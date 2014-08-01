@@ -1,0 +1,894 @@
+\documentclass[article, nojss]{jss}
+
+%\VignetteIndexEntry{Introduction to TDA}
+%% need no \usepackage{Sweave.sty}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\usepackage[utf8x]{inputenc}
+
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+\usepackage{verbatim,float}
+\usepackage{graphicx,subfigure,url}
+\usepackage{dsfont,bm,color,multirow}
+
+
+%spacing for captions
+\usepackage{sidecap}
+\usepackage[font=small,skip=0pt]{caption}
+\setlength{\captionmargin}{20pt}
+
+\newcommand{\todo}[1]{{\color{red}[[\textbf{XXX TODO: }#1]]}}
+
+\newtheorem{algorithm}{Algorithm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newcommand{\argmin}{\mathop{\mathrm{argmin}}}
+\newcommand{\argmax}{\mathop{\mathrm{argmax}}}
+\newcommand{\minimize}{\mathop{\mathrm{minimize}}}
+\newcommand{\Hrule}{\noindent\rule{\linewidth}{0.1mm}}
+
+\def\E{\mathrm{E}}
+\def\P{\mathrm{P}}
+\def\Cov{\mathrm{Cov}}
+\def\sign{\mathrm{sign}}
+\def\tr{\mathrm{tr}}
+\def\col{\mathrm{col}}
+\def\row{\mathrm{row}}
+\def\nul{\mathrm{null}}
+\def\rank{\mathrm{rank}}
+\def\nuli{\mathrm{nuli}}
+\def\half{\frac{1}{2}}
+\def\hbeta{\hat\beta}
+\def\hu{\hat{u}}
+\def\hy{\hat{y}}
+\def\tbeta{\tilde{\beta}}
+\def\tu{\tilde{u}}
+\def\ty{\tilde{y}}
+\def\tA{\widetilde{A}}
+\def\tD{\widetilde{D}}
+\def\tG{\widetilde{G}}
+\def\tP{\widetilde{P}}
+\def\tQ{\widetilde{Q}}
+\def\tR{\widetilde{R}}
+\def\lone{1}
+\def\ltwo{2}
+\def\linf{\infty}
+\def\cA{\mathcal{A}}
+\def\cB{\mathcal{B}}
+\def\cF{\mathcal{F}}
+\def\cG{\mathcal{G}}
+\def\cL{\mathcal{L}}
+\def\cM{\mathcal{M}}
+\def\cN{\mathcal{N}}
+\def\cS{\mathcal{S}}
+\def\cT{\mathcal{T}}
+\def\T{^T}
+\def\R{\mathbb{R}}
+\def\old{\mathrm{old}}
+\def\wBox{{\color{white} \Box}}
+\def\sw{\setlength{\arraycolsep}{1pt}}
+\def\sh{\renewcommand{\arraystretch}{0.75}}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim} {xleftmargin=2em}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{xleftmargin=2em}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{xleftmargin=2em}
+\fvset{listparameters={\setlength{\topsep}{0pt}}}
+\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+
+\author{Brittany T. Fasy \and Fabrizio Lecci \\ \small{In collaboration with the CMU TopStat Group}}
+\Plainauthor{Brittany Terese Fasy, Fabrizio Lecci}
+
+\title{Introduction to the \pkg{TDA} package}
+\Plaintitle{Introduction to the TDA package}
+\Abstract{
+We present a short tutorial and introduction to using the \proglang{R} package 
+\pkg{TDA}, which provides some tools for Topological Data Analysis.
+In particular, it includes implementations of functions that, given some data, provide 
+topological information about the underlying space, such as the distance function, the distance to a measure,
+the kNN density estimator, the kernel density estimator, and the kernel distance.
+The salient topological features of the sublevel sets (or superlevel sets) of these functions
+can be quantified with persistent homology. We provide an \proglang{R} interface
+for the efficient algorithms of the \proglang{Dionysus} C++ library, including a function for 
+the persistent homology of the Rips filtration, and for the persistent homology of sublevel
+sets (or superlevel sets) of arbitrary functions evaluated over a grid of points.
+The significance of the features in the resulting persistence diagrams can be 
+analyzed with functions that implement the methods discussed in \cite{fasy2014statistical},
+\cite{chazal2013stochastic} and \cite{chazal2014robust}.
+The \proglang{R} package \pkg{TDA} also includes the implementation of an algorithm for density 
+clustering, which  allows us to identify  the spatial organization of the probability mass associated to 
+a density function and visualize it by means of a dendrogram, the cluster tree. 
+}
+\Keywords{Topological Data Analysis, Persistent Homology, Density Clustering}
+
+\Address{
+  Brittany T. Fasy\\
+  Computer Science Department\\
+  Tulane University\\
+  Email: \email{brittany.fasy@alumni.duke.edu}\\
+
+  Fabrizio Lecci\\
+  Department of Statistics\\
+  Carnegie Mellon University\\
+  Email: \email{lecci@cmu.edu}\\
+
+  TopStat Group\\
+  Carnegie Mellon University\\
+  Website: \url{http://www.stat.cmu.edu/topstat/} \\
+  Email: \email{topstat@stat.cmu.edu}
+
+}
+
+<<initial_settings, echo=FALSE>>=
+options(stringsAsFactors=FALSE)
+options(width=65)
+options(prompt="> ")
+@
+
+\begin{document}
+
+\section{Introduction}
+\label{sec:intro}
+Topological Data Analysis (TDA) refers to a collection of methods for finding topological structure in data \citep{carlsson2009topology}. Recent advances in computational topology have made it possible to actually compute topological invariants from data.
+The input of these procedures typically takes the form of a point cloud, regarded as possibly noisy observations from an unknown lower-dimensional set $S$ whose interesting topological features were lost during sampling. The output is a collection of data summaries that are used to estimate the topological features of $S$.
+
+In Section \ref{sec:distances}, we describe how to compute some widely studied functions that, starting from a point cloud, provide some topological information about the underlying space: the distance function (\code{distFct}), the distance to a measure function (\code{dtm}), the k Nearest Neighbor density estimator (\code{knnDE}), the kernel density estimator (\code{kde}), and the kernel distance (\code{kernelDist}).
+
+One approach to TDA is persistent homology \citep{edelsbrunner2010computational}, a method for studying the homology at multiple scales simultaneously. More precisely, it provides a framework and efficient algorithms to quantify the evolution of the topology of a family of nested topological spaces. Given a real-valued function $f$, such as the ones described in Section~\ref{sec:distances}, persistent homology describes how the topology of the lower level sets $\{x: f(x) \leq t \}$ (or superlevel sets $\{x: f(x) \geq t \}$) changes as $t$ increases from $-\infty$ to $\infty$ (or decreases from $\infty$ to $-\infty$). 
+This information is encoded in the persistence diagram, a multiset of points in the plane, each corresponding to the birth and death of a homological feature that existed for some interval of $t$.
+In Section \ref{sec:persistent}, we describe how to compute persistence diagrams of sublevel sets (or superlevel sets) of functions evaluated over a grid of points, using \code{gridDiag}, and how to compute the persistence diagram of the Rips filtration built on top of a point cloud, using \code{ripsDiag}. Our implementation relies on \pkg{Dionysus}, a \proglang{C++} library developed by Dmitriy Morozov and freely available at http://mrzv.org/software/dionysus/ .
+
+One of the key challenges in persistent homology is to find a way to isolate the points of the persistence diagram representing the topological noise. In \cite{fasy2014statistical}, \cite{chazal2013stochastic}, and \cite{chazal2014robust}, we propose several statistical methods to construct confidence sets for persistence diagrams and other summary functions that allow us to separate topological signal from topological noise.
+Some of these methods are implemented and described in Section \ref{sec:persistent}.
+
+Finally, the \pkg{TDA} package provides the implementation of an algorithm for density clustering. 
+This method allows us to identify and visualize the spatial organization of the data, without specific knowledge about the data generating mechanism and in particular without any a priori information about the number of clusters. 
+In Section \ref{sec:density}, we describe the function \code{clusterTree}, that, given a density estimator, encodes the hierarchy of the connected components of its superlevel sets into a dendrogram, the cluster tree. \citep{KpoLux11, kent2013}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Distance Functions and Density Estimators} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:distances}
+
+As a first toy example to using the \pkg{TDA} package, we show how to compute
+distance functions and density estimators over a grid of points.
+The setting is the typical one in TDA: a set of points $X=\{x_1, \dots, x_n\}$ 
+has been sampled from some distribution $P$ supported on a manifold and we 
+are interested in recovering the topological features of the underlying manifold
+by studying some functions of the data. 
+The following code generates a sample of 400 points from the unit circle and constructs
+a grid of points over which we will evaluate the functions.
+
+<<eq1, echo=TRUE>>=
+library("TDA")
+X = circleUnif(400)
+
+Xlim=c(-1.6, 1.6);   Ylim=c(-1.7, 1.7);   by=0.065
+
+Xseq=seq(Xlim[1], Xlim[2], by=by)
+Yseq=seq(Ylim[1], Ylim[2], by=by)
+Grid=expand.grid(Xseq,Yseq)
+@
+
+The \pkg{TDA} package provides implementations of the following functions:
+\begin{itemize}
+\item The distance function is defined for each $y \in \mathbb{R}^d$ as
+$
+\Delta(y)= \inf_{x \in X} \| x-y \|_2
+$
+and is computed for each point of the \code{Grid} with the following code:
+<<eq2, echo=TRUE>>=
+distance= distFct(X=X, Grid=Grid)
+@
+\item Given a probability measure $P$, the distance to measure (DTM) is defined for each $y \in \mathbb{R}^d$ as
+$$
+d_{m_0}(y) =\sqrt{ \frac{1}{m_0}\int_0^{m_0} ( G_y^{-1}(u))^2 du},
+$$
+where
+$G_y(t) = P( \Vert X-y \Vert \leq t)$ and $0<m_0<1$ is a smoothing parameter. For more details
+see \cite{chazal2011geometric}.\\
+Given $X=\{x_1, \dots, x_n\}$, the empirical version of the DTM is
+$$
+\hat d_{m_0}(y) = \sqrt{ \frac{1}{k} \sum_{x_i \in N_k(y)} \Vert x_i-y \Vert^2 },
+$$
+where $k= \lceil m_0 n \rceil$ and $N_k(y)$ is the 
+set containing the $k$ nearest neighbors 
+of $y$ among $x_1, \ldots, x_n$.
+The DTM is computed for each point of the \code{Grid} with the following code:
+<<eq3, echo=TRUE>>=
+m0=0.1
+DTM=dtm(X=X, Grid=Grid, m0=m0)
+@
+\item The $k$ Nearest Neighbor density estimator, for each $y \in \mathbb{R}^d$, is defined by
+$$
+\hat\delta_k(y)=\frac{k}{n \; v_d \; r_k^d(y)},
+$$
+where $v_n$ is the volume of the Euclidean $d$ dimensional unit ball and $r_k^d(x)$ is the Euclidean distance form point $x$ to its $k$th closest neighbor among the points of $X$.
+It is computed for each point of the \code{Grid} with the following code:
+<<eq4, echo=TRUE>>=
+k=60
+kNN=knnDE(X=X, Grid=Grid, k=k)
+@
+\item The Gaussian Kernel Density Estimator (KDE), for each $y \in \mathbb{R}^d$, is defined by
+$$
+\hat p_h(y)=\frac{1}{n (\sqrt{2 \pi} h )^d} \sum_{i=1}^n \exp \left( \frac{- \Vert y-x_i \Vert_2^2}{2h^2} \right).
+$$
+where $h$ is a smoothing parameter.
+It is computed for each point of the \code{Grid} with the following code:
+<<eq5, echo=TRUE>>=
+h=0.3
+KDE= kde(X=X, Grid=Grid, h=h)
+@
+\item The Kernel distance estimator, for each $y \in \mathbb{R}^d$, is defined by
+$$
+\hat \kappa_h(y)=\sqrt{ \frac{1}{n^2} \sum_{i=1}^n\sum_{j=1}^n K_h(x_i, x_j) + K_h(y,y) - 2 \frac{1}{n} \sum_{i=1}^n K_h(y,x_i)  },
+$$
+where $K_h(x,y)=\exp\left( \frac{- \Vert x-y \Vert_2^2}{2h^2} \right)$ is the Gaussian Kernel with smoothing parameter $h$.
+The Kernel distance is computed for each point of the \code{Grid} with the following code:
+<<eq6, echo=TRUE>>=
+h=0.3
+Kdist= kernelDist(X=X, Grid=Grid, h=h)
+@
+\end{itemize}
+For this 2 dimensional example, we can visualize the functions using \code{persp} form the \pkg{graphics} package. For example the following code produces the KDE plot in Figure \ref{fig:eq8}:
+
+<<eq7, echo=TRUE, eval=FALSE, height=6, width=6>>=
+persp(Xseq,Yseq,matrix(KDE,ncol=length(Yseq), nrow=length(Xseq)),
+xlab="",ylab="",zlab="",theta=-20,phi=35, ltheta=50, col=2, border=NA, 
+main="KDE", d=0.5, scale=FALSE, expand=3, shade=0.9)
+@
+
+% PLOT START
+\begin{figure}[h!tb]
+\setkeys{Gin}{width=6in, height=4.6in}
+\begin{center}
+<<eq8, echo=FALSE, eval=TRUE, fig=TRUE, height=5, width=6.5>>=
+par(mfrow=c(2,3))
+par(mai=c(0.6,0.25,0.3,0.1))
+	plot(X, pch=16, cex=0.6, xlab="", ylab="", main="Sample X")
+
+par(mai=c(0.1,0.15,0.1,0.1))
+	persp(Xseq,Yseq,matrix(distance,ncol=length(Yseq), nrow=length(Xseq)), xlab="",ylab="",zlab="",theta=-20,phi=35, ltheta=50, col=2, border=NA, main="Distance Function", d=0.5, scale=FALSE, expand=1, shade=0.9)
+
+	persp(Xseq,Yseq,matrix(DTM,ncol=length(Yseq), nrow=length(Xseq)), xlab="",ylab="",zlab="",theta=-20,phi=35, ltheta=50, col=2, border=NA, main="DTM", d=0.5, scale=FALSE, expand=1, shade=0.9)
+
+	persp(Xseq,Yseq,matrix(kNN,ncol=length(Yseq), nrow=length(Xseq)), xlab="",ylab="",zlab="",theta=-20,phi=35, ltheta=50, col=2, border=NA, main="kNN", d=0.5, scale=FALSE, expand=3, shade=0.9)
+
+	persp(Xseq,Yseq,matrix(KDE,ncol=length(Yseq), nrow=length(Xseq)), xlab="",ylab="",zlab="",theta=-20,phi=35, ltheta=50, col=2, border=NA, main="KDE", d=0.5, scale=FALSE, expand=3, shade=0.9)
+
+	persp(Xseq,Yseq,matrix(Kdist,ncol=length(Yseq), nrow=length(Xseq)), xlab="",ylab="",zlab="",theta=-20,phi=35, ltheta=50, col=2, border=NA, main="Kernel Distance", d=0.5, scale=FALSE, expand=5, shade=0.9)
+@
+\end{center}
+\vspace{-1cm}
+\caption{distance functions and density estimators evaluated over a grid of points.}
+\label{fig:eq8}
+\end{figure}
+
+% PLOT END
+
+\subsection{Bootstrap Confidence Bands}
+\label{sec:bootstrap}
+
+We can construct a $(1-\alpha)$ confidence band for a function using the bootstrap algorithm, which we briefly describe using the kernel density estimator:
+\begin{enumerate}
+\item Given a sample $X=\{x_1, \dots, x_n\}$, compute the kernel density estimator $\hat p_h$;
+\item Draw $X^*=\{x_1^*, \dots, x_n^*\}$ from $X=\{x_1, \dots, x_n \}$ (with replacement), and compute $\theta^*=\sqrt{n} \Vert \hat p_h^*(x) - \hat p_h(x) \Vert_\infty$, where $\hat p_h^*$ is the density estimator computed using $X^*$;
+\item Repeat the previous step $B$ times to obtain $\theta_{1}^*, \dots, \theta_{B}^*$;
+\item Compute 
+$
+q_{\alpha} = \inf \left \{q: \frac{1}{B} \sum_{j=1}^B I(\theta_j^* \geq q) \leq \alpha \right\};
+$
+\item The $(1-\alpha)$ confidence band for $\mathbb{E}[\hat p_h]$ is
+$
+\left[\hat p_h - \frac{q_{\alpha}}{\sqrt{n}} \,, \, \hat p_h+ \frac{q_{\alpha}}{\sqrt{n}}\right] .
+$
+\end{enumerate}
+
+\cite{fasy2014statistical} and \cite{chazal2014robust} prove the validity of the bootstrap algorithm for kernel density estimators, distance to measure, and kernel distance, and use it in the framework of persistent homology.
+The bootstrap algorithm is implemented in the function \code{bootstrapBand}, which provides the option of parallelizing the algorithm (\code{parallel=TRUE}) using the package \pkg{parallel}.
+The following code computes a 90\% confidence band for $\mathbb{E}[\hat p_h]$, showed in Figure \ref{fig:eq10}.
+
+<<eq9, echo=TRUE, eval=TRUE>>=
+band=bootstrapBand(X=X, FUN=kde, Grid=Grid, B=100, 
+                   parallel=F, alpha=0.1, h=h)
+@
+
+% PLOT START
+\begin{figure}[h!tb]
+\setkeys{Gin}{width=5in, height=2.5in}
+\begin{center}
+<<eq10, echo=FALSE, eval=TRUE, fig=TRUE, width=8, height=4>>=
+posYgrid=which(Grid[,2]>0)
+posYseq=which(Yseq>0)
+
+par(mfrow=c(1,2))
+par(mai=c(0.5,0.25,0.3,0.1))
+
+persp(Xseq,Yseq,matrix(band$band[,1],ncol=length(Yseq), nrow=length(Xseq)),zlim=c(0,max(band$band[posYgrid,2])), ylim = range(Yseq),
+xlab="",ylab="",zlab="",theta=0,phi=25, ltheta=50, col="pink", border=NA, d=0.5, scale=FALSE, expand=3, shade=0.9,box=F)
+
+
+persp(Xseq,Yseq[posYseq],matrix(band$band[posYgrid,1],ncol=length(Yseq[posYseq]), nrow=length(Xseq)),zlim=c(0,max(band$band[posYgrid,2])), ylim = c(-0.5,1.7),
+xlab="",ylab="",zlab="",theta=0,phi=25, ltheta=50, col="pink", border=NA, d=0.5, scale=FALSE, expand=3, shade=0.9,box=F)
+
+par(new = TRUE)
+
+persp(Xseq,Yseq[posYseq],matrix(band$fun[posYgrid],ncol=length(Yseq[posYseq]), nrow=length(Xseq)),zlim=c(0,max(band$band[posYgrid,2])), ylim = c(-0.5,1.7),,
+xlab="",ylab="",zlab="",theta=0,phi=25, ltheta=50, col="red", border=NA, d=0.5, scale=FALSE, expand=3, shade=0.9,box=F)
+
+par(new = TRUE)
+
+persp(Xseq,Yseq[posYseq],matrix(band$band[posYgrid,2],ncol=length(Yseq[posYseq]), nrow=length(Xseq)), zlim=c(0,max(band$band[posYgrid,2])), ylim = c(-0.5,1.7),
+xlab="",ylab="",zlab="",theta=0,phi=25, ltheta=50, col="pink", border=NA, 
+main="", d=0.5, scale=FALSE, expand=3, shade=0.9, box=F)
+@
+\end{center}
+\vspace{-1cm}
+\caption{the 90\% confidence band for $\mathbb{E}[\hat p_h]$ has the form $[\ell, u]= \left[\hat p_h - q_{\alpha}/\sqrt{n} \,, \, \hat p_h+ q_{\alpha}/\sqrt{n}\right]$. The plot on the right shows a section of the functions: the red surface is the KDE $\hat p_h$; the pink surfaces are $\ell$ and $u$.}
+\label{fig:eq10}
+\end{figure}
+% PLOT END
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Persistent Homology} 
+%%%%%%%%%%%%%%%%%%
+\label{sec:persistent}
+
+
+We provide an informal description of the implemented methods of persistent homology. We assume the reader is familiar with the basic concepts and, for a rigorous exposition, we refer to the textbook \cite{edelsbrunner2010computational}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Persistent Homology Over a Grid}
+%%%%%%%%%%%%%%%%%%%%%%%
+In this section, we describe how to use the \code{gridDiag} function to compute the persistent homology of sublevel (and superlevel) sets of the functions described in Section \ref{sec:distances}. 
+The function \code{gridDiag} evaluates a given real valued function over a triangulated grid, constructs a filtration of simplices using the values of the function, and computes the persistent homology of the filtration. \code{gridDiag} currently supports grids in dimension 1,2, and 3. Future releases of the \pkg{TDA} package will extend its functionalities.
+
+The following code computes the persistent homology of the superlevel sets (\code{sublevel=FALSE}) of the kernel density estimator (\code{FUN=kde}, \code{h=0.3}) using the point cloud stored in the matrix~\code{X} from the previous example.
+The same code would work for the other functions defined in Section \ref{sec:distances} (it is sufficient to replace \code{kde} and its smoothing parameter \code{h} with another function and its parameters). 
+The function \code{gridDiag} returns an object of the class \code{"diagram"}.  
+The other inputs are the features of the grid over which the \code{kde} is evaluated (\code{Xlim}, \code{Ylim} and \code{by}), the smoothing parameter \code{h}, and a logical variable that indicates whether a progress bar should be printed (\code{printStatus}).
+
+<<eq11, echo=TRUE, eval=TRUE>>=
+Diag = gridDiag( X=X, FUN=kde, h=0.3, Xlim=Xlim, Ylim=Ylim, by=by, 
+                 sublevel=F, printStatus=F ) 
+@
+
+
+We plot the data and the the diagram, using the function \code{plot}, implemented as a standard \code{S3} method for objects of the class \code{"diagram"}. The following command produces the third plot in Figure \ref{fig:eq11b}.
+
+<<eq11b, echo=TRUE, eval=FALSE>>=
+plot(Diag, band=2*band$width, main="KDE Diagram")
+@
+
+% PLOT STARTS
+\begin{figure}[h!tb]
+\setkeys{Gin}{width=5.5in, height=2in}
+\begin{center}
+<<eq11b, echo=FALSE, eval=TRUE, fig=TRUE, height=2, width=5.5>>=
+par(mfrow=c(1,3))
+par(mai=c(0.3,0.25,0.3,0.1))
+
+plot(X, pch=16, cex=0.6, xlab="", ylab="",main="Sample X")
+
+persp(Xseq,Yseq,matrix(KDE,ncol=length(Yseq), nrow=length(Xseq)), xlab="",ylab="",zlab="",theta=-20,phi=35, ltheta=50, col=2, border=NA, main="KDE", d=0.5, scale=FALSE, expand=3, shade=0.9)
+
+par(mai=c(0.55,0.6,0.3,0.1))
+
+plot(Diag, band=2*band$width, main="KDE Diagram")
+@
+\end{center}
+\caption{The plot on the right shows the persistence diagram of the superlevel sets of the KDE. Black points represent connected components and red triangles represent loops. 
+The features are born at high levels of the density and die at lower levels. The pink 90\% confidence band separates significant features from noise.}
+\label{fig:eq11b}
+\end{figure}
+% PLOT END
+
+The option \code{band=2*band$width} produces a pink confidence band for the persistence diagram, using the confidence band constructed for the corresponding kernel density estimator in the previous section. 
+The features above the band can be interpreted as representing significant homological features, while points in the band are not significantly different from noise.
+The validity of the bootstrap confidence band for  persistence diagrams of KDE, DTM, and Kernel Distance derive from the \textit{Stability Theorem} \citep{chazal2012structure} and is discussed in detail in \cite{fasy2014statistical} and \cite{chazal2014robust}.\\
+
+The function \code{plot} for the class \code{"diagram"} provide the options of rotating the diagram (\code{rotated=TRUE}), drawing the barcode in place of the diagram (\code{barcode=TRUE}), as well as other standard graphical options:
+
+% PLOT START
+\begin{figure}[h!tb]
+\setkeys{Gin}{width=4.5in, height=2.25in}
+\begin{center}
+<<eq11c, echo=TRUE, eval=TRUE,  fig=TRUE, width=6, height=3>>=
+par(mfrow=c(1,2), mai=c(0.8,0.8,0.3,0.1))
+plot(Diag, rotated=T, band=band$width, main="Rotated Diagram")
+plot(Diag, barcode=T,  main="Barcode")
+@
+\end{center}
+\caption{Rotated Persistence Diagram and Barcode}
+\label{fig:eq11c}
+\end{figure}
+% PLOT END
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\subsection{Rips Diagrams}
+%%%%%%%%%%%%%%%%%%
+The {\em Vietoris-Rips~complex} $R(X,\varepsilon)$
+consists of simplices with vertices in $X$ and diameter
+at most $\varepsilon$.  In other words,
+a simplex $\sigma$ is included in the complex if each pair of vertices in
+$\sigma$ is at most $ \varepsilon$ apart.
+The sequence of Rips complexes obtained by gradually
+increasing the radius $\varepsilon$ creates a filtration.
+
+The \code{ripsDiag} function computes the persistence diagram of the Rips filtration built on top of a point cloud.
+This function is an R wrapper of the function ``rips-pairwise" of the \pkg{Dionysus} \proglang{C++}  library.
+
+The following code generates 60 points from two circles:
+
+<<eq12, echo=TRUE, eval=TRUE>>=
+Circle1 = circleUnif(60)
+Circle2 = circleUnif(60, r=2) +3
+Circles=rbind(Circle1,Circle2)
+@
+
+We specify the limit of the Rips filtration and the max dimension of the homological features we are interested in (0 for components, 1 for loops, 2 for voids...):
+<<eq12b, echo=TRUE, eval=TRUE>>=
+maxscale=5           # limit of the filtration
+maxdimension=1       # components and loops
+@
+
+and we generate the persistence diagram:
+<<eq12c, echo=TRUE, eval=TRUE>>=
+Diag=ripsDiag(X=Circles, maxdimension, maxscale, printStatus=F)
+@
+Alternatively, using the option \code{dist="arbitrary"} in \code{ripsDiag()}, the input \code{X} can be an $n \times n$ matrix of distances.
+This option is useful when the user wants to consider a Rips filtration constructed using an arbitrary distance.\\
+
+Finally we plot the data and the the diagram:\\
+\phantom{o}
+% PLOT START
+\begin{figure}[h!tb]
+\setkeys{Gin}{width=4.6in, height=2.3in}
+\begin{center}
+<<eq12d, echo=TRUE, eval=TRUE,  fig=TRUE, height=2.8, width=5.6>>=
+par(mfrow=c(1,2), mai=c(0.8,0.8,0.3,0.3))
+plot(Circles, pch=16, xlab="",ylab="")
+plot(Diag)
+@
+\end{center}
+\caption{Rips persistence diagram. Black points represent connected components and red triangles represent loops.}
+\label{fig:eq12d}
+\end{figure}
+% PLOT END
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Bottleneck and Wasserstein Distances}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Standard metrics for measuring the distance between two persistence diagrams are the bottleneck distance and the $p$th Wasserstein distance \citep{edelsbrunner2010computational}. 
+The \pkg{TDA} package includes the functions \code{bottleneck} and \code{wasserstein}, which are R wrappers of the functions ``bottleneck\_distance" and ``wasserstein\_distance" of the \pkg{Dionysus} \proglang{C++}  library .
+
+We generate two persistence diagrams of the Rips filtrations built on top of the two (separate) circles of the previous example,
+<<eq13, echo=TRUE, eval=TRUE>>=
+Diag1=ripsDiag(Circle1,maxdimension=1, maxscale=5, printStatus=F)
+Diag2=ripsDiag(Circle2,maxdimension=1, maxscale=5, printStatus=F)
+@
+and we compute the bottleneck distance and the $2$nd Wasserstein distance between the two diagrams.
+In the following code, the option \code{dimension=1} specifies that the distances between diagrams are computed using only one dimensional features (loops).
+<<eq13b, echo=TRUE, eval=TRUE>>=
+print( bottleneck(Diag1, Diag2, dimension=1) )
+print( wasserstein(Diag1, Diag2, p=2, dimension=1) )
+@
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Landscapes and Silhouettes}
+%%%%%%%%%%%%%%%%%%%%%%
+
+Persistence landscapes and silhouettes are real-valued functions that further summarize the information contained in a persistence diagram. They have been introduced and studied in \cite{bubenik2012statistical}, \cite{chazal2013stochastic}, and \cite{chazal2014subsampling}.
+We briefly introduce the two functions.
+
+{\bf Landscape.}  The persistence landscape
+is a collection of continuous, piecewise linear
+functions~\mbox{$\lambda \colon  \mathbb{Z}^{+} \times \mathbb{R} \to \mathbb{R}$} that summarizes a
+persistence diagram.
+To define the landscape, consider the set of functions created by tenting
+each each point $p=(x,y)= \left( \frac{b+d}{2}, \frac{d-b}{2}  \right)$
+representing a birth-death pair $(b,d)$ in the persistence diagram $D$ as follows:
+\begin{equation}\label{eq:triangle}
+ \Lambda_p(t) =
+ \begin{cases}
+  t-x+y & t \in [x-y, x] \\
+  x+y-t & t \in (x,  x+y] \\
+  0 & \text{otherwise}
+ \end{cases}
+ =
+ \begin{cases}
+  t-b & t \in [b, \frac{b+d}{2}] \\
+  d-t & t \in (\frac{b+d}{2}, d] \\
+  0 & \text{otherwise}.
+ \end{cases}
+\end{equation}
+%Notice that $p$ is itself on the graph of $\Lambda_p(t)$.
+We obtain
+an arrangement of piecewise linear curves by overlaying the graphs of
+the functions~\mbox{$\{ \Lambda_p \}_{p}$}; see Figure \ref{fig:eq14a}.
+The persistence landscape of $D$ is a  summary of this arrangement.
+Formally, the persistence landscape of $D$ is the collection of functions
+\begin{equation}\label{eq:landscape}
+ \lambda(k,t) = \underset{p}{k\text{max}} ~ \Lambda_p(t), \quad
+ t \in [0,T], k \in \mathbb{N},
+\end{equation}
+where $k$max is the $k$th largest value in the set; in particular,
+$1$max is the usual maximum~function. 
+
+{\bf Silhouette.}
+Consider a persistence diagram with $N$ off diagonal points.
+For every $0 < p < \infty$
+we define the power-weighted silhouette
+$$
+\phi^{( p)}(t) = \frac{\sum_{j=1}^N |d_j - b_j|^p \Lambda_j(t)}{\sum_{j=1}^N |d_j - b_j|^p}.
+$$
+
+The value $p$ can be thought of as a trade-off parameter between
+uniformly treating all pairs in the persistence diagram 
+and considering only the most persistent pairs.  Specifically, when $p$ is small,
+$\phi^{( p)}(t)$ is dominated by the effect of low persistence features.
+Conversely, when $p$ is large,
+$\phi^{( p)}(t)$ is dominated by the most persistent features;
+see Figure \ref{fig:eq14a} (right).
+
+
+% PLOT START
+\begin{figure}[h!tb]
+\setkeys{Gin}{width=6in, height=2in}
+\begin{center}
+
+<<eq14a, echo=FALSE, eval=TRUE, fig=TRUE, height=2.5, width=7.5>>=
+PlotTriangles = function(left,right){
+   n = length(left)
+   X = (left+right)/2
+   Y = (right-left)/2
+   xlimit=c( 0, max(X+Y)*1.2 )
+   ylimit=c(0, max(Y)*1.2)
+   plot(X,Y,type="n",xlab="",ylab="",xaxt="n",yaxt="n", xlim=xlimit, ylim=ylimit, frame.plot=F, main="Triangles")
+	axis(1)
+	axis(2)
+	mtext("(Birth+Death)/2", side=1, line=2.5, cex=1)
+	mtext("(Death-Birth)/2", side=2, line=2.5, cex=1)
+	#polygon(c(0,0,ylimit[2]),c(0,ylimit[2],ylimit[2]), col="gray87", border=NA)
+   for (i in 1:n){
+      a <- c(0, left[i], (left[i]+right[i])/2, right[i], 0)
+      b <- c(0, 0, (right[i]-left[i])/2, 0, 0)
+      lines(a,b, lwd=2)
+	}
+     B = max(X+Y)
+     grid = seq(0,B,length=1000)
+     maxfun = rep(0,length(grid))
+     tmp = matrix(0,n,length(grid))
+     for(i in 1:n){
+          tmp[i,] = pmax(pmin(grid-left[i],right[i]-grid),0)
+          }
+     land = apply(tmp,2,max)
+     #lines(grid,land,lwd=2, col=4)
+	 points(X,Y,type="p", cex=1, pch=19, col="pink")
+     points(X,Y,type="p")
+}
+
+par(mfrow=c(1,3), mai=c(0.7,0.7,0.3,0.3))
+
+left = c(0,2,2,3.5,5)
+right = c(2,6,3,5,8)
+
+ PlotTriangles(left,right)    
+
+Diag1=cbind(rep(0,length(left)), left, right)
+tseq=seq(min(Diag1[,2:3]), max(Diag1[, 2:3]), length=500)
+Land1=landscape(Diag1, dimension=0, KK=1, tseq )
+Sil1=silhouette(Diag1, p=1, dimension=0, tseq )
+
+   X = (left+right)/2
+   Y = (right-left)/2
+   xlimit=c( 0, max(X+Y)*1.2 )
+   ylimit=c(0, max(Y)*1.2)
+
+plot(tseq, Land1, col=4, type="l", lwd=2, xlim=xlimit, ylim=ylimit, axes=F, main="1st Landscape", xlab="", ylab="")
+axis(1)
+axis(2)
+
+plot(tseq, Sil1, col=4, type="l", lwd=2, xlim=xlimit, ylim=ylimit, axes=F, main="Silhouette p=1", xlab="", ylab="")
+axis(1)
+axis(2)
+@
+\end{center}
+\caption{	Left: we use the rotated axes to represent a persistence diagram $D$.
+	A feature $(b,d) \in D$ is represented by the point
+	$(\frac{b+d}{2},\frac{d-b}{2})$ (pink).
+	In words,
+	the $x$-coordinate is the average parameter value over which the feature
+exists,
+	and the $y$-coordinate is the half-life of the feature.
+        Middle: the blue curve is the landscape $\lambda(1,\cdot)$.
+        Right: the blue curve is the silhouette $\phi^{(1)}(\cdot)$.}
+\label{fig:eq14a}
+\end{figure}
+% PLOT END
+
+\vspace{0.5cm}
+
+The landscape and silhouette functions can be evaluated over a one-dimensional grid of points \code{tseq} using the functions \code{landscape} and \code{silhouette}. In the following code, we use the persistence diagram from Figure \ref{fig:eq12d} to construct the corresponding landscape and silhouette for 
+one-dimensional features (\code{dimension=1}). The option \code{KK=1} specifies that we are interested in the 1st landscape function, and \code{p=1} is the power of the weights in the definition of the silhouette function.
+
+
+<<eq14, echo=TRUE, eval=TRUE>>=
+tseq=seq(0,maxscale, length=1000)   #domain
+Land= landscape(Diag, dimension=1, KK=1, tseq)  
+Sil=silhouette(Diag, p=1,  dimension=1, tseq)  
+@
+
+The functions \code{landscape} and \code{silhouette} return real valued vectors, which can be simply plotted with \code{plot(tseq, Land, type="l"); plot(tseq, Sil, type="l")}. See Figure \ref{fig:eq14b}.
+
+% PLOT START
+\begin{figure}[h!tb]
+\setkeys{Gin}{width=5in, height=1.5in}
+\begin{center}
+<<eq14b, echo=FALSE, eval=TRUE,  fig=TRUE, height=2.4, width=8>>=
+par(mfrow=c(1,2), mai=c(0.5,0.45,0.3,0.3))
+plot(tseq, Land, type="l", lwd=3, ylab="", main="1st Landscape, dim=1",asp=1, col=2)
+plot(tseq, Sil, type="l", lwd=3, ylab="", main="Silhouette (p=1), dim=1",asp=1, col=2)
+@
+\end{center}
+\caption{Landscape and Silhouette of the one-dimensional features of the diagram of Figure \ref{fig:eq12d}.}
+\label{fig:eq14b}
+\end{figure}
+% PLOT END
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Confidence Bands for Landscapes and Silhouettes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Recent results in \cite{chazal2013stochastic} and \cite{chazal2014subsampling} show how to construct confidence bands for landscapes 
+and silhouettes, using a bootstrap algorithm (multiplier bootstrap).
+This strategy is useful in the following scenario.
+We have a very large dataset with $N$ points. There is a diagram $D$ and landscape $\lambda$ corresponding to some filtration built on the data. When $N$ is large, computing $D$ is prohibitive. Instead, we draw $n$ subsamples, each of size $m$. We compute a diagram and landscape for each subsample yielding landscapes $\lambda_1, \dots, \lambda_n $. (Assuming $m$ is much smaller than $N$, these subsamples are essentially independent and identically distributed.) Then we compute $\frac{1}{n}\sum_i \lambda_i$, an estimate of $\mathbb{E}(\lambda_i)$, which can be regarded as an approximation of $\lambda$. The function \code{multipBootstrap} uses the landscapes $\lambda_1, \dots, \lambda_n$ to construct a confidence band for $\mathbb{E}(\lambda_i)$. The same strategy is valid for silhouette functions. We illustrate the method with a simple example.\\
+First we sample $N$ points from two circles:
+
+<<eq15, echo=TRUE, eval=TRUE>>=
+N=4000
+XX1 = circleUnif(N/2)
+XX2 = circleUnif(N/2, r=2) +3
+X=rbind(XX1,XX2)
+@
+
+Then we specify the number of subsamples $n$, the subsample size $m$, and we create the objects that
+will store the $n$ diagrams and landscapes:
+
+<<eq15b, echo=TRUE, eval=TRUE>>=
+m=80        # subsample size
+n=10        # we will compute n landscapes using subsamples of size m
+
+tseq=seq(0,maxscale, length=500)          #domain of landscapes
+
+Diags=list()                              #here we store n Rips diags
+Lands=matrix(0,nrow=n, ncol=length(tseq)) #here we store n landscapes
+@
+
+For $n$ times, we subsample from the large point cloud, compute $n$ Rips diagrams and the corresponding
+1st landscape functions (\code{KK=1}), using 1 dimensional features (\code{dimension=1}):
+
+<<eq15c, echo=TRUE, eval=TRUE>>=
+for (i in 1:n){
+	subX=X[sample(1:N,m),]
+	Diags[[i]]=ripsDiag(subX,maxdimension=1, maxscale=5)
+	Lands[i,]=landscape(Diags[[i]], dimension=1, KK=1, tseq )
+}
+@
+
+Finally we use the $n$ landscapes to construct a 95\% confidence band for the mean landscape
+
+<<eq15d, echo=TRUE, eval=TRUE>>=
+bootLand=multipBootstrap(Lands,B=100,alpha=0.05, parallel=F)
+@
+
+which is plotted by the following code. See Figure \ref{fig:eq15f}.
+
+<<eq15e, echo=TRUE, eval=FALSE>>=
+plot(tseq, bootLand$mean, main="Mean Landscape with 95% band")
+polygon(c(tseq, rev(tseq)), 
+        c(bootLand$band[,1],rev(bootLand$band[,2])), col="pink")
+lines(tseq, bootLand$mean, lwd=2, col=2)
+@
+
+% PLOT STARTS
+\begin{figure}[h!tb]
+\setkeys{Gin}{width=5in, height=2.5in}
+\begin{center}
+<<eq15f, echo=FALSE, eval=TRUE,  fig=TRUE, height=4, width=8>>=
+par(mfrow=c(1,2))
+par(mai=c(0.5,0.45,0.3,0.3))
+
+plot(X, pch=16, cex=0.5, main="Large Sample from Circles")
+
+plot(tseq, bootLand$mean, type="l", lwd=2, xlab=" ", ylab="" ,main="Mean Landscape with 95% band", ylim=c(0,1.2))
+polygon(c(tseq, rev(tseq)), c(bootLand$band[,1],rev(bootLand$band[,2])), col="pink")
+lines(tseq, bootLand$mean, lwd=2, col=2)
+@
+\end{center}
+\caption{95\% confidence band for the mean landscape function.}
+\label{fig:eq15f}
+\end{figure}
+% PLOT END
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Selection of Smoothing Parameters}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+An unsolved problem in topological inference is how to
+choose the smoothing parameters, for example $h$ for KDE and 
+$m$ for DTM.
+
+\cite{chazal2014robust} suggest the following method, that we describe here for the kernel density estimator,
+but works also for the kernel distance and the distance to measure.
+
+Let $\ell_1(h),\ell_2(h),\ldots, $
+be the lifetimes
+of the features of a persistence diagram at scale $h$.
+Let $q_\alpha(h)/\sqrt{n}$
+be the width of the confidence band for the kernel density estimator
+at scale $h$, as described in Section \ref{sec:bootstrap}.
+We define two quantities that measure
+the amount of significant information at level $h$:
+\begin{itemize}
+\item The number of significant features, $N(h) = \# \left\{i:\ \ell(i) > 2\frac{q_\alpha(h)}{\sqrt{n}}\right\}$;
+\item The total significant persistence, $S(h) = \sum_i \left[ \ell_i - 2\frac{q_\alpha(h)}{\sqrt{n}}\right]_+$.
+\end{itemize}
+These measures are small when $h$ is small since $q_\alpha(h)$ is large.
+On the other hand,
+they are small when $h$ is large since then all the features of the KDE are smoothed out.
+Thus we have a kind of topological bias-variance tradeoff.
+We choose $h$ to maximize $N(h)$ or $S(h)$.
+
+The method is implemented in the function \code{maxPersistence}, as shown in the following toy example.
+First, we sample 1600 point from two circles (plus some clutter noise) and we specify the limits of the grid over which the KDE will be evaluated:
+
+<<eq16, echo=TRUE, eval=TRUE>>=
+XX1 = circleUnif(600)
+XX2 = circleUnif(1000, r=1.5) +2.5
+noise=cbind(runif(80, -2,5),runif(80, -2,5))
+X=rbind(XX1,XX2, noise)
+
+# Grid limits
+Xlim=c(-2,5)
+Ylim=c(-2,5)
+by=0.2
+@
+
+Then we specify a sequence of smoothing parameters among which we will select the optimal one, the number of bootstrap iterations and the level of the confidence bands to be computed:
+
+<<eq16b, echo=TRUE, eval=TRUE>>=
+parametersKDE=seq(0.1,0.6,by=0.05)
+
+B=50        # number of bootstrap iterations. Should be large.
+alpha=0.1   # level of the confidence bands
+@
+
+The function \code{maxPersistence} can be parallelized (\code{parallel=TRUE}) and a progress bar can be printed (\code{printProgress=TRUE}):
+
+<<eq16c, echo=TRUE, eval=TRUE>>=
+maxKDE=maxPersistence(kde, parametersKDE, X, Xlim, Ylim, Zlim=NA, 
+                      by=by, sublevel=F, B=B, alpha=alpha, 
+                      parallel=TRUE, printProgress=TRUE)
+@
+
+The \code{S3} methods \code{summary} and \code{plot} are implemented for the class \code{"maxPersistence"}.
+We can display the values of the parameters that maximize the two criteria:
+<<eq16d, echo=TRUE, eval=TRUE>>=
+print(summary(maxKDE))
+@
+
+and produce the summary plot of Figure \ref{fig:eq16e}:\\
+
+% PLOT STARTS
+\begin{figure}[h!]
+\setkeys{Gin}{width=5in, height=2.5in}
+\begin{center}
+<<eq16e, echo=TRUE, eval=TRUE,  fig=TRUE, height=4, width=8>>=
+par(mfrow=c(1,2), mai=c(0.8,0.8,0.35,0.3))
+plot(X, pch=16, cex=0.5, main="Two Circles")
+plot(maxKDE, main="Max Persistence - KDE")
+@
+\end{center}
+\caption{Max Persistence Method for the selection of smoothing parameters. For each value of the smoothing parameter we display the persistence of the corresponding homological features, along with a (pink) confidence band that separates the statistically significant features from the topological noise.}
+\label{fig:eq16e}
+\end{figure}
+% PLOT END
+
+\newpage
+%%%%%%%%%%%%%%%%%
+\section{Density Clustering}
+%%%%%%%%%%%%%%%%%
+\label{sec:density}
+
+The last example of this vignette illustrates the use of the function \code{clusterTree}, which is an implementation of Algorithm 1 in \cite{kent2013debacl}.
+
+First, we briefly describe the task of density clustering; we defer the reader to \cite{kent2013} for a more rigorous and complete description.
+Let $f$ be the density of the probability distribution~$P$ generating the observed sample $X=\{x_1, \dots, x_n\} \subset \mathbb{R}^D$. For a threshold value $\lambda >0$, the corresponding super level set of $f$ is $L_f (\lambda) := \text{cl} (\{x \in \mathbb{R}^D : f(x) > \lambda\})$, and its $D$-dimensional subsets are called high-density regions. The high-density clusters of $P$ are the maximal connected subsets of $L_f (\lambda)$.
+By considering all the level sets simultaneously (from $\lambda=0$ to $\lambda=\infty$), we can record the evolution and the hierarchy of the high-density clusters of $P$.
+This naturally leads to the notion of the cluster density tree of $P$ (see, e.g., \cite{hartigan1981consistency}), defined as the collection of sets $T := \{L_f (\lambda), \lambda \geq 0\}$, which satisfies the tree property: $A,B \in T$ implies that $A \subset B$ or $B \subset A$ or $A \cap B = \emptyset$. We will refer to this construction as the $\lambda$-tree. Alternatively, \cite{kent2013debacl} introduced the \textit{$\kappa$-tree}, which facilitates the interpretation of the tree by precisely encoding the probability content of each tree branch rather than the density level. Cluster trees are particularly useful for high dimensional data, whose spatial organization is difficult to represent.
+
+We illustrate the strategy with a simple example.
+First we generate a 2D point cloud from three (not so well) separated clusters (see top left plot of Figure \ref{fig:eq18d}):
+
+<<eq18, echo=TRUE, eval=TRUE>>=
+X1=cbind(rnorm(300,1,.8),rnorm(300,5,0.8))
+X2=cbind(rnorm(300,3.5,.8),rnorm(300,5,0.8))
+X3=cbind(rnorm(300,6,1),rnorm(300,1,1))
+XX=rbind(X1,X2,X3)
+@
+
+Then we use the function \code{clusterTree} to compute cluster trees using the k Nearest Neighbors density estimator (\code{k=100} nearest neighbors) and the Gaussian kernel density estimator, with smoothing parameter \code{h}.
+
+<<eq18b, echo=TRUE, eval=TRUE>>=
+Tree=clusterTree(XX, k=100, density="knn", printStatus=F)
+TreeKDE=clusterTree(XX, k=100, h=0.3, density="kde", printStatus=F)
+@
+
+Note that, even when \code{kde} is used to estimate the density, we have to provide the option \code{k=100}, so that the algorithm can compute the connected components at each level of the density using a k Nearest Neighbors graph.
+
+The \code{"clusterTree"} objects \code{Tree} and \code{TreeKDE} contain information about both the $\lambda$-tree and the $\kappa$-tree. The function \code{plot} for objects of the class \code{"clusterTree"} produces the plots in Figure \ref{fig:eq18d}.
+
+<<eq18c, echo=TRUE, eval=FALSE>>=
+plot(Tree, type="lambda", main="lambda Tree (knn)")
+plot(Tree, type="kappa", main="kappa Tree (knn)")
+plot(TreeKDE, type="lambda", main="lambda Tree (kde)")
+plot(TreeKDE, type="kappa", main="kappa Tree (kde)")
+@
+
+
+
+% PLOT STARTS
+\begin{figure}[h!tb]
+\setkeys{Gin}{width=6in, height=4in}
+\begin{center}
+<<eq18d, echo=FALSE, eval=TRUE,  fig=TRUE, height=4, width=6>>=
+
+par(mfrow=c(2,3))
+par(mai=c(0.25,0.35,0.3,0.3))
+
+plot(XX, pch=16, cex=0.6, main="Data")
+
+# plot lambda trees
+plot(Tree, type="lambda", main="lambda Tree (knn)")
+plot(TreeKDE, type="lambda", main="lambda Tree (kde)")
+
+# plot clusters
+plot(XX, pch=19, cex=0.6, main="cluster labels (knn)")
+for (i in Tree$id){
+	points(matrix(XX[Tree$DataPoints[[i]],],ncol=2), col=i, pch=19, cex=0.6)
+}
+
+#plot kappa trees
+plot(Tree, type="kappa", main="kappa Tree (knn)")
+plot(TreeKDE, type="kappa", main="kappa Tree (kde)")
+@
+\end{center}
+\caption{The lambda trees and kappa trees of the k Nearest Neighbor density estimator and the kernel density estimator.}
+\label{fig:eq18d}
+\end{figure}
+% PLOT END
+
+\newpage
+
+\bibliography{biblio}  
+
+\end{document}

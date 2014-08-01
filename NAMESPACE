@@ -1,0 +1,37 @@
+
+import(FNN, igraph, parallel, scales)
+
+export(	bootstrapBand,
+	bottleneck,
+	bottleneckInterval,
+	circleUnif,
+	clusterTree,
+	distFct,
+	dtm,
+	gridDiag,
+	hausdInterval,
+	kde,
+	kernelDist,
+	knnDE,
+	landscape,
+	maxPersistence,
+	multipBootstrap,
+	ripsArbitDiag,
+	ripsDiag,
+	ripsL2Diag,
+	silhouette,
+	torusUnif,
+	wasserstein)
+
+S3method(plot, diagram)
+S3method(plot, maxPersistence)
+S3method(plot, clusterTree)
+S3method(print, diagram)
+S3method(print, maxPersistence)
+S3method(print, clusterTree)
+S3method(summary, diagram)
+S3method(summary, maxPersistence)
+S3method(print, summary.diagram)
+S3method(print, summary.maxPersistence)
+
+useDynLib(TDA)

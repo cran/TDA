@@ -1,0 +1,55 @@
+\name{silhouette}
+\alias{silhouette}
+\title{
+The Persistence Silhouette Function
+}
+\description{
+This function computes the silhouette function corresponding to a given persistence diagram.
+}
+\usage{
+silhouette(Diag, p = 1, dimension = 1, 
+           tseq = seq(min(Diag[, 2:3]), max(Diag[, 2:3]), length = 500))
+}
+\arguments{
+  \item{Diag}{
+	an object of class \code{diagram} or a \eqn{P} by \eqn{3} matrix, storing a persistence diagram with columns: "dimension", "Birth", "Death". 
+}
+  \item{p}{
+	number: the power of the weights of the silhouette function. See the definition of silhouette function, Section 5 in the reference.
+}
+  \item{dimension}{
+	the dimension of the topological features under consideration. Default is 1 (loops).
+}
+  \item{tseq}{
+	a vector of values at which the silhouette function is evaluated.
+}
+}
+\value{
+	Returns a numeric vector of the same length of \code{tseq}, with the values of the silhouette function evaluated at the points of \code{tseq}.
+}
+\references{
+Frederic Chazal, Brittany T. Fasy, Fabrizio Lecci, Alessandro Rinaldo, and Larry Wasserman, (2014), "Stochastic Convergence of Persistence Landscapes and Silhouettes", Proceedings of the 30th Symposium of Computational Geometry (SoCG). (arXiv:1312.0308)
+}
+\author{
+Fabrizio Lecci
+}
+\seealso{
+\code{\link{landscape}}
+}
+\examples{
+XX1 = circleUnif(30)
+XX2 = circleUnif(30, r=2) +3
+XX=rbind(XX1,XX2)
+
+DiagLim=5
+maxdimension=1
+## note that the input XX is a point cloud
+Diag=ripsDiag(XX,maxdimension,DiagLim, printStatus=TRUE)
+
+#persistence silhouette
+tseq=seq(0,DiagLim, length=1000)
+Sil=silhouette(Diag, p=1,  dimension=1, tseq)
+
+plot(tseq, Sil, type="l", xlab="t", ylab="silhouette", asp=1)
+}
+\keyword{methods}
