@@ -77,7 +77,7 @@ Grid=seq(-3, 6, by=by)
 ## bandwidth for kernel density estimator
 h=0.3  
 ## Bootstrap confidence band
-band= bootstrapBand(X, kde, Grid, B=100, parallel=FALSE, alpha=0.05, h=h)
+band= bootstrapBand(X, kde, Grid, B=80, parallel=FALSE, alpha=0.05, h=h)
 
 plot(Grid,band$fun, type="l", lwd=2, ylim=c(0, max(band$band)), 
      main="kde with 0.95 confidence band")

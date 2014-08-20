@@ -1,7 +1,7 @@
 \name{bottleneckInterval}
 \alias{bottleneckInterval}
 \title{
-Bootstrapped Confidence Set for a Persistence Diagram, using the Bottlenck Distance.
+Bootstrapped Confidence Set for a Persistence Diagram, using the Bottleneck Distance.
 }
 \description{
 \code{bottleneckInterval} computes a \code{(1-alpha)} confidence set for the Persistence Diagram of a filtration of sublevel sets (or superlevel sets) of a function evaluated over a grid of points in dimension \eqn{d=}1, 2 or 3. The function returns the (\code{1-alpha}) quantile of \code{B} bottleneck distances, computed in \code{B} iterations of the bootstrap algorithm. The method is discussed in the 1st reference. 
@@ -102,7 +102,7 @@ h = .3  #bandwidth for the function kde
 Diag=gridDiag(XX, kde, Xlim, Ylim, by=by, sublevel=FALSE, printStatus=TRUE, h=h) 
 
 # confidence set
-B=15         ## the number of bootstrap iterations should be higher! 
+B=10         ## the number of bootstrap iterations should be higher! 
              ## this is just an example
 alpha=0.05
 

@@ -1,9 +1,7 @@
 \name{ripsDiag}
 \alias{ripsDiag}
-\alias{ripsL2Diag}
-\alias{ripsArbitDiag}
 \title{
-Rips Persitence Diagram
+Rips Persistence Diagram
 }
 \description{
 This function computes the persistence diagram of the Rips filtration built on top of a point cloud.
@@ -68,6 +66,7 @@ maxdimension=1
 ## note that the input distXX is a distance matrix
 DiagTri=ripsDiag(distX,maxdimension,DiagLim, dist="arbitrary", printStatus=TRUE)
 #points with lifetime=0 are not shown. e.g. the loop of the triangle.
+print(DiagTri)
 }
 \keyword{methods}
 

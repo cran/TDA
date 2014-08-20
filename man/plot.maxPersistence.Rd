@@ -1,7 +1,7 @@
 \name{plot.maxPersistence}
 \alias{plot.maxPersistence}
 \title{
-Plots the Persistence Diagram
+Summary plot for the maxPersistence function
 }
 \description{
 This function plots an object of class \code{maxPersistence}, for the selection of the optimal smoothing parameter for persistent homology.
@@ -42,16 +42,17 @@ Xlim=c(-2,2)
 Ylim=c(-2,2)
 by=0.2
 
-B=100
+B=80
 alpha=0.05
 
 ## candidates
-parametersKDE=seq(0.1,0.5, by=0.1)
+parametersKDE=seq(0.1,0.5, by=0.2)
+
+maxKDE=maxPersistence(kde, parametersKDE, X, Xlim, Ylim, Zlim=NA, by=by, B=B,
+                  alpha=alpha, parallel=FALSE, printProgress = TRUE)
 
 par(mfrow=c(1,2))
 plot(X, pch=16, cex=0.5, main="Circle")
-maxKDE=maxPersistence(kde, parametersKDE, X, Xlim, Ylim, Zlim=NA, by=by, B=B,
-                  alpha=alpha, parallel=FALSE)
 plot(maxKDE)
 }
 \keyword{hplot}

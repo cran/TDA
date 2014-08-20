@@ -69,7 +69,7 @@ Brittany T. Fasy and Fabrizio Lecci
 
 \seealso{
 \code{\link{summary.diagram}}, \code{\link{plot.diagram}},
-\code{\link{distFct}}, \code{\link{kde}}, \code{\link{kernelDist}}, \code{\link{dtm}}
+\code{\link{distFct}}, \code{\link{kde}}, \code{\link{kernelDist}}, \code{\link{dtm}}, \code{\link{ripsDiag}}
 }
 \examples{
 ## Distance Function Diagram and Kernel Density Diagram

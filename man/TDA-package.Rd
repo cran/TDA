@@ -12,8 +12,8 @@ This package provides some tools for Topological Data Analysis. In particular it
 \tabular{ll}{
 Package: \tab TDA\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2014-08-01\cr
+Version: \tab 1.1\cr
+Date: \tab 2014-08-20\cr
 License: \tab GPL (>= 2.0) \cr
 }
 }

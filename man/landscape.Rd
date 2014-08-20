@@ -40,18 +40,16 @@ Fabrizio Lecci
 \code{\link{silhouette}}
 }
 \examples{
-XX1 = circleUnif(30)
-XX2 = circleUnif(30, r=2) +3
-XX=rbind(XX1,XX2)
-
-DiagLim=5
-maxdimension=1
-Diag=ripsDiag(XX,maxdimension,DiagLim, printStatus=TRUE)
+Diag=matrix(c(0,0,10,1,0,3,1,3,8), ncol=3, byrow=TRUE)
+DiagLim=10
+colnames(Diag)=c("dim", "Birth", "Death")
 
 #persistence landscape
 tseq=seq(0,DiagLim, length=1000)
 Land= landscape(Diag, dimension=1, KK=1, tseq)
 
+par(mfrow=c(1,2))
+plot.diagram(Diag)
 plot(tseq, Land, type="l", xlab="t", ylab="landscape", asp=1)
 }
 \keyword{methods}

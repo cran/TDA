@@ -1,7 +1,7 @@
 \name{plot.diagram}
 \alias{plot.diagram}
 \title{
-Plots the Persistence Diagram
+Plot the Persistence Diagram
 }
 \description{
 This function plots the Persistence Diagram stored in an object of class \code{diagram}. Optionally, it can also represent the diagram as a persistence barcode.

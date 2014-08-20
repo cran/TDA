@@ -2,6 +2,7 @@
 \alias{maxPersistence}
 \alias{print.maxPersistence}
 \alias{summary.maxPersistence}
+\alias{print.summary.maxPersistence}
 \title{
 Maximal Persistence Method
 }
@@ -91,17 +92,18 @@ Xlim=c(-2,2)
 Ylim=c(-2,2)
 by=0.2
 
-B=100
+B=80
 alpha=0.05
 
 ## candidates
-parametersKDE=seq(0.1,0.5, by=0.1)
+parametersKDE=seq(0.1,0.5, by=0.2)
 
-par(mfrow=c(1,2))
-plot(X, pch=16, cex=0.5, main="Circle")
 maxKDE=maxPersistence(kde, parametersKDE, X, Xlim, Ylim, Zlim=NA, by=by, B=B,
                   alpha=alpha, parallel=FALSE, printProgress = TRUE)
 print(summary(maxKDE))
+
+par(mfrow=c(1,2))
+plot(X, pch=16, cex=0.5, main="Circle")
 plot(maxKDE)
 }
 \keyword{methods}

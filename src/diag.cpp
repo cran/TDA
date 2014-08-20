@@ -418,8 +418,8 @@ int simplicesFromGrid(Fltr& filtr, const std::string& infile)
     {
       int curidx = i + ncols*j + ncols*nrows*k;
       fcnvalues.push_back(x); // at index i + ncols*j    
-      assert(fcnvalues.at(curidx) = x);
- 
+      assert(fcnvalues.at(curidx) == x);
+		
       // .. add the vertex 
       std::vector<Vertex> vcont;
       vcont.push_back((Vertex)(curidx));
@@ -755,7 +755,6 @@ extern "C" {
    	// kernel Dist function on a Grid
 	void kdeDist(double *XX, int *pNN, int *pDD, double *Grid, int *pMM, double *hh, double *out){
 	    double *pp= new double[pDD[0]];
-		double pi=3.141593;
 		double first=0.0;
 		double second=1.0;
 	    double *third= new double[pMM[0]];
