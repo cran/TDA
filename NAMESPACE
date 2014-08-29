@@ -1,9 +1,8 @@
-
 import(FNN, igraph, parallel, scales)
 
 export(	bootstrapBand,
+	bootstrapDiagram,
 	bottleneck,
-	bottleneckInterval,
 	circleUnif,
 	clusterTree,
 	distFct,
@@ -28,6 +27,7 @@ export(	bootstrapBand,
 	print.summary.maxPersistence,
 	ripsDiag,
 	silhouette,
+	sphereUnif,
 	torusUnif,
 	wasserstein)
 

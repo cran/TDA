@@ -86,7 +86,7 @@ par(mai=c(0.1,0.15,0.1,0.1))
 ### code chunk number 10: eq9
 ###################################################
 band=bootstrapBand(X=X, FUN=kde, Grid=Grid, B=100, 
-                   parallel=F, alpha=0.1, h=h)
+                   parallel=FALSE, alpha=0.1, h=h)
 
 
 ###################################################
@@ -120,8 +120,8 @@ main="", d=0.5, scale=FALSE, expand=3, shade=0.9, box=F)
 ###################################################
 ### code chunk number 12: eq11
 ###################################################
-Diag = gridDiag( X=X, FUN=kde, h=0.3, Xlim=Xlim, Ylim=Ylim, by=by, 
-                 sublevel=F, printStatus=F ) 
+Diag = gridDiag( X=X, FUN=kde, h=0.3, lim=cbind(Xlim,Ylim), by=by, 
+          sublevel=F, library="Dionysus", printProgress=FALSE )$diagram
 
 
 ###################################################
@@ -171,7 +171,8 @@ maxdimension=1       # components and loops
 ###################################################
 ### code chunk number 18: eq12c
 ###################################################
-Diag=ripsDiag(X=Circles, maxdimension, maxscale, printStatus=F)
+Diag=ripsDiag(X=Circles, maxdimension, maxscale,
+              library="GUDHI", printProgress=FALSE)$diagram
 
 
 ###################################################
@@ -185,8 +186,8 @@ plot(Diag)
 ###################################################
 ### code chunk number 20: eq13
 ###################################################
-Diag1=ripsDiag(Circle1,maxdimension=1, maxscale=5, printStatus=F)
-Diag2=ripsDiag(Circle2,maxdimension=1, maxscale=5, printStatus=F)
+Diag1=ripsDiag(Circle1,maxdimension=1, maxscale=5)$diagram
+Diag2=ripsDiag(Circle2,maxdimension=1, maxscale=5)$diagram
 
 
 ###################################################
@@ -297,7 +298,7 @@ Lands=matrix(0,nrow=n, ncol=length(tseq)) #here we store n landscapes
 ###################################################
 for (i in 1:n){
 	subX=X[sample(1:N,m),]
-	Diags[[i]]=ripsDiag(subX,maxdimension=1, maxscale=5)
+	Diags[[i]]=ripsDiag(subX,maxdimension=1, maxscale=5)$diagram
 	Lands[i,]=landscape(Diags[[i]], dimension=1, KK=1, tseq )
 }
 
@@ -305,7 +306,7 @@ for (i in 1:n){
 ###################################################
 ### code chunk number 28: eq15d
 ###################################################
-bootLand=multipBootstrap(Lands,B=100,alpha=0.05, parallel=F)
+bootLand=multipBootstrap(Lands,B=100,alpha=0.05, parallel=FALSE)
 
 
 ###################################################
@@ -356,9 +357,9 @@ alpha=0.1   # level of the confidence bands
 ###################################################
 ### code chunk number 33: eq16c
 ###################################################
-maxKDE=maxPersistence(kde, parametersKDE, X, Xlim, Ylim, Zlim=NA, 
-                      by=by, sublevel=F, B=B, alpha=alpha, 
-                      parallel=TRUE, printProgress=TRUE)
+maxKDE=maxPersistence(kde, parametersKDE, X, lim=cbind(Xlim, Ylim), 
+                   by=by, sublevel=F, B=B, alpha=alpha, parallel=TRUE, 
+                   printProgress=TRUE, bandFUN="bootstrapBand")
 
 
 ###################################################
@@ -387,8 +388,8 @@ XX=rbind(X1,X2,X3)
 ###################################################
 ### code chunk number 37: eq18b
 ###################################################
-Tree=clusterTree(XX, k=100, density="knn", printStatus=F)
-TreeKDE=clusterTree(XX, k=100, h=0.3, density="kde", printStatus=F)
+Tree=clusterTree(XX, k=100, density="knn", printProgress=F)
+TreeKDE=clusterTree(XX, k=100, h=0.3, density="kde", printProgress=F)
 
 
 ###################################################

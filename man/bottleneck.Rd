@@ -27,7 +27,7 @@ bottleneck(Diag1, Diag2, dimension)
 Returns the value of the bottleneck distance between the two persistence diagrams.
 }
 \references{
-http://www.mrzv.org/software/dionysus/
+Dmitriy Morozov, "Dionysus, a C++ library for computing persistent homology". http://www.mrzv.org/software/dionysus/
 
 Herbert Edelsbrunner and John Harer (2010), Computational topology: an introduction. American Mathematical Society.
 }
@@ -36,7 +36,7 @@ Fabrizio Lecci
 }
 
 \seealso{
- \code{\link{ripsDiag}},  \code{\link{gridDiag}},
+ \code{\link{wasserstein}}, \code{\link{ripsDiag}},  \code{\link{gridDiag}},
   \code{\link{plot.diagram}}
 }
 \examples{
@@ -46,8 +46,8 @@ XX2 = circleUnif(20, r=0.2)
 DiagLim=5
 maxdimension=1
 
-Diag1=ripsDiag(XX1,maxdimension,DiagLim, printStatus=FALSE)
-Diag2=ripsDiag(XX2,maxdimension,DiagLim, printStatus=FALSE)
+Diag1=ripsDiag(XX1,maxdimension,DiagLim, printProgress=FALSE)$diagram
+Diag2=ripsDiag(XX2,maxdimension,DiagLim, printProgress=FALSE)$diagram
 
 bottleneckDist=bottleneck(Diag1, Diag2, dimension=1)
 print(bottleneckDist)

@@ -24,8 +24,11 @@ circleUnif(n, r = 1)
 \author{
 Fabrizio Lecci
 }
+\note{
+ Uniform sample from sphere of arbitrary dimension can be generated using \code{\link{sphereUnif}}.
+}
 \seealso{
-\code{\link{torusUnif}}
+\code{\link{sphereUnif}}, \code{\link{torusUnif}}
 }
 \examples{
 X=circleUnif(100)

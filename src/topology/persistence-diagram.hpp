@@ -251,7 +251,7 @@ RealType                bottleneck_distance(const Diagram1& dgm1, const Diagram2
 // Wasserstein distance
 template<class Diagram>
 RealType
-wasserstein_distance(const Diagram& dgm1, const Diagram& dgm2, unsigned p)
+wasserstein_distance(const Diagram& dgm1, const Diagram& dgm2, int p)
 {
     typedef         RealType                    Distance;
     typedef         typename Diagram::Point     Point;

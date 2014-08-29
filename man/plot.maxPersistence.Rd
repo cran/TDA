@@ -8,11 +8,20 @@ This function plots an object of class \code{maxPersistence}, for the selection 
 For each value of the smoothing parameter, the plot shows the number of detected features, their persistence, and a bootstrap confidence band.
 }
 \usage{
-\method{plot}{maxPersistence}(x, ...)
+\method{plot}{maxPersistence}(x, features="dimension", colorBand="pink", colorBorder=NA, ...)
 }
 \arguments{
   \item{x}{
     an object of class \code{maxPersistence}, as returned by the functions \code{\link{maxPersistence}}
+}
+ \item{features}{
+    string: if "all" then all the features are plotted; if "dimension" then only the features of the dimension used to compute the confidence band are plotted.
+}
+\item{colorBand}{
+    the color for filling the confidence band. The default is "pink". (NA leaves the band unfilled)
+}
+  \item{colorBorder}{
+    the color to draw the border of the confidence band. The default is NA and omits the border.
 }
   \item{\dots}{
     additional graphical parameters.
@@ -40,6 +49,7 @@ X=rbind(XX1,noise)
 ## limits of the Gird at which the density estimator is evaluated
 Xlim=c(-2,2)
 Ylim=c(-2,2)
+lim=cbind(Xlim,Ylim)
 by=0.2
 
 B=80
@@ -48,8 +58,10 @@ alpha=0.05
 ## candidates
 parametersKDE=seq(0.1,0.5, by=0.2)
 
-maxKDE=maxPersistence(kde, parametersKDE, X, Xlim, Ylim, Zlim=NA, by=by, B=B,
-                  alpha=alpha, parallel=FALSE, printProgress = TRUE)
+maxKDE=maxPersistence(kde, parametersKDE, X, lim=lim, by=by, 
+                  bandFUN="bootstrapBand",B=B, alpha=alpha,
+                  parallel=FALSE, printProgress = TRUE)
+print(summary(maxKDE))
 
 par(mfrow=c(1,2))
 plot(X, pch=16, cex=0.5, main="Circle")

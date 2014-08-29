@@ -19,7 +19,7 @@ This function plots the Cluster Tree stored in an object of class \code{clusterT
             if "kappa", then the kappa Tree is plotted.
 }
   \item{color}{
-    the color of the branches of the Cluster Tree
+    number: the color of the branches of the Cluster Tree. Default is \code{NULL} and a different color is assigned to each branch.
 }
   \item{add}{
     logical: if \code{TRUE} the Tree is added to an existing plot.

@@ -1,3 +1,7 @@
 PKG_CXXFLAGS= -I .
 
+
+## We want C++11
+CXX_STD = CXX11
+
 all: $(SHLIB)

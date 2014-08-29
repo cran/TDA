@@ -1,5 +1,5 @@
 plot.diagram <-
-function(x, diagLim=NULL, dimension=NULL, col=NULL, rotated=FALSE, barcode=FALSE, band=NULL, add=FALSE,...){
+function(x, diagLim=NULL, dimension=NULL, col=NULL, rotated=FALSE, barcode=FALSE, band=NULL, colorBand="pink", colorBorder=NA, add=FALSE,...){
 
     if (class(x)!="diagram" && class(x)!="matrix" && !is.data.frame(x) )  
     	stop("x should be a diagram, or a P by 3 matrix")
@@ -95,13 +95,13 @@ function(x, diagLim=NULL, dimension=NULL, col=NULL, rotated=FALSE, barcode=FALSE
 		if (rotated==TRUE){
 
 			if (add==FALSE) plot(0, 0,type="n", axes=F, xlim=diagLim, ylim=diagLim, xlab=" ", ylab=" ", ...)
-			if (!is.null(band)) 	polygon(c(0,diagLim[2]+1, diagLim[2]+1,0),c(0,0,band,band),col="pink", lwd=0.01, border="white")
+			if (!is.null(band)) 	polygon(c(0,diagLim[2]+1, diagLim[2]+1,0),c(0,0,band,band),col=colorBand, lwd=1.5, border=colorBorder)
 
 			points((x[,2]+x[,3])/2, (x[,3]-x[,2])/2 ,col=col,pch=symb,lwd=2,cex=1)
 		} else{
 
 			if (add==FALSE) plot(0, 0,type="n", axes=F, xlim=diagLim, ylim=diagLim, xlab=" ", ylab=" ", ...)
-			if (!is.null(band)) 	polygon(c(0,diagLim[2]+1,diagLim[2]+1,0),c(0,diagLim[2]+1, diagLim[2]+1+band,band),col="pink", lwd=0.01, border="white")
+			if (!is.null(band)) 	polygon(c(diagLim[1]-1,diagLim[2]+1,diagLim[2]+1,diagLim[1]-1),c(diagLim[1]-1,diagLim[2]+1, diagLim[2]+1+band,diagLim[1]-1+band),col=colorBand, lwd=1.5, border=colorBorder)
 
 
 			points(x[,2],x[,3],pch=symb,lwd=2, cex=1, col=col)

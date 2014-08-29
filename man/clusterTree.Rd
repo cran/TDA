@@ -5,11 +5,11 @@
 Density clustering: the cluster tree
 }
 \description{
-Given a point cloud, or a matrix of distances, this function computes a density estimates and returns an object of class \code{clusterTree} (lambda tree and kappa tree; see references).
+Given a point cloud, or a matrix of distances, this function computes a density estimator and returns the corresponding cluster tree of superlevel sets (lambda tree and kappa tree; see references).
 }
 \usage{
 clusterTree(X, k, h = NULL, density="knn", dist="euclidean", d=NULL, 
-            Nlambda = 100, printStatus = FALSE)
+            Nlambda = 100, printProgress = FALSE)
 }
 \arguments{
   \item{X}{
@@ -28,7 +28,7 @@ clusterTree(X, k, h = NULL, density="knn", dist="euclidean", d=NULL,
     Default is "knn".
 }
   \item{dist}{
-string: can be \code{"euclidean"}, when \code{X} is a point cloud or \code{"arbitrary"}, when \code{X} is a matrix of distances.
+string: can be \code{"euclidean"}, when \code{X} is a point cloud or \code{"arbitrary"}, when \code{X} is a matrix of distances. Default is 'euclidean'
 }
   \item{d}{
     integer: if \code{dist="arbitrary"}, then \code{d} is the dimension of the underlying space.
@@ -36,7 +36,7 @@ string: can be \code{"euclidean"}, when \code{X} is a point cloud or \code{"arbi
   \item{Nlambda}{
     integer: size of the grid of values of the density estimator, used to compute the cluster tree. High \code{Nlambda} (i.e. a fine grid) means a more accurate cluster Tree.
 }
-  \item{printStatus}{
+  \item{printProgress}{
 	logical: if TRUE a progress bar is printed. Default is \code{FALSE}.
 }
 }

@@ -1,11 +1,11 @@
 clusterTree <-
-function(X, k, h=NULL, density="knn", dist="euclidean", d=NULL, Nlambda=100, printStatus=FALSE){
+function(X, k, h=NULL, density="knn", dist="euclidean", d=NULL, Nlambda=100, printProgress=FALSE){
 	
 	if (!is.numeric(X) && !is.data.frame(X)) stop("X should be a matrix of coordinates")
 	if (!is.vector(k) || length(k)!=1) stop("k should be an number")
 	if (!is.null(h) && (!is.vector(h) || length(h)!=1)) stop("h should be a real value")
 	if (!is.null(Nlambda) && (!is.vector(Nlambda) || length(Nlambda)!=1)) stop("Nlambda should be a number")
-	if (!is.logical(printStatus)) stop("printStatus should be logical")
+	if (!is.logical(printProgress)) stop("printProgress should be logical")
 	if (density=="kde" && dist!="euclidean") stop("kde is only possible with dist='euclidean' ")
 	if (!is.null(d) && (!is.vector(d) || length(d)!=1)) stop("d should be a number")
 				
@@ -68,7 +68,13 @@ function(X, k, h=NULL, density="knn", dist="euclidean", d=NULL, Nlambda=100, pri
 	
 	## in CLUSTERS we store the clusters found for each level of lambda_j
 	CLUSTERS=list()
-	if (printStatus) cat("Percentage: ")
+	if (printProgress)
+	{
+		cat("0   10   20   30   40   50   60   70   80   90   100\n")
+		cat("|----|----|----|----|----|----|----|----|----|----|\n")
+		cat("*")		
+	}
+	percentageFloor=0
 	for (j in 1:Nlambda){
 		OldExcluded=exclude
 		lambda=Lambda[j]
@@ -78,9 +84,18 @@ function(X, k, h=NULL, density="knn", dist="euclidean", d=NULL, Nlambda=100, pri
 		G[NewExcluded, present]=FALSE     # remove edges of the new excluded point
 		clust=clusters(G)
 		CLUSTERS[[j]]=list("no"=clust$no,"mem"=clust$mem, "present"=present, "exclude"=exclude)		
-		if (printStatus) cat(round(j/Nlambda, 3), " ")
+
+		if (printProgress && floor((100*j/Nlambda-percentageFloor)/2)>0)
+		{
+			for (aa in 1:(floor((100*j/Nlambda-percentageFloor)/2)))
+			{
+				cat("*")
+				percentageFloor=percentageFloor+2
+			}
+
+		}
 	}
-	if (printStatus) cat("\n")
+	if (printProgress) cat("\n")
 	
 	## Now assign ID, Generation and Components to each new cluster
 	id=0                   # id assigned to each new cluster
@@ -201,3 +216,7 @@ function(X, k, h=NULL, density="knn", dist="euclidean", d=NULL, Nlambda=100, pri
 	
 	return(out1)
 }
+
+
+## TODO
+## when using Nlambda, the top density of a cluster and the Ytop of the corresponding branch might differ, because Ytop depends on the grid, while the density is exact.

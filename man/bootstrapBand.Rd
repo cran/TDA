@@ -8,7 +8,7 @@
 }
 \usage{
 bootstrapBand(X, FUN, Grid, B = 30, alpha = 0.05, parallel = FALSE, 
-              printStatus=FALSE, ...)
+              printProgress=FALSE, ...)
 }
 \arguments{
   \item{X}{
@@ -18,7 +18,7 @@ bootstrapBand(X, FUN, Grid, B = 30, alpha = 0.05, parallel = FALSE,
     a function whose inputs are an \eqn{n} by \eqn{d} matrix of coordinates \code{X}, an \eqn{m} by \eqn{d} matrix of coordinates \code{Grid} and returns a numeric vector of length \eqn{m}. For example see \code{\link{distFct}},  \code{\link{kde}}, and \code{\link{dtm}}  which compute the distance function, the kernel density estimator and the distance to measure over a grid of points, using the input \code{X}.
 }
   \item{Grid}{
-an \eqn{m} by \eqn{d} matrix of coordinates, where \eqn{m} is the number of points in the grid.
+an \eqn{m} by \eqn{d} matrix of coordinates, where \eqn{m} is the number of points in the grid, at which \code{FUN} is evaluated.
 }
   \item{B}{
   the number of bootstrap iterations.
@@ -29,7 +29,7 @@ an \eqn{m} by \eqn{d} matrix of coordinates, where \eqn{m} is the number of poin
   \item{parallel}{
     logical: if \code{TRUE} the bootstrap iterations are parallelized, using the library \code{parallel}.
 }
-  \item{printStatus}{
+  \item{printProgress}{
 	if TRUE a progress bar is printed. Default is \code{FALSE}.
 }
   \item{...}{

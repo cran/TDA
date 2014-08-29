@@ -2,456 +2,34 @@
 #include <R_ext/Print.h>
 
 
+//for Rips
+#include <tdautils/ripsL2.h>
+#include <tdautils/ripsArbit.h>
+
+//for grid
+#include <tdautils/gridUtils.h>
 
 //for kernel density
-#include <kernelUtilities.h>
+#include <tdautils/kernelUtils.h>
 
+//for bottleneck and Wasserstein
+#include <tdautils/bottleneckUtils.h>
 
-//for bottleneck distance
-#include <utilities/types.h>
-#include <string>
-#include <sstream>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/serialization/map.hpp>
+//for GUDHI
+#include <tdautils/gudhiUtils.h>
 
-
-
-// For rips and ripsArbit
-#include <topology/rips.h>
-#include <topology/filtration.h>
-#include <topology/static-persistence.h>
-#include <topology/dynamic-persistence.h>
-#include <topology/persistence-diagram.h>
-
-#include <geometry/l2distance.h>
-#include <geometry/Arbitdistance.h>
-#include <geometry/distances.h>
-
-#include <utilities/containers.h>           // for BackInsertFunctor
-#include <utilities/timer.h>
-
-#include <vector>
-
-
-typedef         PairwiseDistances<PointContainer, L2Distance>           PairDistances;
-typedef         PairwiseDistances<PointContainer, ArbitDistance>        PairDistancesA;
-typedef         PairDistances::DistanceType                             DistanceType;
-typedef         PairDistances::IndexType                                VertexR;
-typedef         PairDistancesA::DistanceType                             DistanceTypeA;
-typedef         PairDistancesA::IndexType                                VertexRA;
-
-
-typedef         Rips<PairDistances>                                     Generator;
-typedef         Rips<PairDistancesA>                                     GeneratorA;
-
-typedef         Generator::Simplex                                      SmplxR;
-typedef         GeneratorA::Simplex                                      SmplxRA;
-
-typedef         Filtration<SmplxR>                                       FltrR;
-typedef         Filtration<SmplxRA>                                       FltrRA;
-
-typedef         StaticPersistence<>                                     PersistenceR;
-//typedef         DynamicPersistenceChains<>                              PersistenceR;
-typedef         PersistenceDiagram<>                                    PDgmR;
-
-
-
-// For grid
-#include "utilities/log.h"
-#include "topology/simplex.h"
-#include "utilities/indirect.h"
-#include <map>
-#include <iostream>
-
-#if 1
-#include <fstream>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/vector.hpp>
-#endif
-
-typedef         unsigned                                            Vertex;
-typedef         Simplex<Vertex, double>                             Smplx;
-typedef         Smplx::VertexContainer				    VertexCont;
-typedef         std::vector<Vertex>                                 VertexVector;
-typedef         Filtration<Smplx>                                   Fltr;
-typedef         StaticPersistence<>                                 Persistence;
-typedef         PersistenceDiagram<>                                PDgm;
-typedef         OffsetBeginMap<Persistence, Fltr, 
-                               Persistence::iterator, 
-                               Fltr::Index>                         PersistenceFiltrationMap;
-typedef         OffsetBeginMap<Fltr, Persistence,
-                               Fltr::Index, 
-                               Persistence::iterator>               FiltrationPersistenceMap;
-
-
-
-
-
-
-
-
-
-
-//bottleneck
-typedef PersistenceDiagram<>                    PDgmB;
-
-void read_diagram(PDgmB& dgm, const std::string& filename)
-{
-    std::ifstream in(filename.c_str());
-    std::string line;
-    std::getline(in, line);
-    while (in)
-    {
-        std::istringstream sin(line);
-        double x,y;
-        sin >> x >> y;
-        dgm.push_back(PDgmB::Point(x,y));
-        std::getline(in, line);
-    }
-}
-
-
-
-
-
-// add a single edge to the filtration
-void addEdge(Fltr& filtr, const std::vector<double> fcnvalues, 
-            int vert01, int vert02)
-{
-     VertexVector vertices(3);
-     vertices[0] = vert01;
-     vertices[1] = vert02;
-     VertexVector::const_iterator bg = vertices.begin();
-
-     double value = std::max(fcnvalues.at(vert01), fcnvalues.at(vert02));
-     filtr.push_back(Smplx(bg, bg + 2, value)); 
-         // std::max(fcnvalues.at(vert03),fcnvalues.at(vert04))),
-} // end function to add a single edge
-
-// add a single triangle to the filtration
-void addTri(Fltr& filtr, const std::vector<double> fcnvalues, 
-            int vert01, int vert02, int vert03)
-{
-     VertexVector vertices(3);
-     vertices[0] = vert01;
-     vertices[1] = vert02;
-     vertices[2] = vert03;
-     VertexVector::const_iterator bg = vertices.begin();
-
-     double value = std::max(std::max(fcnvalues.at(vert01), fcnvalues.at(vert02)),
-                    fcnvalues.at(vert03));
-     filtr.push_back(Smplx(bg, bg + 3, value)); 
-         // std::max(fcnvalues.at(vert03),fcnvalues.at(vert04))),
-} // end function to add a single triangle
-
-// add a single tet to the filtration
-void addTet(Fltr& filtr, const std::vector<double> fcnvalues, 
-            int vert01, int vert02, int vert03, int vert04)
-{
-     VertexVector vertices(3);
-     vertices[0] = vert01;
-     vertices[1] = vert02;
-     vertices[2] = vert03;
-     vertices[3] = vert04;
-     VertexVector::const_iterator bg = vertices.begin();
-
-     double value = std::max(std::max(fcnvalues.at(vert01), fcnvalues.at(vert02)),
-                    std::max(fcnvalues.at(vert03), fcnvalues.at(vert04)));
-     filtr.push_back(Smplx(bg, bg + 4, value)); 
-         // std::max(fcnvalues.at(vert03),fcnvalues.at(vert04))),
-} // end function to add a single tet
-
-void addAllEdges(Fltr& filtr, const std::vector<double> fcnvalues, 
-              const int ncols, const int nrows, int i, int j, int k)
-{     
-     int curidx = i + ncols*j + ncols*nrows*k;
-
-     // ... add edge (i-1,j,k) <--> (i,j,k)
-     if (i > 0)
-     {
-        addEdge(filtr, fcnvalues, curidx, curidx -1);
-     }
-     
-     // ... add edge (i,j-1,k) <--> (i,j,k)
-     if (j > 0)
-     {
-        addEdge(filtr, fcnvalues, curidx, curidx - ncols);
-     }
-   
-     // ... add edge (i,j,k-1) <--> (i,j,k)
-     if (k > 0)
-     {
-        addEdge(filtr, fcnvalues, curidx, curidx - nrows*ncols);
-     }
-
-
-     // TODO: add the rest of the code for creating edges to here
-     //       from fcn simplicesFromGrid 
-
-     // ... consider two cases for the cubical decomposition:
-     if ((i+j+k)%2 == 0)
-     {
-	// ... EVEN BOX 
-        if (i > 0 && j > 0) // top
-        { 
-           addEdge(filtr, fcnvalues, curidx, curidx - ncols -1);
-        }
-        if (i > 0 && k > 0) // back
-        {
-           addEdge(filtr, fcnvalues, curidx, curidx - nrows*ncols -1);
-        }
-        if (j > 0 && k > 0) // right
-        {
-           addEdge(filtr, fcnvalues, curidx, curidx - nrows*ncols - ncols);
-        }
-     }
-     else
-     {
-     	// ... ODD BOX
-        if (i > 0 && j > 0) // top
-        {
-           addEdge(filtr, fcnvalues, curidx - 1, curidx - ncols);
-        }
-        if (i > 0 && k > 0) // back
-        {
-           addEdge(filtr, fcnvalues, curidx - 1, curidx - nrows*ncols);
-        }
-        if (j > 0 && k > 0) // right
-        {
-           addEdge(filtr, fcnvalues, curidx - ncols, curidx - nrows*ncols);
-        }
-     }
-
-
-     return;
-} // end function addEdges
-
-void addEvenTets(Fltr& filtr, const std::vector<double> fcnvalues, 
-                  const int ncols, const int nrows, int i, int j, int k)
-{
-     assert(i > 0 && j > 0 && k > 0);
-     int curidx = i + ncols*j + ncols*nrows*k;
-     
-     // top vertex (i, j-1, k)
-     addTet(filtr, fcnvalues, curidx, curidx - 1 - ncols, curidx - ncols - nrows*ncols, curidx - ncols);
-     
-     // top vertex (i-1, j, k)
-     addTet(filtr, fcnvalues, curidx, curidx - 1, curidx - nrows*ncols - 1, curidx -1 - ncols);
-
-     // top vertex (i, j, k-1)
-     addTet(filtr, fcnvalues, curidx, curidx - 1 - nrows*ncols, curidx - ncols - nrows*ncols, curidx - nrows*ncols);
-
-     // top vertex (i-1, j-1, k-1)
-     addTet(filtr, fcnvalues, curidx - 1 - nrows*ncols, curidx - ncols - nrows*ncols, curidx - 1 - ncols, curidx - 1 - ncols - nrows*ncols);
-     
-     return;
-} // end fcn to add four EVEN tets
-
-void addOddTets(Fltr& filtr, const std::vector<double> fcnvalues, 
-                  const int ncols, const int nrows, int i, int j, int k)
-{
-     assert(i > 0 && j > 0 && k > 0);
-     int curidx = i + ncols*j + ncols*nrows*k;
-      
-     VertexVector vertices(4);
-     vertices[0] = curidx;  vertices[3] = curidx;
-     vertices[1] = -1; vertices[2] = -1; 
-     VertexVector::const_iterator bg = vertices.begin();
-     VertexVector::const_iterator end = vertices.end();
-    
-     int v1, v2, v3, v4;
-     double value, value2;  // max of value and value 2 is the fcn value. 
-
-     // top vertex (i, j, k)
-     v1 = curidx -1;   vertices[0] = v1;
-     v2 = curidx - ncols;  vertices[1] = v2;  
-     value = std::max(fcnvalues.at(v1),fcnvalues.at(v2));
-     
-     v3 = curidx - nrows*ncols;  vertices[2] = v3;
-     v4 = curidx; vertices[3] = v4;
-     value2 = std::max(fcnvalues.at(v3),fcnvalues.at(v4));
-     
-     filtr.push_back(Smplx(bg, bg + 4, std::max(value,value2)));
-     
-     // top vertex (i-1, j-1, k)
-     v3 = curidx - 1 - ncols - nrows*ncols;  vertices[2] = v3;
-     v4 = curidx - 1 -ncols; vertices[3] = v4;
-     value2 = std::max(fcnvalues.at(v3),fcnvalues.at(v4));
-     
-     filtr.push_back(Smplx(bg, bg + 4, std::max(value,value2)));
-
-     // top vertex (i, j-1, k-1)
-     v1 = curidx - nrows*ncols;   vertices[0] = v1;
-     v2 = curidx - 1 - ncols - nrows*ncols;  vertices[1] = v2;  
-     value = std::max(fcnvalues.at(v1),fcnvalues.at(v2));
-     
-     v3 = curidx - ncols;  vertices[2] = v3;
-     v4 = curidx -ncols - nrows*ncols; vertices[3] = v4;
-     value2 = std::max(fcnvalues.at(v3),fcnvalues.at(v4));
-     
-     filtr.push_back(Smplx(bg, bg + 4, std::max(value,value2)));
-
-     // top vertex (i-1, j, k-1)
-     v3 = curidx - 1;  vertices[2] = v3;
-     v4 = curidx -1 - nrows * ncols; vertices[3] = v4;
-     value2 = std::max(fcnvalues.at(v3),fcnvalues.at(v4));
-    
-     filtr.push_back(Smplx(bg, bg + 4, std::max(value,value2)));
-      
-
-     return;
-} // end fcn addEvenTets
-
-void addTriNTet(Fltr& filtr, const std::vector<double> fcnvalues, 
-                  const int ncols, const int nrows, int i, int j, int k)
-{
-     int curidx = i + ncols*j + ncols*nrows*k;
-     
-     // ... consider two cases for the cubical decomposition:
-     if ((i+j+k)%2 == 0)
-     {
-	// ... EVEN BOX
-        if (i > 0 && j > 0) // top
-        {
-     
-           addTri(filtr, fcnvalues, curidx, curidx - ncols - 1, curidx - ncols);
-           addTri(filtr, fcnvalues, curidx, curidx -1, curidx - ncols -1); 
-        }
-        if (i > 0 && k > 0) // back
-        {
-           addTri(filtr, fcnvalues, curidx, curidx - nrows*ncols -1, curidx - 1);
-           addTri(filtr, fcnvalues, curidx, curidx - nrows*ncols, curidx - nrows*ncols -1);
-        }
-        
-        if (j > 0 && k > 0) // right
-        {
-           addTri(filtr, fcnvalues, curidx, curidx - nrows*ncols - ncols, curidx - nrows*ncols);
-           addTri(filtr, fcnvalues, curidx, curidx - ncols, curidx - nrows*ncols - ncols);
-           
-           if (i > 0) // middle
-           {
-              addTri(filtr, fcnvalues, curidx, curidx - ncols -1, curidx - ncols - nrows*ncols);
-              addTri(filtr, fcnvalues, curidx, curidx -1 -nrows*ncols, curidx - ncols -1);
-              addTri(filtr, fcnvalues, curidx -1 - nrows*ncols, curidx - ncols - nrows*ncols, curidx);
-              addTri(filtr, fcnvalues, curidx -1 - nrows*ncols, curidx - 1 - ncols, curidx - ncols - nrows*ncols);
-             
-              // ... add center tets 
-              addTet(filtr, fcnvalues, curidx -1 - nrows*ncols, curidx - 1 - ncols, curidx - ncols - nrows*ncols, curidx);
-              // ... add remaining tets 
-              addEvenTets(filtr, fcnvalues, ncols, nrows, i, j, k);
-           }
-        }
-     } // end if for even case 
-     else {
-        // ... ODD CASE
-        if (i > 0 && j > 0) // top
-        {
-           addTri(filtr, fcnvalues, curidx -1, curidx - ncols, curidx);
-           addTri(filtr, fcnvalues, curidx -1, curidx - ncols -1, curidx - ncols);
-        }
-
-        if (i > 0 && k > 0) // back
-        {
-           addTri(filtr, fcnvalues, curidx -1, curidx - nrows*ncols, curidx - nrows*ncols - 1);
-           addTri(filtr, fcnvalues, curidx -1, curidx, curidx - nrows*ncols);
-        }  
-        
-        if (j > 0 && k > 0) // right
-        {
-           addTri(filtr, fcnvalues, curidx - ncols, curidx - nrows*ncols, curidx - ncols - nrows*ncols);
-           addTri(filtr, fcnvalues, curidx - ncols, curidx, curidx - nrows*ncols);
-           
-           if ( i > 0) // middle
-           { 
-              addTri(filtr, fcnvalues, curidx -1, curidx - ncols, curidx - nrows*ncols);
-              addTri(filtr, fcnvalues, curidx -1, curidx - nrows*ncols - ncols - 1, curidx - ncols);
-              addTri(filtr, fcnvalues, curidx - nrows*ncols, curidx - nrows*ncols - ncols -1, curidx - ncols);
-              addTri(filtr, fcnvalues, curidx - nrows*ncols, curidx - 1, curidx - nrows*ncols - ncols -1);
-               
-              // ... add central tet
-              addTet(filtr, fcnvalues, curidx -1, curidx - ncols, curidx - nrows*ncols, curidx - nrows*ncols -ncols -1);
-              // ... add remaining tets
-              addOddTets(filtr, fcnvalues, ncols, nrows, i, j, k);
-           }
-        } // end for through j k positive
-     } // end else through odd case.
-
-    return;
-} // end function addTriangles
-
-
-int simplicesFromGrid(Fltr& filtr, const std::string& infile)
-{
-  std::ifstream in(infile.c_str());
-  std::string	line;
-  int nrows, ncols, ndimz;
-  if (std::getline(in,line))
-  {
-    std::stringstream linestream(line);
-    if (linestream >> nrows)
-    {  if (linestream >> ncols)
-       { if (linestream >> ndimz)
-         {; //std::cout << nrows << " rows and " << ncols << " columns." << std::endl;
-         }
-          else
-            ndimz = 1;  // to make backwards compatible with 2d grid
-       }
-    }
-    else
-      return 1;
-  }
-  
-  int i = 0; // indexing the columns
-  int j = 0; // indexing the rows
-  int k = 0; // indexing the z dimension
-  std::vector<double> fcnvalues;
-  //double fcnvalues [i*j]; 
-
-  while(std::getline(in, line))
-  {
-    //std::vector<Vertex> currow[ncols];
-    if(line[0] == '#') continue;	// comment line
-    std::stringstream	linestream(line);
-    double x;
-    while (linestream >> x) // each line corresponds to changing i
-    {
-      int curidx = i + ncols*j + ncols*nrows*k;
-      fcnvalues.push_back(x); // at index i + ncols*j    
-      assert(fcnvalues.at(curidx) == x);
-		
-      // .. add the vertex 
-      std::vector<Vertex> vcont;
-      vcont.push_back((Vertex)(curidx));
-      filtr.push_back(Smplx(vcont, fcnvalues.at(curidx))); 
-
-      // .. NEXT, Add the edges:
-      addAllEdges(filtr, fcnvalues, ncols, nrows, i, j, k);
-      // ... now add the triangles:
-      addTriNTet(filtr, fcnvalues, ncols, nrows, i, j, k);
-
-      ++i; // advance column
-    } // end inner while loop, which iterates through i (a row / line)
-
-    // ... advance row / z value
-    i = 0;
-    ++j;
-    if (j > nrows -1)
-    {
-	j = 0;
-        ++k;
-    }
-  } // end while 
-  in.close();
-  
-  return 0;
-} // end simplicesFromGrid function
+// for phat
+#include <tdautils/phatUtils.h>
 
 
 
 extern "C" {
 
-	void grid(int* input)
+
+
+	// grid function by Brittany T. Fasy
+	// modified by Jisu Kim for arbitrary dimension & using memory as an input & setting maximum dimension
+	void grid(double *FUNvaluesInput, int *gridDimensionInput, int *gridNumberInput, int *maxdimensionInput, char** decompositionInput, char** libraryInput, int* printInput)
 	{
 	#ifdef LOGGING
 		//rlog::RLogInit(argc, argv);
@@ -461,35 +39,84 @@ extern "C" {
 		//stdoutLog.subscribeTo(RLOG_CHANNEL("topology/vineyard"));
 	#endif
 
-		// ... set up the input
-		
-		bool printstatus=input[0];
-		
-		std::string infilename;
-		infilename = "inputDionysus.txt";
-
+		bool printstatus=printInput[0];
 		Fltr f;
-		simplicesFromGrid(f, infilename); // fill the simplices
 
+		// Generate simplicial complex from function values and grid
+		if (decompositionInput[0][0] == '5')
+		{
+			simplicesFromGrid(f, FUNvaluesInput, gridNumber( gridDimensionInput, gridNumberInput ), (*maxdimensionInput)+1 ); // fill the simplices
+		}
+		if (decompositionInput[0][0] == 'b')
+		{
+			simplicesFromGridBarycenter(f, FUNvaluesInput, gridNumber( gridDimensionInput, gridNumberInput ), (*maxdimensionInput)+1 ); // fill the simplices
+		}
+		if (printstatus){
+			Rprintf("# Generated complex of size: %d \n", f.size());
+		}
+
+
+		// Sort simplicial complex
 		f.sort(Smplx::DataComparison()); // initialize filtration
-		Persistence p(f); // initialize persistence
-		p.pair_simplices(printstatus); // pair simplices
-		// TODO: why doesn't this work? rLog(rlmain, "testing");   
- 
-		Persistence::SimplexMap<Fltr>   m = p.make_simplex_map(f);
-		std::map<Dimension, PDgm> dgms;
-		init_diagrams(dgms, p.begin(), p.end(), 
-					  evaluate_through_map(m, Smplx::DataEvaluator()),
-					  evaluate_through_map(m, Smplx::DimensionExtractor()));
 
+
+		// Compute persistent homology from sorted simplicial complex
+		std::map<Dimension, PDgm> dgms;
+		std::vector< std::vector< std::vector< double > > > persDgm;
+		if (libraryInput[0][0] == 'D')
+		{
+
+			Persistence p(f); // initialize persistence
+			p.pair_simplices(printstatus); // pair simplices
+			// TODO: why doesn't this work? rLog(rlmain, "testing");   
+	 
+			Persistence::SimplexMap<Fltr> m = p.make_simplex_map(f);
+			init_diagrams(dgms, p.begin(), p.end(), 
+						  evaluate_through_map(m, Smplx::DataEvaluator()),
+						  evaluate_through_map(m, Smplx::DimensionExtractor()));
+
+			//std::vector< double > persDgmPoint(3);
+			//std::map<Dimension, PDgm>::const_iterator dgmItr;
+			//for (dgmItr = dgms.begin(); dgmItr != dgms.end(); ++dgmItr)
+			//{
+			//		if (dgmItr->first > *maxdimensionInput)
+			//				break;
+			//		PDgm::const_iterator dgmPtItr;
+			//		for (dgmPtItr = (dgmItr->second).begin(); dgmPtItr != (dgmItr->second).end(); ++dgmPtItr)
+			//		{
+			//				persDgmPoint[0] = dgmItr->first;
+			//				persDgmPoint[1] = dgmPtItr->x();
+			//				persDgmPoint[2] = dgmPtItr->y();
+			//				persDgm.push_back( persDgmPoint );
+			//		}
+			//}
+		}
+		if (libraryInput[0][0] == 'P')
+		{
+			persDgm = computePersistentPairsPhat(f, *maxdimensionInput);
+		}
+
+
+		// Output persistent diagram
 		std::ofstream outfile;
-		outfile.open("outputDionysus.txt");
-		outfile << 0 << std::endl << dgms[0] << std::endl; // print 0-dim diagram
-		outfile << 1 << std::endl << dgms[1] << std::endl; // print 1-dim diagram
-		outfile << 2 << std::endl << dgms[2] << std::endl; // print 1-dim diagram
-				
-		// TODO: remove this line, this is just for testing
-		//outfile << f;  // add the filter
+		outfile.open("outputTDA.txt");
+		for (int dgmsIdx=0; dgmsIdx<= *maxdimensionInput; ++dgmsIdx)
+		{
+			outfile << dgmsIdx << std::endl;
+			if (libraryInput[0][0] == 'D')
+			{
+				outfile << dgms[dgmsIdx] << std::endl; // print i-dim diagram
+			}
+			if (libraryInput[0][0] == 'P')
+			{
+				std::vector< std::vector< double > >::const_iterator persdgmIdx;
+				for (persdgmIdx = persDgm[ dgmsIdx ].begin(); persdgmIdx != persDgm[ dgmsIdx ].end(); ++persdgmIdx)
+				{
+					outfile << (*persdgmIdx)[0] << " " << (*persdgmIdx)[1] << std::endl;
+				}
+			}
+		}
+		outfile.close();
 	}
 
 
@@ -501,8 +128,8 @@ extern "C" {
 		DistanceType            max_distance;
 		std::string             infilename, diagram_name;
 		
-		infilename = "inputDionysus.txt";
-		diagram_name="outputDionysus.txt";
+		infilename = "inputTDA.txt";
+		diagram_name="outputTDA.txt";
 		skeleton= dimInput[0];
 		max_distance= maxInput[0];
 		
@@ -592,8 +219,8 @@ extern "C" {
 		DistanceTypeA            max_distance;
 		std::string             infilename, diagram_name;
 
-		infilename = "inputDionysus.txt";
-		diagram_name="outputDionysus.txt";
+		infilename = "inputTDA.txt";
+		diagram_name="outputTDA.txt";
 		skeleton= dimInput[0];
 		max_distance= maxInput[0];
 		
@@ -672,111 +299,243 @@ extern "C" {
 
 
 
-	void bottleneck(double* out_name)
+	void bottleneck(double* points1Input, int* points1NumberInput, double* points2Input, int* points2NumberInput, double* out_name)
 	{
 		// ... set up the input
-		std::string filename1;
-		std::string filename2;
-		filename1 = "inputDionysus.txt";
-		filename2 = "inputDionysus2.txt";
-				
-// 		po::options_description hidden("Hidden options");
-// 		hidden.add_options()
-// 			("input-file1",  po::value<std::string>(&filename1), "The first collection of persistence diagrams")
-// 			("input-file2",  po::value<std::string>(&filename2), "The second collection of persistence diagrams");
-// 
-// 		po::positional_options_description p;
-// 		p.add("input-file1", 1);
-// 		p.add("input-file2", 2);
-// 
-// 		po::options_description all; all.add(hidden);
-// 
-// 		po::variables_map vm;
-// 		po::store(po::command_line_parser(argc, argv).
-// 					  options(all).positional(p).run(), vm);
-// 		po::notify(vm);
-// 
-// 		if (!vm.count("input-file1") || !vm.count("input-file2"))
-// 		{
-// 			std::cout << "Usage: " << argv[0] << " input-file1 input-file2" << std::endl;
-// 			return 1;
-// 		}
-
 		PDgmB dgm1, dgm2;
-		read_diagram(dgm1, filename1);
-		read_diagram(dgm2, filename2);
-// 		std::cout << "Size dgm1: " << dgm1.size() << std::endl;
-// 		std::cout << "Size dgm2: " << dgm2.size() << std::endl;
-// 
-// 		std::cout << "Distance: " << bottleneck_distance(dgm1, dgm2) << std::endl;
-	
+		read_diagram(dgm1, points1Input, points1NumberInput);
+		read_diagram(dgm2, points2Input, points2NumberInput);
+
 		out_name[0]=bottleneck_distance(dgm1, dgm2);
 	}
 
 
-	void wasserstein(double* inputP, double* out_name)
+	void wasserstein(double* points1Input, int* points1NumberInput, double* points2Input, int* points2NumberInput, int* inputP, double* out_name)
 	{
 		// ... set up the input
-		std::string filename1;
-		std::string filename2;
-		filename1 = "inputDionysus.txt";
-		filename2 = "inputDionysus2.txt";
-		
-		unsigned p=inputP[0];		
+		int p=inputP[0];		
 
 		PDgmB dgm1, dgm2;
-		read_diagram(dgm1, filename1);
-		read_diagram(dgm2, filename2);
+		read_diagram(dgm1, points1Input, points1NumberInput);
+		read_diagram(dgm2, points2Input, points2NumberInput);
 	
 		out_name[0]=wasserstein_distance(dgm1, dgm2, p);
 	}
 
 
   	// KDE function on a Grid
-	void kde(double *XX, int *pNN, int *pDD, double *Grid, int *pMM, double *hh, double *out){
+	void kde(double *XX, int *pNN, int *pDD, double *Grid, int *pMM, double *hh, int *printProgress, double *out){
 	    double *pp= new double[pDD[0]];
 		double pi=3.141593;
 		double den=0.0;
-		
+
+		int counter=0;
+		int totalCount=pMM[0];
+		int percentageFloor=0;	
+		int tmp;
+
 		den=pow(hh[0], pDD[0]) * pow( 2*pi  , (pDD[0]/2.0));
 		
-		for (int m=1; m<=pMM[0]; m++) {
-	 		for (int d=1; d<=pDD[0]; d++) {			
-				pp[d-1]=ReadMat(Grid, pMM, pDD, m, d);
-			}		
-			out[m-1]=oneKernel(pp, XX, pNN, pDD, hh);
-   			out[m-1]=out[m-1]/ den;
-   		}
-				
+		if (printProgress[0])
+		{
+			Rprintf("0   10   20   30   40   50   60   70   80   90   100");
+			Rprintf("\n");
+			Rprintf("|----|----|----|----|----|----|----|----|----|----|\n");
+			Rprintf("*");		
+
+
+			for (int m=1; m<=pMM[0]; m++) {
+				for (int d=1; d<=pDD[0]; d++) {			
+					pp[d-1]=ReadMat(Grid, pMM, pDD, m, d);
+				}		
+				out[m-1]=oneKernel(pp, XX, pNN, pDD, hh);
+				out[m-1]=out[m-1]/ den;
+						
+				//printProgress
+				counter++;
+				tmp=std::floor((100*counter/totalCount-percentageFloor)/2);
+				if (tmp>0)
+				{
+					for (int aa=1; aa<=tmp; aa++)
+					{
+						Rprintf("*");
+						percentageFloor=percentageFloor+2;
+					}							
+				}					   		
+			}
+		} else //no printProgress
+		{
+			for (int m=1; m<=pMM[0]; m++) {
+				for (int d=1; d<=pDD[0]; d++) {			
+					pp[d-1]=ReadMat(Grid, pMM, pDD, m, d);
+				}		
+				out[m-1]=oneKernel(pp, XX, pNN, pDD, hh);
+				out[m-1]=out[m-1]/ den;					   		
+			}
+
+		}
+   		
+   		if (printProgress[0]) Rprintf("\n");					
 		delete[] pp;
 	}
 
 
    	// kernel Dist function on a Grid
-	void kdeDist(double *XX, int *pNN, int *pDD, double *Grid, int *pMM, double *hh, double *out){
+	void kdeDist(double *XX, int *pNN, int *pDD, double *Grid, int *pMM, double *hh, int *printProgress, double *out){
 	    double *pp= new double[pDD[0]];
 		double first=0.0;
 		double second=1.0;
 	    double *third= new double[pMM[0]];
 		
-		for (int i=1; i<=pNN[0]; i++) {
-	 		for (int d=1; d<=pDD[0]; d++) {			
-				pp[d-1]=ReadMat(XX, pNN, pDD, i, d);
-			}		
-			first=first+ oneKernel(pp, XX, pNN, pDD, hh);
-		}
-		first=first/pNN[0];
+		int counter=0;
+		int totalCount=pNN[0]+pMM[0];
+		int percentageFloor=0;	
+		int tmp;
 		
-		for (int m=1; m<=pMM[0]; m++) {
-	 		for (int d=1; d<=pDD[0]; d++) {			
-				pp[d-1]=ReadMat(Grid, pMM, pDD, m, d);
-			}		
-			third[m-1]=oneKernel(pp, XX, pNN, pDD, hh);
-   			out[m-1]= std::sqrt(first+second - 2* third[m-1]  );
+		if (printProgress[0])
+		{
+			Rprintf("0   10   20   30   40   50   60   70   80   90   100");
+			Rprintf("\n");
+			Rprintf("|----|----|----|----|----|----|----|----|----|----|\n");
+			Rprintf("*");		
+					
+			for (int i=1; i<=pNN[0]; i++) {
+				for (int d=1; d<=pDD[0]; d++) {			
+					pp[d-1]=ReadMat(XX, pNN, pDD, i, d);
+				}		
+				first=first+ oneKernel(pp, XX, pNN, pDD, hh);
+		
+				// printProgress
+				counter++;
+				tmp=std::floor((100*counter/totalCount-percentageFloor)/2);
+				
+				if (tmp>0)
+				{
+					for (int aa=1; aa<=tmp; aa++)
+					{
+						Rprintf("*");
+						percentageFloor=percentageFloor+2;
+					}							
+				}				
+			}
+			first=first/pNN[0];
+		
+			for (int m=1; m<=pMM[0]; m++) {
+				for (int d=1; d<=pDD[0]; d++) {			
+					pp[d-1]=ReadMat(Grid, pMM, pDD, m, d);
+				}		
+				third[m-1]=oneKernel(pp, XX, pNN, pDD, hh);
+				out[m-1]= std::sqrt(first+second - 2* third[m-1]  );
+
+				// printProgress
+				counter++;
+				tmp=std::floor((100*counter/totalCount-percentageFloor)/2);
+				if (tmp>0)
+				{
+					for (int aa=1; aa<=tmp; aa++)
+					{
+						Rprintf("*");
+						percentageFloor=percentageFloor+2;
+					}							
+				}
+			}   		
+			Rprintf("\n");		
+   		} else //no printProgress
+		{
+			for (int i=1; i<=pNN[0]; i++) {
+				for (int d=1; d<=pDD[0]; d++) {			
+					pp[d-1]=ReadMat(XX, pNN, pDD, i, d);
+				}		
+				first=first+ oneKernel(pp, XX, pNN, pDD, hh);
+			}
+			first=first/pNN[0];
+		
+			for (int m=1; m<=pMM[0]; m++) {
+				for (int d=1; d<=pDD[0]; d++) {			
+					pp[d-1]=ReadMat(Grid, pMM, pDD, m, d);
+				}		
+				third[m-1]=oneKernel(pp, XX, pNN, pDD, hh);
+				out[m-1]= std::sqrt(first+second - 2* third[m-1]  );
+			}   		
    		}
-   		
 		delete[] pp;
 		delete[] third;
+	}
+
+
+
+	// GUDHI RIPS
+	/** \brief Interface for R code, construct the persistence diagram 
+	  * of the Rips complex constructed on the input set of points.
+	  *
+	  * @param[out] void            every function called by R must return void
+	  * @param[in]  point           pointer toward the coordinates of all points. Format 
+	  *                             must be X11 X12 ... X1d X21 X22 ... X2d X31 ...
+	  * @param[in]  dim             embedding dimension 
+	  * @param[in]  num_points      number of points. The input point * must be a 
+	  *                             pointer toward num_points*dim double exactly.
+	  * @param[in]  rips_threshold  threshold for the Rips complex
+	  * @param[in]  max_complex_dim maximal dimension of the Rips complex
+	  * @param[in]  diagram         where to output the diagram. The format must be dimension birth death.
+	  * @param[in]  max_num_bars    write the max_num_pairs most persistent pairs of the
+	  *                             diagram. diagram must point to enough memory space for
+	  *                             3*max_num_pairs double. If there is not enough pairs in the diagram,
+	  *                             write nothing after.
+	  */
+	void 
+	rips_persistence_diagram_GUDHI( double * points          //points to some memory space
+							, int    * dim
+							, int    * num_points
+							, double * rips_threshold
+							, int    * max_complex_dim
+							, double * diagram         //points to some memory space
+							, int    * printInput)
+
+	{
+	  bool printstatus=printInput[0];  
+	  std::string diagram_name="outputTDA.txt";
+
+
+	  // Turn the input points into a range of points
+	  typedef std::vector<double> Point_t;
+	  std::vector< Point_t > point_set(*num_points, Point_t(*dim));
+	  double * curr_coordinate = points;
+	  for(int i = 0; i < *num_points; ++i) {
+		for(int j = 0; j < *dim; ++j) {
+		  point_set[i][j] = *curr_coordinate;
+		  ++curr_coordinate;
+		}
+	  }
+	// Compute the proximity graph of the points
+	  Graph_t prox_graph = compute_proximity_graph( point_set, *rips_threshold
+												  , euclidean_distance<Point_t> );
+
+	// Construct the Rips complex in a Simplex Tree
+	// Construct the Rips complex in a Simplex Tree
+	  Simplex_tree<> st;        
+	  st.insert_graph(prox_graph); // insert the proximity graph in the simplex tree
+	  st.expansion( *max_complex_dim ); // expand the graph until dimension dim_max
+
+		if (printstatus){
+			Rprintf("# Generated complex of size: %d \n", st.num_simplices());
+			// std::cout << st.num_simplices() << " simplices \n";
+		}
+
+	// Sort the simplices in the order of the filtration
+	  st.initialize_filtration();
+
+	// Compute the persistence diagram of the complex
+	  int p = 2; //characteristic of the coefficient field for homology
+	  double min_persistence = 0; //minimal length for persistent intervals
+	  Persistent_cohomology< Simplex_tree<>, Field_Zp > pcoh( st );
+	  pcoh.init_coefficients( p ); //initilizes the coefficient field for homology
+	  pcoh.compute_persistent_cohomology( min_persistence ); //compute persistent homology
+
+	// write diagram on the output file
+	  pcoh.write_output_diagram(diagram_name);
+	
+	// or write the most persistent points in diagram (max_num_bars should be an input) 
+	//  pcoh.most_persistent_bars(diagram, *max_num_bars);
 	}
 
 

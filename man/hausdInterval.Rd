@@ -8,7 +8,7 @@
 }
 \usage{
 hausdInterval(X, m, B = 30, alpha = 0.05, parallel = FALSE, 
-              printStatus=FALSE)
+              printProgress=FALSE)
 }
 \arguments{
   \item{X}{
@@ -26,7 +26,7 @@ hausdInterval(X, m, B = 30, alpha = 0.05, parallel = FALSE,
   \item{parallel}{
     logical: if \code{TRUE} the iterations are parallelized, using the library \code{parallel}.
 }
-  \item{printStatus}{
+  \item{printProgress}{
 	if TRUE a progress bar is printed. Default is \code{FALSE}.
 }
 }
@@ -46,7 +46,9 @@ Fabrizio Lecci
 \code{\link{bootstrapBand}}
 }
 \examples{
-print(0)
+X= circleUnif(1000)
+interval= hausdInterval(X, m=800)
+print(interval)
 }
 \keyword{nonparametric}
 \keyword{htest}

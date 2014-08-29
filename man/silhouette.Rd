@@ -12,7 +12,7 @@ silhouette(Diag, p = 1, dimension = 1,
 }
 \arguments{
   \item{Diag}{
-	an object of class \code{diagram} or a \eqn{P} by \eqn{3} matrix, storing a persistence diagram with columns: "dimension", "Birth", "Death". 
+	an object of class \code{diagram} or a \eqn{P} by \eqn{3} matrix, storing a persistence diagram with colnames: "dimension", "Birth", "Death". 
 }
   \item{p}{
 	number: the power of the weights of the silhouette function. See the definition of silhouette function, Section 5 in the reference.

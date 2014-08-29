@@ -34,7 +34,7 @@ Persi Diaconis, Susan Holmes, and Mehrdad Shahshahani, (2013), "Sampling from a 
 Fabrizio Lecci
 }
 \seealso{
-\code{\link{circleUnif}}
+\code{\link{circleUnif}},\code{\link{sphereUnif}}
 }
 \examples{
 X=torusUnif(300, a=1.8, c=5)

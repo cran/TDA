@@ -1,6 +1,3 @@
-// Fabrizio Lecci
-
-#include <iostream>
 #include <cmath>
 
 

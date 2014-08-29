@@ -12,7 +12,7 @@ landscape(Diag, dimension = 1, KK = 1,
 }
 \arguments{
   \item{Diag}{
-	an object of class \code{diagram} or a \eqn{P} by \eqn{3} matrix, storing a persistence diagram with columns: "dimension", "Birth", "Death". 
+	an object of class \code{diagram} or a \eqn{P} by \eqn{3} matrix, storing a persistence diagram with colnames: "dimension", "Birth", "Death". 
 }
   \item{dimension}{
 	the dimension of the topological features under consideration. Default is 1 (loops).

@@ -10,8 +10,10 @@ Maximal Persistence Method
 Given a point cloud and a function built on top of the data, we are interested in studying the evolution of the sublevel sets (or superlevel sets) of the function, using persistent homology. The Maximal Persistence Method selects the optimal smoothing parameter of the function, by maximizing the number of significant topological features, or by maximizing the total significant persistence of the features. For each value of the smoothing parameter, this function computes a persistence diagram using \code{gridDiag} and returns the values of the two criteria, the dimension of detected features, their persistence, and a bootstrapped confidence band. The features that fall outside of the band are statistically significant. See References. 
 }
 \usage{
-maxPersistence(FUN, parameters, X, Xlim, Ylim=NA, Zlim=NA, by, sublevel = TRUE, 
-             B = 30, alpha = 0.05, parallel = FALSE, printProgress = FALSE)
+maxPersistence(FUN, parameters, X, lim, by, maxdimension=length(lim)/2-1, 
+             sublevel = TRUE, library="Dionysus", B=30, alpha=0.05, 
+             bandFUN="bootstrapBand", distance="bottleneck", dimension=1, p=1,
+             parallel=FALSE, printProgress=FALSE)
 }
 \arguments{
   \item{FUN}{
@@ -23,38 +25,49 @@ maxPersistence(FUN, parameters, X, Xlim, Ylim=NA, Zlim=NA, by, sublevel = TRUE,
   \item{X}{
     a \eqn{n} by \eqn{d} matrix of coordinates of the input point cloud, where \eqn{d} is the dimension of the space.
 }
-  \item{Xlim}{
-    a numeric vector of length 2, specifying the range of the first dimension of the grid, over which the function \code{FUN} is evaluated.
-
-}
-  \item{Ylim}{
-        a numeric vector of length 2, specifying the range of the second dimension of the grid, over which the function \code{FUN} is evaluated. \code{NA} for a 1 dimensional grid.
-}
-  \item{Zlim}{
-    a numeric vector of length 2, specifying the range of the third dimension of the grid, over which the function \code{FUN} is evaluated. \code{NA} for a 1 dimensional or 2 dimensional grid.
-}
+  \item{lim}{
+    a \eqn{2} by \eqn{d} matrix, where each column specifying the range of each dimension of the grid, over which the function \code{FUN} is evaluated.
+  }
   \item{by}{
-    number: space between points of the grid in each dimension.    
-}
+    either a number or a vector of length \eqn{d} specifying space between points of the grid in each dimension. If a number is given, then same space is used in each dimension.
+  }
+  \item{maxdimension}{
+    a number that indicates the maximum dimension to compute persistent homology to. Default is \eqn{d-1}, which is (dimension of embedding space - 1).
+  }
   \item{sublevel}{
 a logical variable indicating if the persistent homology should be computed for sublevel sets of \code{FUN} (TRUE) or superlevel sets (FALSE). Default is TRUE.
-
 }
+  \item{library}{
+  User can compute the persistence diagram using either the library 'Dionysus', or 'phat'. Default is 'Dionysus'.
+}
+  \item{bandFUN}{
+  the function to be used in the computation of the confidence band. Either 'bootstrapDiagram' or 'bootstrapBand'.
+}
+
   \item{B}{
   the number of bootstrap iterations.
 }
   \item{alpha}{
   for each value store in \code{parameters}, \code{maxPersistence} computes a (1-\code{alpha}) confidence band.
 }
+  \item{distance}{
+  optional (if bandFUN==bootstrapDiagram): a string specifying the distance to be used for persistence diagrams: either 'bottleneck' or 'wasserstein'
+}
+  \item{dimension}{
+	optional (if bandFUN==bootstrapDiagram): an integer specifying the dimension of the features used to compute the bottleneck distance. 0 for connected components, 1 for loops, 2 for voids. Deafault is 1.
+}
+  \item{p}{
+  	optional (if bandFUN==bootstrapDiagram AND distance=='wasserstein'): integer specifying the power to be used in the computation of the Wasserstein distance. Default is 1.
+}
   \item{parallel}{
-    logical: if \code{TRUE} the bootstrap iterations are parallelized, using the library \code{parallel}.
+    logical: if \code{TRUE} the bootstrap iterations are parallelized, using the library \code{parallel}. (only if bandFUN=="bootstrapBand")
 }
   \item{printProgress}{
 	if TRUE a progress bar is printed. Default is \code{FALSE}.
 }
 }
 \details{
-	\code{maxPersistence} calls the \code{\link{gridDiag}} function, which computes the persistence diagram of sublevel (or superlevel) sets of a function, evaluated over a grid of points in dimension 1,2, or 3.
+	\code{maxPersistence} calls the \code{\link{gridDiag}} function, which computes the persistence diagram of sublevel (or superlevel) sets of a function, evaluated over a grid of points.
 }
 \value{
   The function returns an object of the class "maxPersistence", a list with the following components
@@ -90,6 +103,7 @@ X=rbind(XX1,noise)
 ## limits of the Gird at which the density estimator is evaluated
 Xlim=c(-2,2)
 Ylim=c(-2,2)
+lim=cbind(Xlim,Ylim)
 by=0.2
 
 B=80
@@ -98,8 +112,9 @@ alpha=0.05
 ## candidates
 parametersKDE=seq(0.1,0.5, by=0.2)
 
-maxKDE=maxPersistence(kde, parametersKDE, X, Xlim, Ylim, Zlim=NA, by=by, B=B,
-                  alpha=alpha, parallel=FALSE, printProgress = TRUE)
+maxKDE=maxPersistence(kde, parametersKDE, X, lim=lim, by=by, 
+                  bandFUN="bootstrapBand",B=B, alpha=alpha,
+                  parallel=FALSE, printProgress = TRUE)
 print(summary(maxKDE))
 
 par(mfrow=c(1,2))

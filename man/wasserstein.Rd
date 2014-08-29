@@ -4,7 +4,7 @@
 Wasserstein distance between two persistence diagrams
 }
 \description{
-This function computes the Wasserstein distance between two persistence diagrams
+This function computes the Wasserstein distance between two persistence diagrams.
 }
 \usage{
 wasserstein(Diag1, Diag2, p=1, dimension=1)
@@ -20,7 +20,7 @@ wasserstein(Diag1, Diag2, p=1, dimension=1)
   	integer specifying the power to be used in the computation of the Wasserstein distance. Default is 1.
 }
   \item{dimension}{
-	an integer specifying the dimension of the features used to compute the wasserstein distance. 0 for connected components, 1 for loops, 2 for voids and so on. Default is 1.
+	an integer specifying the dimension of the features used to compute the wasserstein distance. 0 for connected components, 1 for loops, 2 for voids and so on. Default is 1 (loops).
 }
 }
 \details{
@@ -30,7 +30,7 @@ wasserstein(Diag1, Diag2, p=1, dimension=1)
 Returns the value of the Wasserstein distance between the two persistence diagrams.
 }
 \references{
-http://www.mrzv.org/software/dionysus/
+Dmitriy Morozov, "Dionysus, a C++ library for computing persistent homology". http://www.mrzv.org/software/dionysus/
 
 Herbert Edelsbrunner and John Harer (2010), Computational topology: an introduction. American Mathematical Society.
 }
@@ -39,7 +39,7 @@ Fabrizio Lecci
 }
 
 \seealso{
- \code{\link{ripsDiag}},  \code{\link{gridDiag}},
+ \code{\link{bottleneck}}, \code{\link{ripsDiag}},  \code{\link{gridDiag}},
   \code{\link{plot.diagram}}
 }
 \examples{
@@ -49,8 +49,8 @@ XX2 = circleUnif(20, r=0.2)
 DiagLim=5
 maxdimension=1
 
-Diag1=ripsDiag(XX1,maxdimension,DiagLim, printStatus=FALSE)
-Diag2=ripsDiag(XX2,maxdimension,DiagLim, printStatus=FALSE)
+Diag1=ripsDiag(XX1,maxdimension,DiagLim, printProgress=FALSE)$diagram
+Diag2=ripsDiag(XX2,maxdimension,DiagLim, printProgress=FALSE)$diagram
 
 wassersteinDist=wasserstein(Diag1, Diag2, p=1, dimension=1)
 print(wassersteinDist)

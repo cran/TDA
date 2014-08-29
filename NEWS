@@ -1,3 +1,10 @@
+### TDA: version 1.2
+- Fixed bugs
+- gridDiag extended to arbitrary dimension
+- PHAT can be used in gridDiag
+- GUDHI can be used in ripsDiag (requires R>=3.1.0)
+- Minor improvements for displaying the results (plot.diagram, plot.maxPersistence)
+
 ### TDA: version 1.1
 - Fixed bug in diag.cpp, line 421 [ fcnvalues.at(curidx) = x ]
 - ripsDiag works in 32-bit machines now (l2distance.h is bypassed)

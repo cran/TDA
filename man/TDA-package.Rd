@@ -12,13 +12,13 @@ This package provides some tools for Topological Data Analysis. In particular it
 \tabular{ll}{
 Package: \tab TDA\cr
 Type: \tab Package\cr
-Version: \tab 1.1\cr
-Date: \tab 2014-08-20\cr
-License: \tab GPL (>= 2.0) \cr
+Version: \tab 1.2\cr
+Date: \tab 2014-08-29\cr
+License: \tab GPL-3 \cr
 }
 }
 \author{
-Brittany Terese Fasy and Fabrizio Lecci
+Brittany Terese Fasy, Jisu Kim, Fabrizio Lecci, Clement Maria
 
 Maintainer: Fabrizio Lecci <lecci@cmu.edu>
 }
@@ -33,6 +33,10 @@ Frederic Chazal, Brittany T. Fasy, Fabrizio Lecci, Alessandro Rinaldo, and Larry
 
 Frederic Chazal, Brittany T. Fasy, Fabrizio Lecci, Bertrand Michel, Alessandro Rinaldo, and Larry Wasserman, (2014), "Subsampling Methods for Persistent Homology". (arXiv:1406.1901)
 
-http://www.mrzv.org/software/dionysus/
+Clement Maria, "GUDHI, Simplicial Complexes and Persistent Homology Packages". https://project.inria.fr/gudhi/software/.
+
+Dmitriy Morozov, "Dionysus, a C++ library for computing persistent homology". http://www.mrzv.org/software/dionysus/
+
+Ulrich Bauer, Michael Kerber, Jan Reininghaus, "PHAT, a software library for persistent homology". https://code.google.com/p/phat/
 }
 \keyword{ package }

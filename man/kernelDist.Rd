@@ -14,7 +14,7 @@ For each \eqn{x \in R^d} the Kernel distance is defined by
 	}
 }
 \usage{
-kernelDist(X, Grid, h)
+kernelDist(X, Grid, h, printProgress=FALSE)
 }
 \arguments{
   \item{X}{
@@ -25,6 +25,9 @@ an \eqn{m} by \eqn{d} matrix of coordinates, where \eqn{m} is the number of poin
 }
   \item{h}{
 number: the smoothing paramter of the Gaussian Kernel.
+}
+  \item{printProgress}{
+	if TRUE a progress bar is printed. Default is \code{FALSE}.
 }
 }
 \value{

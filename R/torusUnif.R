@@ -5,6 +5,7 @@ function(n,a,c){
 	if (!is.vector(a) || length(a)!=1) stop("a should be a number")	
 	if (!is.vector(c) || length(c)!=1) stop("c should be a number")	
 
+	n=floor(n)
 	theta=NULL
 	while (length(theta)<n){
 		xvec=runif(1,0,2*pi)

@@ -10,7 +10,7 @@ Given a point cloud \code{X} (\eqn{n} points), this function computes the Kernel
 	}		
 }
 \usage{
-kde(X, Grid, h)
+kde(X, Grid, h, printProgress=FALSE)
 }
 \arguments{
   \item{X}{
@@ -21,6 +21,9 @@ an \eqn{m} by \eqn{d} matrix of coordinates, where \eqn{m} is the number of poin
 }
   \item{h}{
 number: the smoothing paramter of the Gaussian Kernel.
+}
+  \item{printProgress}{
+	if TRUE a progress bar is printed. Default is \code{FALSE}.
 }
 }
 \value{
