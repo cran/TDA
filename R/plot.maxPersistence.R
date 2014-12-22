@@ -17,7 +17,8 @@ function(x, features="dimension", colorBand="pink", colorBorder=NA , ...){
 		dimension=x$dimension	
 	}
 
-	plot(parameter, rep(maxPers, Kseq), type="n", ylim=c(0,1.18*maxPers), ylab="Persistence", axes=F, ... )
+	plot(parameter, rep(maxPers, Kseq), type="n", ylim=c(0,1.18*maxPers), xlab="",ylab="", axes=F, ... )
+	title(xlab="parameter", ylab="Persistence", line=2.2)
 	axis(1)
 	axis(2)
 	

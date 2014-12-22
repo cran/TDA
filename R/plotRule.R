@@ -32,9 +32,10 @@ function(Tree){
 					NewTree=Tree
 					
 					#update new IDs
-					NewTree$Ytop[bros]=Tree$Ytop[orderID]	
-					NewTree$Ktop[bros]=Tree$Ktop[orderID]	
-					
+					NewTree$lambdaTop[bros]=Tree$lambdaTop[orderID]	
+					NewTree$rTop[bros]=Tree$rTop[orderID]	
+					NewTree$kappaTop[bros]=Tree$kappaTop[orderID]	
+					NewTree$alphaTop[bros]=Tree$alphaTop[orderID]	
 					
 					for (j in 1:length(bros)){
 						NewTree$parent[which(Tree$parent==bros[j])]=newID[j]

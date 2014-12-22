@@ -1,5 +1,5 @@
 plot.diagram <-
-function(x, diagLim=NULL, dimension=NULL, col=NULL, rotated=FALSE, barcode=FALSE, band=NULL, colorBand="pink", colorBorder=NA, add=FALSE,...){
+function(x, diagLim=NULL, dimension=NULL, col=NULL, rotated=FALSE, barcode=FALSE, band=NULL, lab.line=2.2, colorBand="pink", colorBorder=NA, add=FALSE,...){
 
     if (class(x)!="diagram" && class(x)!="matrix" && !is.data.frame(x) )  
     	stop("x should be a diagram, or a P by 3 matrix")
@@ -75,6 +75,7 @@ function(x, diagLim=NULL, dimension=NULL, col=NULL, rotated=FALSE, barcode=FALSE
 		xlim=c(Bmin,Bmax),ylim=c(0,n+1),
 		xaxt="n", yaxt="n", ...)
 		axis(1)
+		title(xlab="time", line=lab.line)
 		
 		lwid=rep(2,n)
 		ltype=rep(1,n)
@@ -113,13 +114,13 @@ function(x, diagLim=NULL, dimension=NULL, col=NULL, rotated=FALSE, barcode=FALSE
 			axis(2)
 			if (sublevel) {
 				if (!rotated){
-					title(main="", xlab="Birth", ylab="Death")
-				}else title(main="", ylab="(Death-Birth)/2", xlab="(Death+Birth)/2")
+					title(main="", xlab="Birth", ylab="Death", line=lab.line)
+				}else title(main="", ylab="(Death-Birth)/2", xlab="(Death+Birth)/2",line=lab.line)
 			} 
 			if (!sublevel) {
 				if (!rotated){
-					title(main="", xlab="Death", ylab="Birth")
-				}else title(main="", ylab="(Birth-Death)/2", xlab="(Death+Birth)/2")
+					title(main="", xlab="Death", ylab="Birth", line=lab.line)
+				}else title(main="", ylab="(Birth-Death)/2", xlab="(Death+Birth)/2", line=lab.line)
 			} 
 		}
 	}

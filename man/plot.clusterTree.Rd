@@ -16,6 +16,8 @@ This function plots the Cluster Tree stored in an object of class \code{clusterT
 }
   \item{type}{
     string: if "lambda", then the lambda Tree is plotted.
+            if "r" then the r Tree is plotted.
+            if "alpha" then the alpha Tree is plotted.
             if "kappa", then the kappa Tree is plotted.
 }
   \item{color}{

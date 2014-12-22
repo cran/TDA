@@ -8,7 +8,7 @@ This function plots the Persistence Diagram stored in an object of class \code{d
 }
 \usage{
 \method{plot}{diagram}(x, diagLim=NULL, dimension=NULL, col=NULL, rotated=FALSE, barcode=FALSE, 
-            band=NULL, colorBand="pink", colorBorder=NA, add = FALSE, ...)
+            band=NULL, lab.line=2.2, colorBand="pink", colorBorder=NA, add = FALSE, ...)
 }
 \arguments{
   \item{x}{
@@ -31,6 +31,9 @@ This function plots the Persistence Diagram stored in an object of class \code{d
 }
   \item{band}{
     numeric: if \code{band}!=\code{NULL}, a pink band of size \code{band} is added around the diagonal. If also \code{barcode} is \code{TRUE}, then bars shorter than \code{band} are dotted. Default is \code{NULL}.
+}
+  \item{lab.line}{
+    number of lines from the plot edge, where the labels will be placed. Default is 2.2.
 }
   \item{colorBand}{
     the color for filling the confidence band. The default is "pink". (NA leaves the band unfilled)
@@ -65,13 +68,13 @@ DiagLim=5
 maxdimension=1
 
 ## rips diagram
-Diag=ripsDiag(XX,maxdimension,DiagLim, printProgress=TRUE)
+Diag=ripsDiag(XX,maxdimension,DiagLim, printProgress=TRUE)$diagram
 
 #plot
 par(mfrow=c(1,3))
-plot(Diag$diagram)
-plot(Diag$diagram, rotated=TRUE)
-plot(Diag$diagram, barcode=TRUE)
+plot(Diag)
+plot(Diag, rotated=TRUE)
+plot(Diag, barcode=TRUE)
 
 }
 \keyword{hplot}

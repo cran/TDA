@@ -24,6 +24,7 @@
 #define GUDHI_SIMPLEX_TREE_H
 
 #include <algorithm>
+#include <limits>
 #include <boost/container/flat_map.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -322,11 +323,12 @@ Simplex_key    key      ( Simplex_handle sh ) { return sh->second.key(); }
 Simplex_handle simplex  ( Simplex_key key ) { return filtration_vect_[key]; }
 /** \brief Returns the filtration value of a simplex. 
   * 
-  * Called on the null_simplex, returns INFINITY. */
+  * Called on the null_simplex, returns std::numeric_limits<double>::infinity(). 
+  * std::numeric_limits<Filtration_value>::has_infinity must be 1.*/
 Filtration_value filtration(Simplex_handle sh)
 { 
   if(sh != null_simplex()) { return sh->second.filtration(); }
-  else                     { return INFINITY; }//filtration(); }
+  else                     { return std::numeric_limits< Filtration_value >::infinity(); }//filtration(); }
 }
 /** \brief Returns an upper bound of the filtration values of the simplices. */
 Filtration_value filtration()

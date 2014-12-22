@@ -18,7 +18,9 @@ function(distX,maxdimension, maxscale, printProgress=FALSE){
 	}
 	#remove points with lifetime=0
 	if (!is.null(remove)) Diag=Diag[-remove,]  
-	#Diag[which(Diag==Inf)]=maxscale	
+	## change Inf values to maxscale
+	Diag[which(Diag[,3]==Inf),3]=maxscale	
+
 
 	if (class(Diag)!="matrix") Diag=t(Diag) #in the case there is only 1 point
 	colnames(Diag)=c("dimension","Birth", "Death")
@@ -26,7 +28,6 @@ function(distX,maxdimension, maxscale, printProgress=FALSE){
 	attributes(Diag)$maxdimension=maxdimension
 	attributes(Diag)$scale=c(0, maxscale)
 	attributes(Diag)$call=match.call()
-	Diag[1,3]=maxscale
 
 	return(list("diagram"=Diag))
 }

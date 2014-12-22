@@ -31,7 +31,15 @@ function(X,maxdimension, maxscale, library="GUDHI", printProgress=FALSE){
 	                                       as.double(diagram),
 	                                       as.integer(printProgress),
 	                                       dup=FALSE, package="TDA")
-		Diag=as.matrix(read.table("outputTDA.txt", sep=""))
+		
+		## GUDHI in windows has a problem: instead of Inf writes 1.#INF
+		## here we manually fix the problem
+		Diag=read.csv("outputTDA.txt", sep=" ", header=F)
+		attributes(Diag[,3])$levels=c(attributes(Diag[,3])$levels, "Inf")
+		change=which(Diag[,3]=="1.#INF")
+		Diag[change,3]="Inf"
+		Diag[,3]=as.numeric(as.character(Diag[,3]))
+		Diag=as.matrix(Diag)
 	}
 	
 		N=dim(Diag)[1]
@@ -41,7 +49,9 @@ function(X,maxdimension, maxscale, library="GUDHI", printProgress=FALSE){
 		}
 		#remove points with lifetime=0
 		if (!is.null(remove)) Diag=Diag[-remove,]  
-		#Diag[which(Diag==Inf)]=maxscale	
+		## change Inf values to maxscale
+		Diag[which(Diag[,3]==Inf),3]=maxscale	
+
 		colnames(Diag)=c("dimension","Birth", "Death")
 		
 		if (class(Diag)!="matrix") Diag=t(Diag) #in the case there is only 1 point
@@ -50,7 +60,6 @@ function(X,maxdimension, maxscale, library="GUDHI", printProgress=FALSE){
 		attributes(Diag)$maxdimension=maxdimension
 		attributes(Diag)$scale=c(0, maxscale)
 		attributes(Diag)$call=match.call()
-		Diag[1,3]=maxscale
 			
 		return(list("diagram"=Diag))
 	

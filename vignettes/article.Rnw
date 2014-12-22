@@ -411,13 +411,14 @@ The core of the function is written in \proglang{C++} and the user can choose to
 
 The following code computes the persistent homology of the superlevel sets \linebreak (\code{sublevel=FALSE}) of the kernel density estimator (\code{FUN=kde}, \code{h=0.3}) using the point cloud stored in the matrix~\code{X} from the previous example.
 The same code would work for the other functions defined in Section \ref{sec:distances} (it is sufficient to replace \code{kde} and its smoothing parameter \code{h} with another function and the corresponding parameter). 
-The function \code{gridDiag} returns a list whose first element is an object of the class \code{"diagram"}.  
-The other inputs include the features of the grid over which the \code{kde} is evaluated (\code{lim} and \code{by}), the smoothing parameter \code{h}, and a logical variable that indicates whether a progress bar should be printed (\code{printProgress}).
+The function \code{gridDiag} returns an object of the class \code{"diagram"}.  
+The other inputs are the features of the grid over which the \code{kde} is evaluated (\code{lim} and \code{by}), the smoothing parameter \code{h}, and a logical variable that indicates whether a progress bar should be printed (\code{printProgress}).
 
 <<eq11, echo=TRUE, eval=TRUE>>=
 Diag = gridDiag( X=X, FUN=kde, h=0.3, lim=cbind(Xlim,Ylim), by=by, 
           sublevel=F, library="Dionysus", printProgress=FALSE )$diagram
 @
+
 
 We plot the data and the diagram, using the function \code{plot}, implemented as a standard \code{S3} method for objects of the class \code{"diagram"}. The following command produces the third plot in Figure \ref{fig:eq11b}.
 
@@ -534,7 +535,7 @@ plot(Diag)
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Standard metrics for measuring the distance between two persistence diagrams are the bottleneck distance and the $p$th Wasserstein distance \citep{edelsbrunner2010computational}. 
-The \pkg{TDA} package includes the functions \code{bottleneck} and \code{wasserstein}, which are \proglang{R} wrappers of the functions ``bottleneck\_distance" and ``wasserstein\_distance" of the \proglang{C++}  library \pkg{Dionysus}.
+The \pkg{TDA} package includes the functions \code{bottleneck} and \code{wasserstein}, which are R wrappers of the functions ``bottleneck\_distance" and ``wasserstein\_distance" of the \proglang{C++}  library \pkg{Dionysus}.
 
 We generate two persistence diagrams of the Rips filtrations built on top of the two (separate) circles of the previous example,
 
@@ -887,7 +888,7 @@ The last example of this vignette illustrates the use of the function \code{clus
 First, we briefly describe the task of density clustering; we defer the reader to \cite{kent2013} for a more rigorous and complete description.
 Let $f$ be the density of the probability distribution~$P$ generating the observed sample $X=\{x_1, \dots, x_n\} \subset \mathbb{R}^d$. For a threshold value $\lambda >0$, the corresponding super level set of $f$ is $L_f (\lambda) := \text{cl} (\{x \in \mathbb{R}^s : f(x) > \lambda\})$, and its $d$-dimensional subsets are called high-density regions. The high-density clusters of $P$ are the maximal connected subsets of $L_f (\lambda)$.
 By considering all the level sets simultaneously (from $\lambda=0$ to $\lambda=\infty$), we can record the evolution and the hierarchy of the high-density clusters of $P$.
-This naturally leads to the notion of the cluster density tree of $P$ (see, e.g., \cite{hartigan1981consistency}), defined as the collection of sets $T := \{L_f (\lambda), \lambda \geq 0\}$, which satisfies the tree property: if $A$ and $B$ are two clusters, then one is a subset of the other or they are disjoint. We refer to this construction as the $\lambda$-tree. Alternatively, \cite{kent2013debacl} introduced the $\kappa$-tree, which facilitates the interpretation of the tree by precisely encoding the probability content of each tree branch rather than the density level. Cluster trees are particularly useful for high dimensional data, whose spatial organization is difficult to represent.
+This naturally leads to the notion of the cluster density tree of $P$ (see, e.g., \cite{hartigan1981consistency}), defined as the collection of sets $T := \{L_f (\lambda), \lambda \geq 0\}$, which satisfies the tree property: $A,B \in T$ implies that $A \subset B$ or $B \subset A$ or $A \cap B = \emptyset$. We will refer to this construction as the $\lambda$-tree. Alternatively, \cite{kent2013debacl} introduced the $\alpha$-tree and $\kappa$-tree, which facilitate the interpretation of the tree by precisely encoding the probability content of each tree branch rather than the density level. Cluster trees are particularly useful for high dimensional data, whose spatial organization is difficult to represent.
 
 We illustrate the strategy with a simple example.
 First we generate a 2D point cloud from three (not so well) separated clusters (see top left plot of Figure \ref{fig:eq18d}):
@@ -908,7 +909,7 @@ TreeKDE=clusterTree(XX, k=100, h=0.3, density="kde", printProgress=F)
 
 Note that, even when \code{kde} is used to estimate the density, we have to provide the option \code{k=100}, so that the algorithm can compute the connected components at each level of the density using a k Nearest Neighbors graph.
 
-The \code{"clusterTree"} objects \code{Tree} and \code{TreeKDE} contain information about both the $\lambda$-tree and the $\kappa$-tree. The function \code{plot} for objects of the class \code{"clusterTree"} produces the plots in Figure \ref{fig:eq18d}.
+The \code{"clusterTree"} objects \code{Tree} and \code{TreeKDE} contain information about the $\lambda$-tree, $\alpha$-tree and $\kappa$-tree. The function \code{plot} for objects of the class \code{"clusterTree"} produces the plots in Figure \ref{fig:eq18d}.
 
 <<eq18c, echo=TRUE, eval=FALSE>>=
 plot(Tree, type="lambda", main="lambda Tree (knn)")

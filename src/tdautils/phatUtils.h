@@ -13,9 +13,13 @@
 #include <phat/boundary_matrix.h>
 
 #include <limits>
+#include <algorithm>
+
+#include <tdautils/dionysusUtils.h>
+
 
 template<typename Flt>
-std::vector< std::vector< std::vector< double > > > computePersistentPairsPhat(Flt f, int maxDimension)
+void computePersistentPairsPhat(Flt f, int maxDimension, const double * const FUNvaluesInput, const unsigned int & gridNumProd, bool isLocation, std::vector< std::vector< std::vector< double > > > &persDgm, std::vector< std::vector< std::vector< unsigned int > > > &persLoc)
 {
 
 	// If phat is used, convert from Dionysus to phat
@@ -52,15 +56,23 @@ std::vector< std::vector< std::vector< double > > > computePersistentPairsPhat(F
 	pairs.sort();
 
 
-	// Save persistent diagram
-	std::vector< std::vector< std::vector< double > > > persDgm(maxDimension+1);
+	// Save persistent diagram & trace back birth & death simplex
 	std::vector< double > persDgmPoint(2);
+	std::vector< unsigned int > persLocPoint(2);
 	unsigned int persDim;
 
 	// Manually add 0th homology for minimum to infinity
 	persDgmPoint[0] = simplex_map_inv.at(0).data();
 	persDgmPoint[1] = std::numeric_limits< double >::infinity();
 	persDgm[0].push_back(persDgmPoint );
+
+	// Manually trace back birth & death point
+	if (isLocation)
+	{
+		persLocPoint[0] = getLocation(simplex_map_inv.at(0), FUNvaluesInput);
+		persLocPoint[1] = (unsigned int)(std::max_element(FUNvaluesInput, FUNvaluesInput+gridNumProd)-FUNvaluesInput+1);
+		persLoc[ 0 ].push_back( persLocPoint );
+	}
 
 	for( phat::index idx = 0; idx < pairs.get_num_pairs(); idx++ )
 	{
@@ -70,7 +82,14 @@ std::vector< std::vector< std::vector< double > > > computePersistentPairsPhat(F
 		if (persDgmPoint[0] < persDgmPoint[1] && persDim <= maxDimension )
 		{
 			persDgm[ persDim ].push_back( persDgmPoint );
+
+			// trace back birth & death point
+			if (isLocation)
+			{
+				persLocPoint[0] = getLocation(simplex_map_inv.at(pairs.get_pair( idx ).first), FUNvaluesInput);
+				persLocPoint[1] = getLocation(simplex_map_inv.at(pairs.get_pair( idx ).second), FUNvaluesInput);
+				persLoc[ persDim ].push_back( persLocPoint );
+			}
 		}
 	}
-	return persDgm;
 }

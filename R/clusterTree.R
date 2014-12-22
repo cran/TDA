@@ -1,7 +1,7 @@
 clusterTree <-
 function(X, k, h=NULL, density="knn", dist="euclidean", d=NULL, Nlambda=100, printProgress=FALSE){
 	
-	if (!is.numeric(X) && !is.data.frame(X)) stop("X should be a matrix of coordinates")
+	if (!is.numeric(X) && !is.data.frame(X)) stop("X should be an n by d matrix of coordinates")
 	if (!is.vector(k) || length(k)!=1) stop("k should be an number")
 	if (!is.null(h) && (!is.vector(h) || length(h)!=1)) stop("h should be a real value")
 	if (!is.null(Nlambda) && (!is.vector(Nlambda) || length(Nlambda)!=1)) stop("Nlambda should be a number")
@@ -23,7 +23,7 @@ function(X, k, h=NULL, density="knn", dist="euclidean", d=NULL, Nlambda=100, pri
 	
 	## start adjacency matrix
 	adjMat=diag(n)
-
+	
 	## Compute density estimator: knn or kde
 	if (density=="knn" && dist=="euclidean"){
 		knnInfo=get.knn(X, k=k, algorithm="kd_tree")
@@ -203,20 +203,57 @@ function(X, k, h=NULL, density="knn", dist="euclidean", d=NULL, Nlambda=100, pri
 			}
 		}
 	}	
-	
+
+
+	#info for alpha Tree
+	ID=1:bb
+	alphaBottom=numeric(bb)
+	alphaTop=numeric(bb)
+	for (i in 1:bb)
+	{
+		alphaBottom[i]=sum(hat.f>bottom[i])/n
+		alphaTop[i]=sum(hat.f>top[i])/n
+	}
+
 	## info for the kappa tree
 	kTree=findKtree(bb, parent, sons, compBranch, n)
-	Ktop=kTree$Ktop
-	Kbottom=kTree$Kbottom
+	kappaTop=kTree$kappaTop
+	kappaBottom=kTree$kappaBottom
+
 	
-	out=list("n"=n, "id"=1:bb, "Xbase"=base, "Ybottom"=bottom, "Ytop"=top, "Kbottom"=Kbottom, "Ktop"=Ktop, "silo"=silo, "sons"=sons, "parent"=parent, "DataPoints"=compBranch, "density"=hat.f)
+	## r Tree
+	if (density!="kde")
+	{
+		rTop=(k/(n*v.d*top))^(1/d)
+		rBottom=(k/(n*v.d*bottom))^(1/d)
+		
+		for (i in 1:bb)
+		{
+			if (bottom[i]==0) rBottom[i]=max(r.k)	
+			if (top[i]==0) rTop[i]=max(r.k)			
+		}
+		
+		out=list("density"=hat.f, "DataPoints"=compBranch, 
+		"n"=n, "id"=1:bb, 
+		"sons"=sons, "parent"=parent,
+		"silo"=silo, "Xbase"=base, 
+		"lambdaBottom"=bottom, "lambdaTop"=top, 
+		"rBottom"=rBottom, "rTop"=rTop,
+		"alphaBottom"=alphaBottom, "alphaTop"=alphaTop,
+		"kappaBottom"=kappaBottom, "kappaTop"=kappaTop)
+	} else{
+		out=list("density"=hat.f, "DataPoints"=compBranch, 
+		"n"=n, "id"=1:bb, 
+		"sons"=sons, "parent"=parent,
+		"silo"=silo, "Xbase"=base, 
+		"lambdaBottom"=bottom, "lambdaTop"=top, 
+		"alphaBottom"=alphaBottom, "alphaTop"=alphaTop,
+		"kappaBottom"=kappaBottom, "kappaTop"=kappaTop)
+		
+	}
+	
 	class(out)="clusterTree"
-	
 	out1=plotRule(out) ## relabel branches according to plotting rules.
 	
 	return(out1)
 }
-
-
-## TODO
-## when using Nlambda, the top density of a cluster and the Ytop of the corresponding branch might differ, because Ytop depends on the grid, while the density is exact.

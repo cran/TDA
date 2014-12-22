@@ -2,27 +2,41 @@ plot.clusterTree <-
 function(x, type="lambda",color=NULL, add=FALSE, ...){
 	
 	if (class(x)!="clusterTree") stop("Tree should be an object of class clusterTree")
-	if (!is.null(color) && (!is.vector(color) || length(color)!=1) ) stop("color should have length 1")
      if (!is.logical(add)) stop("add should be logical")
 	
 	id=x$id
 	base=x$Xbase
 	
 	if (type=="lambda"){
-		bottom=x$Ybottom
-		top=x$Ytop
+		bottom=x$lambdaBottom
+		top=x$lambdaTop
+	} else if (type=="r"){
+		bottom=-x$rBottom
+		top=-x$rTop
 	} else if (type=="kappa"){
-		bottom=x$Kbottom
-		top=x$Ktop
-	} else stop("type should be 'lambda' or 'kappa'")
+		bottom=x$kappaBottom
+		top=x$kappaTop
+	} else if (type=="alpha"){
+		bottom=-x$alphaBottom
+		top=-x$alphaTop
+	} else stop("type should be 'r', 'lambda', 'alpha' or 'kappa'")
 
+	Range=range(c(bottom,top))
+	
+
+	AT=c(bottom,top)	
+	labels=-round(AT,3)
+	if (type=="lambda" || type=="kappa") labels=round(AT,3)
+	
 	sons=x$sons
 	
-	Ylim=max(top[which(!is.na(top))])
+	Ylim=c(min(bottom[which(!is.na(bottom))]), max(top[which(!is.na(top))]))
 	
-	if (!add)
-	plot(c(0,0),c(0,Ylim), type="n", xlim=c(0,1), ylab=type, xlab="", ...)
-	
+	if (!add){
+		plot(c(0,0),c(Ylim[1],Ylim[2]), type="n", xlim=c(0,1), ylab=type, xlab="", axes=F, ...)
+		axis(1)
+		axis(2, at=AT, labels=labels)
+	}
 	#vertical lines
 	if (is.null(color)) color=id
 	segments(base,bottom,base,top, col=color, lwd=3)

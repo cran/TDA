@@ -102,7 +102,7 @@ h = .3  #bandwidth for the function kde
 Diag=gridDiag(XX, kde, lim=lim, by=by, sublevel=FALSE, printProgress=TRUE, h=h) 
 
 # confidence set
-B=5         ## the number of bootstrap iterations should be higher! 
+B=10         ## the number of bootstrap iterations should be higher! 
              ## this is just an example
 alpha=0.05
 

@@ -323,11 +323,10 @@ void addAllTetrahedra(Fltr& filtr, const double * const fcnvalues,
 } // end function addTriangles
 
 
-int simplicesFromGrid(Fltr & filtr, const double * const extFcnVal, const std::vector< unsigned int > & argGridNum, const int argDimMax)
+int simplicesFromGrid(Fltr & filtr, const double * const extFcnVal, const std::vector< unsigned int > & argGridNum, const unsigned int & gridNumProd, const int argDimMax)
 {
 
     unsigned int idxCur, idxDim;
-    const unsigned int gridNumProd = std::accumulate( argGridNum.begin(), argGridNum.end(), 1, std::multiplies< unsigned int >() );
 
 
 	int ncols, nrows;
@@ -528,11 +527,10 @@ void addSimplices( Fltr & argFltr, const double * const extFcnVal, const int arg
 }
 
 
-int simplicesFromGridBarycenter( Fltr & argFltr, const double * const extFcnVal, const std::vector< unsigned int > & argGridNum, const int argDimMax )
+int simplicesFromGridBarycenter( Fltr & argFltr, const double * const extFcnVal, const std::vector< unsigned int > & argGridNum, const unsigned int & gridNumProd, const int argDimMax )
 {
 
     unsigned int idxCur, idxDim;
-    const unsigned int gridNumProd = std::accumulate( argGridNum.begin(), argGridNum.end(), 1, std::multiplies< unsigned int >() );
 
    std::vector< std::map< std::vector< unsigned char >, std::vector< std::vector< std::vector< unsigned char > > > > >  triedCube = triangulateHypercube( argGridNum.size(), argDimMax );
   

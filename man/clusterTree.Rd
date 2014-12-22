@@ -45,18 +45,22 @@ This function is an implementation of Algorithm 1 in the first reference.
 }
 \value{
 This function returns an object of class \code{clusterTree}, a list with the following components
+\item{density}{Vector of length \code{n}: the values of the density estimator evaluated at each of the points stored in \code{X}}
+\item{DataPoints}{A list whose elements are the points of \code{X} corresponding to each branch, in the same order of \code{id}}
 \item{n}{The number of points stored in the input matrix \code{X}}
 \item{id}{Vector: the IDs associated to the branches of the cluster tree}
-\item{Xbase}{Vector: the horiontal coordinates of the branches of the cluster tree, in the same order of \code{id}}
-\item{Ybottom}{Vector: the vertical bottom coordinates of the branches of the lambda tree, in the same order of \code{id}}
-\item{Ytop}{Vector: the vertical top coordinates of the branches of the lambda tree, in the same order of \code{id}}
-\item{Kbottom}{Vector: the vertical bottom coordinates of the branches of the kappa tree, in the same order of \code{id}}
-\item{Ktop}{Vector: the vertical top coordinates of the branches of the kappa tree, in the same order of \code{id}}
-\item{silo}{A list whose elements are the horizontal coordinates of the silo of each branch, in the same order of \code{id}}
 \item{sons}{A list whose elements are the IDs of the sons of each branch, in the same order of \code{id}}
 \item{parent}{Vector: the IDs of the parents of each branch, in the same order of \code{id}}
-\item{DataPoints}{A list whose elements are the points of \code{X} corresponding to each branch, in the same order of \code{id}}
-\item{density}{Vector of length \code{n}: the values of the density estimator evaluated at each of the points stored in \code{X}}
+\item{silo}{A list whose elements are the horizontal coordinates of the silo of each branch, in the same order of \code{id}}
+\item{Xbase}{Vector: the horiontal coordinates of the branches of the cluster tree, in the same order of \code{id}}
+\item{lambdaBottom}{Vector: the vertical bottom coordinates of the branches of the lambda tree, in the same order of \code{id}}
+\item{lambdaTop}{Vector: the vertical top coordinates of the branches of the lambda tree, in the same order of \code{id}}
+\item{rBottom}{(only if \code{density="knn"}) Vector: the vertical bottom coordinates of the branches of the r tree, in the same order of \code{id}}
+\item{rTop}{(only if \code{density="knn"}) Vector: the vertical top coordinates of the branches of the r tree, in the same order of \code{id}}
+\item{alphaBottom}{Vector: the vertical bottom coordinates of the branches of the alpha tree, in the same order of \code{id}}
+\item{alphaTop}{Vector: the vertical top coordinates of the branches of the alpha tree, in the same order of \code{id}}
+\item{Kbottom}{Vector: the vertical bottom coordinates of the branches of the kappa tree, in the same order of \code{id}}
+\item{Ktop}{Vector: the vertical top coordinates of the branches of the kappa tree, in the same order of \code{id}}
 }
 \references{
 Brian P. Kent, Alessandro Rinaldo, and Timothy Verstynen, (2013), "DeBaCl: A Python Package for Interactive DEnsity-BAsed CLustering."arXiv:1307.8136 

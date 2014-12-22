@@ -1,5 +1,5 @@
 gridDiag <-
-function(X, FUN, lim, by, maxdimension=length(lim)/2-1, sublevel=TRUE, library="Dionysus", printProgress=FALSE, diagLimit=NULL, ...){
+function(X, FUN, lim, by, maxdimension=length(lim)/2-1, sublevel=TRUE, library="Dionysus", location=FALSE, printProgress=FALSE, diagLimit=NULL, ...){
 
 
   if (library=="dionysus" || library=="DIONYSUS") library="Dionysus"
@@ -34,22 +34,26 @@ function(X, FUN, lim, by, maxdimension=length(lim)/2-1, sublevel=TRUE, library="
 	#write input.txt and read output.txt
   if (ncol(X)<=3)
   {
-  	computeGrid=.C("grid",FUNvaluesInput=as.double(gridValues),gridDimensionInput=as.integer(length(dim)),gridNumberInput=as.integer(dim),maxdimensionInput=as.integer(maxdimension),decompositionInput=as.character("5tetrahedra"),libraryInput=as.character(library),printInput=as.integer(printProgress),
+  	computeGrid=.C("grid",FUNvaluesInput=as.double(gridValues),gridDimensionInput=as.integer(length(dim)),gridNumberInput=as.integer(dim),maxdimensionInput=as.integer(maxdimension),decompositionInput=as.character("5tetrahedra"),libraryInput=as.character(library),locationInput=as.integer(location),printInput=as.integer(printProgress),
                    dup=FALSE, package="TDA")
   }
   else
   {
-    computeGrid=.C("grid",FUNvaluesInput=as.double(gridValues),gridDimensionInput=as.integer(length(dim)),gridNumberInput=as.integer(dim),maxdimensionInput=as.integer(maxdimension),decompositionInput=as.character("barycenter"),libraryInput=as.character(library),printInput=as.integer(printProgress),
+    computeGrid=.C("grid",FUNvaluesInput=as.double(gridValues),gridDimensionInput=as.integer(length(dim)),gridNumberInput=as.integer(dim),maxdimensionInput=as.integer(maxdimension),decompositionInput=as.character("barycenter"),libraryInput=as.character(library),locationInput=as.integer(location),printInput=as.integer(printProgress),
                    dup=FALSE, package="TDA")
   }
 	
-#  if (library=="Dionysus")
-#  {
-    out=read.table("outputTDA.txt", sep="\n")
+  out=read.table("outputTDA.txt", sep="\n")
 
-   ##convert outputTDA.txt in matrix format
+  ##convert outputTDA.txt in matrix format
  	vecOut=as.vector(out$V1)
- 	whichDimens=c((1:length(vecOut))[!grepl(" ",vecOut)], length(vecOut)+1)
+  if (location==FALSE)
+  {
+ 	  whichDimens=c((1:length(vecOut))[!grepl(" ",vecOut)], length(vecOut)+1)
+  } else
+  {
+    whichDimens=(1:length(vecOut))[!grepl("[ C]",vecOut)]
+  }
  	dim=NULL
    if (length(whichDimens)>1)
    {
@@ -57,20 +61,28 @@ function(X, FUN, lim, by, maxdimension=length(lim)/2-1, sublevel=TRUE, library="
    		dim=c(dim, rep(as.numeric(vecOut[whichDimens[i]]), whichDimens[i+1]-whichDimens[i]-1))
    		}
    }
- 	out2=data.frame(dim,life=out[grep(" ",vecOut),1])
- 	life2=matrix(NA, ncol=2, nrow=length(dim))
-   if (length(dim)>0)
-   {
-   	for (i in 1:length(dim)){
-   		life2[i,]=as.numeric(unlist(strsplit(as.character(out2[i,2]), " "))	)
-   		}
-   }	
- 	Diag=cbind(dim,life2)
-# }
-#	if (library=="PHAT")
-#	{
-#    Diag=as.matrix(read.table("outputTDA.txt"))
-#	}
+  if (location==FALSE)
+  {
+ 	  life=out[grep(" ",vecOut),1]
+  } else
+  {
+    life=(out[grep(" ",vecOut),1])[1:length(dim)]
+  }
+  life2=matrix(as.numeric(unlist(strsplit(as.character(life)," "))),ncol=2, nrow=length(dim), byrow=TRUE)
+	Diag=cbind(dim,life2)
+  if (location==TRUE)
+  {
+    loc=out[(grep("L",vecOut)+1):(grep("C",vecOut)-1),1]
+    loc2=matrix(as.numeric(unlist(strsplit(as.character(loc)," "))),ncol=2, nrow=length(loc), byrow=TRUE)
+    BirthLocation=Grid$grid[loc2[,1],]
+    DeathLocation=Grid$grid[loc2[,2],]
+    
+    if (library=="Dionysus")
+    {
+      cycle=c("",as.character(out[(grep("C",vecOut)+1):nrow(out),1]))
+      CycleLocation = lapply(strsplit(as.character(cycle)," "),function(c){Grid$grid[as.numeric(c),]})
+    }
+  }
 	  
   if (nrow(Diag)>0) {
   	if (sublevel==FALSE) {
@@ -90,5 +102,15 @@ function(X, FUN, lim, by, maxdimension=length(lim)/2-1, sublevel=TRUE, library="
 	nonInf=which(Diag[,2]!=Inf & Diag[,3]!=Inf)
 	attributes(Diag)$scale=c(min(Diag[nonInf,2:3]), max(Diag[nonInf,2:3]))
 	attributes(Diag)$call=match.call()
-	return(list("diagram"=Diag))
+  if (location==FALSE)
+  {
+    out=list("diagram"=Diag)
+  } else if (library=="PHAT")
+  {
+    out=list("diagram"=Diag,"birthLocation"=BirthLocation,"deathLocation"=DeathLocation)
+  } else
+  {
+    out=list("diagram"=Diag,"birthLocation"=BirthLocation,"deathLocation"=DeathLocation,"cycleLocation"=CycleLocation)
+  }
+	return(out)
 }

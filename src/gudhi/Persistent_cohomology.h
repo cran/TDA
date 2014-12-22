@@ -245,11 +245,50 @@ Persistent_cohomology ( Complex_ds & cpx
 
 ~Persistent_cohomology()
 { 
+
+//counters
+  int counter=0;
+  for(auto &cam_ref : cam_){
+    for(auto &cell_ref : cam_ref.col_) {
+      ++counter;
+    }
+  }
+//std::cout << "Remains " << counter << " cells at the end \n";
+
 //Clean the remaining columns in the matrix.
-  for(auto & cam_ref : cam_) { cam_ref.col_.clear(); }
+  for(auto cam_col_it = cam_.begin();
+      cam_col_it != cam_.end(); ) 
+  { 
+    
+    for(auto col_cell_it = cam_col_it->col_.begin();
+        col_cell_it != cam_col_it->col_.end();) 
+    {
+      auto tmp_it = col_cell_it;
+      ++col_cell_it;
+      tmp_it->base_hook_cam_h::unlink(); //unlink from row list
+      Cell * tmp_cell_ptr = &(*tmp_it);
+      cam_col_it->col_.erase(tmp_it); //remove from column
+      
+      coeff_field_.clear_coefficient(tmp_cell_ptr->coefficient_);
+      delete tmp_cell_ptr; // delete from memory 
+    }
+    cam_col_it->col_.clear(); 
+    auto tmp_col_it = cam_col_it;
+    ++cam_col_it;
+    Column * tmp_col_ptr = &(*tmp_col_it);
+    cam_.erase(tmp_col_it); 
+    delete tmp_col_ptr; // delete column /should I erase from cam first?
+  }
 //Clean the transversal lists
-  for( auto & transverse_ref : transverse_idx_ )
-  {  transverse_ref.second.row_->clear(); delete transverse_ref.second.row_; }
+  for( auto transverse_it = transverse_idx_.begin();
+      transverse_it != transverse_idx_.end(); )
+  { 
+//     transverse_ref.second.row_->clear(); 
+//     delete transverse_ref.second.row_; 
+    auto tmp_hcell_ptr = transverse_it->second.row_;
+    ++transverse_it;
+    delete tmp_hcell_ptr;
+  }
 }
 
 private:
@@ -604,6 +643,19 @@ void destroy_cocycle ( Simplex_handle   sigma
           Simplex_key key_tmp = dsets_.find_set( curr_col->class_key_ );
           ds_repr_[ key_tmp ] = &(*(result_insert_cam.first));
           result_insert_cam.first->class_key_ = key_tmp;
+          
+
+          for(auto col_cell_it = curr_col->col_.begin();
+              col_cell_it != curr_col->col_.end();) 
+          {
+            auto tmp_it = col_cell_it;
+            ++col_cell_it;
+            //tmp_it->base_hook_cam_h::unlink(); //unlink from row list
+            Cell * tmp_cell_ptr = &(*tmp_it);
+            curr_col->col_.erase(tmp_it); //remove from column
+            coeff_field_.clear_coefficient(tmp_cell_ptr->coefficient_);
+            delete tmp_cell_ptr; // delete from memory 
+          }
           delete curr_col; //delete curr_col;
         }
       }

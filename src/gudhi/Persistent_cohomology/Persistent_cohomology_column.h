@@ -62,9 +62,9 @@ class Persistent_cohomology_cell
 
   typedef Persistent_cohomology_column< SimplexKey, ArithmeticElement > Column;
 
-  Persistent_cohomology_cell( SimplexKey        key
-                 , ArithmeticElement x
-                 , Column *          self_col)
+  Persistent_cohomology_cell(  SimplexKey        key
+                             , ArithmeticElement x
+                             , Column *          self_col)
   : key_(key)
   , coefficient_(x)
   , self_col_(self_col) {}

@@ -40,8 +40,8 @@ XX=rbind(XX1,XX2)
 DiagLim=5            # limit of the filtration
 maxdimension=1       # computes betti0 and betti1
 
-Diag=ripsDiag(XX,maxdimension,DiagLim, printProgress=TRUE)
+Diag=ripsDiag(XX,maxdimension,DiagLim, printProgress=TRUE)$diagram
 
-print(Diag$diagram)
-print(summary(Diag$diagram))
+print(Diag)
+print(summary(Diag))
 }
