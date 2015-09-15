@@ -1,5 +1,5 @@
 print.diagram <-
-function(x, ...){
-	n=nrow(x)
-	print(x[1:n,])	
+function(x, ...) {
+  n <- nrow(x)
+  print(x[seq_len(n), ])  
 }

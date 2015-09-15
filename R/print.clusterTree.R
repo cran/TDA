@@ -1,4 +1,4 @@
 print.clusterTree <-
-function(x, ...){
-	print(x)	
+function(x, ...) {
+  print(x)  
 }

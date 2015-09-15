@@ -1,18 +1,23 @@
 \name{bootstrapDiagram}
-\alias{bootstrapDiagram}
-\title{
-Bootstrapped Confidence Set for a Persistence Diagram, using the Bottleneck Distance (or the Wasserstein distance).
-}
-\description{
-\code{bootstrapDiagram} computes a \code{(1-alpha)} confidence set for the Persistence Diagram of a filtration of sublevel sets (or superlevel sets) of a function evaluated over a grid of points. The function returns the (\code{1-alpha}) quantile of \code{B} bottleneck distances (or Wasserstein distances), computed in \code{B} iterations of the bootstrap algorithm. The method is discussed in the 1st reference. 
-}
-\usage{
-bootstrapDiagram(X, FUN, lim, by, sublevel = TRUE, library="Dionysus",
-                 B=30, alpha=0.05, distance="bottleneck", dimension=1,
-                 p=1, printProgress = FALSE, ...)
-}
-\arguments{
 
+\alias{bootstrapDiagram}
+
+\title{
+  Bootstrapped Confidence Set for a Persistence Diagram, using the Bottleneck Distance (or the Wasserstein distance).
+}
+
+\description{
+  \code{bootstrapDiagram} computes a \code{(1-alpha)} confidence set for the Persistence Diagram of a filtration of sublevel sets (or superlevel sets) of a function evaluated over a grid of points. The function returns the (\code{1-alpha}) quantile of \code{B} bottleneck distances (or Wasserstein distances), computed in \code{B} iterations of the bootstrap algorithm. The method is discussed in the 1st reference. 
+}
+
+\usage{
+bootstrapDiagram(X, FUN, lim, by, maxdimension = length(lim) / 2 - 1,
+                 sublevel = TRUE, library = "Dionysus", B = 30, alpha = 0.05,
+                 distance = "bottleneck", dimension = min(1, maxdimension),
+                 p = 1, parallel = FALSE, printProgress = FALSE, weight = NULL, ...)
+}
+
+\arguments{
   \item{X}{
     an \eqn{n} by \eqn{d} matrix of coordinates, used by the function \code{FUN}, where \eqn{n} is the number of points stored in \code{X} and \eqn{d} is the dimension of the space.
   }
@@ -28,89 +33,115 @@ bootstrapDiagram(X, FUN, lim, by, sublevel = TRUE, library="Dionysus",
   \item{by}{
     either a number or a vector of length \eqn{d} specifying space between points of the grid in each dimension. If a number is given, then same space is used in each dimension.
   }
+
+  \item{maxdimension}{
+    a number that indicates the maximum dimension to compute persistent homology to. Default is \eqn{d-1}, which is (dimension of embedding space - 1).
+  }
+
   \item{sublevel}{
-a logical variable indicating if the Persistence Diagram should be computed for sublevel sets (\code{TRUE}) or superlevel sets (\code{FALSE}) of the function. Default is \code{TRUE}.
-}
+    a logical variable indicating if the Persistence Diagram should be computed for sublevel sets (\code{TRUE}) or superlevel sets (\code{FALSE}) of the function. Default is \code{TRUE}.
+  }
+
   \item{library}{
-  The user can compute the persistence diagram using either the library 'Dionysus', or 'PHAT'. Default is 'Dionysus'.
-}
+    The user can compute the persistence diagram using either the library 'Dionysus', or 'PHAT'. Default is 'Dionysus'.
+  }
+
   \item{B}{
-  the number of bootstrap iterations.
-}
+    the number of bootstrap iterations.
+  }
+
   \item{alpha}{
-  \code{bootstrapDiagram} returns a (1-\code{alpha}) quantile.
-}
+    \code{bootstrapDiagram} returns a (1-\code{alpha}) quantile.
+  }
+
   \item{distance}{
-  a string specifying the distance to be used for persistence diagrams: either 'bottleneck' or 'wasserstein'
-}
+    a string specifying the distance to be used for persistence diagrams: either 'bottleneck' or 'wasserstein'
+  }
+
   \item{dimension}{
-	if \code{distance=="wasserstein"}, then \code{dimension} an integer specifying the dimension of the features used to compute the bottleneck distance. 0 for connected components, 1 for loops, 2 for voids and so on.
-}
+    \code{dimension} is an integer or a vector specifying the dimension of the features used to compute the bottleneck distance. 0 for connected components, 1 for loops, 2 for voids and so on.
+  }
+
   \item{p}{
-		if \code{distance=="wasserstein"}, then \code{p} is an integer specifying the power to be used in the computation of the Wasserstein distance. Default is 1.
-}
+    if \code{distance == "wasserstein"}, then \code{p} is an integer specifying the power to be used in the computation of the Wasserstein distance. Default is 1.
+  }
+
+  \item{parallel}{
+    logical: if \code{TRUE} the bootstrap iterations are parallelized, using the library \code{parallel}.
+  }
+
   \item{printProgress}{
-	if \code{TRUE} a progress bar is printed. Default is \code{FALSE}.
-}
+    if \code{TRUE} a progress bar is printed. Default is \code{FALSE}.
+  }
+
+  \item{weight}{
+    either NULL, a number, or a vector of length \eqn{n}. If it is NULL, weight is not used. If it is a number, then same weight is applied to each points of \code{X}. If it is a vector, \code{weight} represents weights of each points of \code{X}.
+  }
+
   \item{...}{
-	additional parameters for the function \code{FUN}.
+    additional parameters for the function \code{FUN}.
+  }
 }
 
-}
 \details{
-\code{bootstrapDiagram} uses \code{gridDiag} to compute the persistence diagram of the input function using the entire sample. Then the bootstrap algorithm, for \code{B} times, computes the bottleneck distance between the original persistence diagram and the one computed using a subsample. Finally the (\code{1-alpha}) quantile of these \code{B} values is returned.
+  \code{bootstrapDiagram} uses \code{gridDiag} to compute the persistence diagram of the input function using the entire sample. Then the bootstrap algorithm, for \code{B} times, computes the bottleneck distance between the original persistence diagram and the one computed using a subsample. Finally the (\code{1-alpha}) quantile of these \code{B} values is returned.
 }
+
 \value{
-Returns the (1-\code{alpha}) quantile of the values computed by the bootstrap algorithm. 
+  Returns the (1-\code{alpha}) quantile of the values computed by the bootstrap algorithm. 
 }
 
 \references{
-Chazal F, Fasy BT, Lecci F, Michel B, Rinaldo A, Wasserman L (2014). "Robust Topological Inference: Distance-To-a-Measure and Kernel Distance." Technical Report.	
+  Chazal F, Fasy BT, Lecci F, Michel B, Rinaldo A, Wasserman L (2014). "Robust Topological Inference: Distance-To-a-Measure and Kernel Distance." Technical Report. 
 
-Larry Wasserman (2004), "All of statistics: a concise course in statistical inference", Springer.
+  Larry Wasserman (2004), "All of statistics: a concise course in statistical inference", Springer.
 
-Dmitriy Morozov, "Dionysus, a C++ library for computing persistent homology". http://www.mrzv.org/software/dionysus/
+  Dmitriy Morozov, "Dionysus, a C++ library for computing persistent homology". http://www.mrzv.org/software/dionysus/
 }
+
 \author{
-Fabrizio Lecci
+  Jisu Kim, Fabrizio Lecci
 }
+
 \note{
- This function uses the C++ library Dionysus for the computation of bottleneck and Wasserstein distances. See references.
+  This function uses the C++ library Dionysus for the computation of bottleneck and Wasserstein distances. See references.
 }
 
 \seealso{
-\code{\link{bottleneck}}, \code{\link{bootstrapBand}},
-\code{\link{distFct}}, \code{\link{kde}}, \code{\link{kernelDist}}, \code{\link{dtm}},
-\code{\link{summary.diagram}}, \code{\link{plot.diagram}},
+  \code{\link{bottleneck}}, \code{\link{bootstrapBand}},
+  \code{\link{distFct}}, \code{\link{kde}}, \code{\link{kernelDist}}, \code{\link{dtm}},
+  \code{\link{summary.diagram}}, \code{\link{plot.diagram}},
 }
+
 \examples{
 ## confidence set for the Kernel Density Diagram
 
 # input data
-n = 400
-XX = circleUnif(n)
+n <- 400
+XX <- circleUnif(n)
 
 ## Ranges of the grid
-Xlim=c(-1.8,1.8)
-Ylim=c(-1.6,1.6)
-lim=cbind(Xlim, Ylim)
-by=0.05
+Xlim <- c(-1.8, 1.8)
+Ylim <- c(-1.6, 1.6)
+lim <- cbind(Xlim, Ylim)
+by <- 0.05
 
-h = .3  #bandwidth for the function kde
+h <- .3  #bandwidth for the function kde
 
 #Kernel Density Diagram of the superlevel sets
-Diag=gridDiag(XX, kde, lim=lim, by=by, sublevel=FALSE, printProgress=TRUE, h=h) 
+Diag <- gridDiag(XX, kde, lim = lim, by = by, sublevel = FALSE,
+                 printProgress = TRUE, h = h) 
 
 # confidence set
-B=10         ## the number of bootstrap iterations should be higher! 
-             ## this is just an example
-alpha=0.05
+B <- 10       ## the number of bootstrap iterations should be higher!
+              ## this is just an example
+alpha <- 0.05
 
-cc=bootstrapDiagram(XX, kde, lim=lim, by=by, sublevel=FALSE, B=B, alpha=alpha, 
-   dimension=1, printProgress=TRUE, h=h)
+cc <- bootstrapDiagram(XX, kde, lim = lim, by = by, sublevel = FALSE, B = B,
+          alpha = alpha, dimension = 1, printProgress = TRUE, h = h)
 
-plot(Diag$diagram, band=2*cc)
+plot(Diag[["diagram"]], band = 2 * cc)
 }
+
 \keyword{nonparametric}
 \keyword{htest}
-

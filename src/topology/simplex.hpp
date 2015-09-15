@@ -1,4 +1,5 @@
 #include "boost/serialization/base_object.hpp"
+#include "boost/serialization/serialization.hpp"
 #include "boost/serialization/set.hpp"
 #include "boost/serialization/nvp.hpp"
 

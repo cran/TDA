@@ -1,24 +1,32 @@
-torusUnif<-
-function(n,a,c){
+torusUnif <-
+function(n, a, c) {
 
-	if (!is.vector(n) || length(n)!=1 || !is.numeric(n)) stop("n should be a integer")	
-	if (!is.vector(a) || length(a)!=1) stop("a should be a number")	
-	if (!is.vector(c) || length(c)!=1) stop("c should be a number")	
+  if (!is.numeric(n) || length(n) != 1 || n < 0) {
+    stop("n should be a nonnegative integer")
+  }
+  if (!is.numeric(a) || length(a) != 1 || a < 0) {
+    stop("a should be a nonnegative number")
+  }
+  if (!is.numeric(c) || length(c) != 1 || c < 0) {
+    stop("c should be a nonnegative number")
+  }
 
-	n=floor(n)
-	theta=NULL
-	while (length(theta)<n){
-		xvec=runif(1,0,2*pi)
-		yvec=runif(1,0,1/pi)
-		fx=(1+(a/c)*cos(xvec))/(2*pi)
-		if (yvec<fx) theta=c(theta, xvec)
-	}
+  n <- floor(n)
+  theta <- NULL
+  while (length(theta) < n){
+    xvec <- stats::runif(1, 0, 2 * pi)
+    yvec <- stats::runif(1, 0, 1 / pi)
+    fx <- (1 + (a / c) * cos(xvec)) / (2 * pi)
+    if (yvec < fx) {
+      theta <- c(theta, xvec)
+    }
+  }
 
-	phi=runif(n,0,2*pi)
-	x=(c+a*cos(theta))*cos(phi)
-	y=(c+a*cos(theta))*sin(phi)
-	z=a*sin(theta)
-	
-	out=cbind(x,y,z)
-	return(out)
+  phi <- stats::runif(n, 0, 2 * pi)
+  x <- (c + a * cos(theta)) * cos(phi)
+  y <- (c + a * cos(theta)) * sin(phi)
+  z <- a * sin(theta)
+  
+  out <- cbind(x, y, z)
+  return(out)
 }

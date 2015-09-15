@@ -12,10 +12,10 @@ circleUnif(n, r = 1)
 }
 \arguments{
   \item{n}{
-	an integer specifying the number of points in the sample.
+  an integer specifying the number of points in the sample.
 }
   \item{r}{
-	a numeric variable specifying the radius of the circle. Default is 1.
+  a numeric variable specifying the radius of the circle. Default is 1.
 }
 }
 \value{
@@ -31,7 +31,7 @@ Fabrizio Lecci
 \code{\link{sphereUnif}}, \code{\link{torusUnif}}
 }
 \examples{
-X=circleUnif(100)
+X <- circleUnif(100)
 plot(X)
 }
 \keyword{datagen}
