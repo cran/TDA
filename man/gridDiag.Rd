@@ -109,7 +109,7 @@ gridDiag(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
 }
 
 \seealso{
-  \code{\link{summary.diagram}}, \code{\link{plot.diagram}}, \code{\link{distFct}}, \code{\link{kde}}, \code{\link{kernelDist}}, \code{\link{dtm}}, \code{\link{alphaDiag}}, \code{\link{ripsDiag}}
+  \code{\link{summary.diagram}}, \code{\link{plot.diagram}}, \code{\link{distFct}}, \code{\link{kde}}, \code{\link{kernelDist}}, \code{\link{dtm}}, \code{\link{ripsDiag}}
 }
 
 \examples{

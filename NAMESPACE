@@ -1,6 +1,6 @@
 importFrom(Rcpp, evalCpp)
 
-export( alphaDiag,
+export(
 	bootstrapBand,
 	bootstrapDiagram,
 	bottleneck,

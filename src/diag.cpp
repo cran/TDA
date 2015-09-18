@@ -22,7 +22,7 @@
 #include <tdautils/gudhiUtils.h>
 
 //for CGAL
-#include <tdautils/cgalUtils.h>
+//#include <tdautils/cgalUtils.h>
 
 // for Dionysus
 #include <tdautils/dionysusUtils.h>
@@ -506,7 +506,7 @@ RipsDiag(const Rcpp::NumericMatrix & X
 }
 
 
-
+/*
 //---------------------------------------------------------------------------------------------------------------------
 // gudhi type definition
 typedef Gudhi::Simplex_tree<>::Vertex_handle Simplex_tree_vertex;
@@ -553,7 +553,7 @@ Vertex_list fromVertex(const Alpha_shape_3::Vertex_handle& vh)
 	the_list.push_back(vh);
 	return the_list;
 }
-
+*/
 
 
 // AlphaDiag in GUDHI
@@ -564,7 +564,7 @@ Vertex_list fromVertex(const Alpha_shape_3::Vertex_handle& vh)
   * @param[in]  X              An nx3 matrix of coordinates,
   * @param[in]  printProgress  Is progress printed?
   */
-// [[Rcpp::export]]
+/*// [[Rcpp::export]]
 Rcpp::List
 AlphaDiagGUDHI(const Rcpp::NumericMatrix & X          //points to some memory space
              , const bool                  printProgress
@@ -681,20 +681,20 @@ AlphaDiagGUDHI(const Rcpp::NumericMatrix & X          //points to some memory sp
 	  if (printProgress) {
 		  Rprintf("# Generated complex of size: %d \n", simplex_tree.num_simplices());
 	  }
-	  /*std::cout << "vertices \t\t" << count_vertices << std::endl;
-	  std::cout << "edges \t\t"    << count_edges << std::endl;
-	  std::cout << "facets \t\t"   << count_facets << std::endl;
-	  std::cout << "cells \t\t"    << count_cells << std::endl;
+	  //std::cout << "vertices \t\t" << count_vertices << std::endl;
+	  //std::cout << "edges \t\t"    << count_edges << std::endl;
+	  //std::cout << "facets \t\t"   << count_facets << std::endl;
+	  //std::cout << "cells \t\t"    << count_cells << std::endl;
 
 
-	  std::cout << "Information of the Simplex Tree: " << std::endl;
-	  std::cout << "  Number of vertices = " << simplex_tree.num_vertices() << " ";
-	  std::cout << "  Number of simplices = " << simplex_tree.num_simplices() << std::endl << std::endl;
-	  std::cout << "  Dimension = " << simplex_tree.dimension() << " ";
-	  std::cout << "  filtration = " << simplex_tree.filtration() << std::endl << std::endl;
-	  std::cout << "Iterator on vertices: " << std::endl;
-	  for( auto vertex : simplex_tree.complex_vertex_range() )
-	  { std::cout << vertex << " "; }*/
+	  //std::cout << "Information of the Simplex Tree: " << std::endl;
+	  //std::cout << "  Number of vertices = " << simplex_tree.num_vertices() << " ";
+	  //std::cout << "  Number of simplices = " << simplex_tree.num_simplices() << std::endl << std::endl;
+	  //std::cout << "  Dimension = " << simplex_tree.dimension() << " ";
+	  //std::cout << "  filtration = " << simplex_tree.filtration() << std::endl << std::endl;
+	  //std::cout << "Iterator on vertices: " << std::endl;
+	  //for( auto vertex : simplex_tree.complex_vertex_range() )
+	  //{ std::cout << vertex << " "; }
 
 	  // Sort the simplices in the order of the filtration
 	  simplex_tree.initialize_filtration();
@@ -711,3 +711,4 @@ AlphaDiagGUDHI(const Rcpp::NumericMatrix & X          //points to some memory sp
 			concatStlToRcpp< Rcpp::NumericMatrix >(persLoc, false, 2),
 			StlToRcppList< Rcpp::List, Rcpp::NumericVector >(persCycle));
 }
+*/

@@ -1,8 +1,7 @@
-effdc80cab4c9e6b20be5903f8e021da *DESCRIPTION
-5e1036d94126d43f66c65a1a6883ae33 *NAMESPACE
+9bc35dcd9a441a79bd318382548fb5b7 *DESCRIPTION
+7be54e3b44254b3d8701e1cf0efdb71a *NAMESPACE
 aa1502a5d89a1dc6e645b79993bfb560 *NEWS
-1970cc960e22c944c87e305153e857e4 *R/RcppExports.R
-e604aab4872e082c8196ed2acdb985b8 *R/alphaDiag.R
+b283bbbe1f979de06e3708c3207d924f *R/RcppExports.R
 260b0dc2119011c88b92072533112461 *R/bootstrapBand.R
 a2d7c316e104663ee72d7a87c0f649e4 *R/bootstrapDiagram.R
 278667a8d1a8a96834ea4093edde9c45 *R/bottleneck.R
@@ -38,13 +37,12 @@ c8c3d24cb4e2ef109cbc7221e40a1c45 *R/siloF.R
 79aa08571f761901c280054d21fd4f17 *R/summary.maxPersistence.R
 75cab85ba403e8ff78a14253e7ac1b7e *R/torusUnif.R
 4a23c7d0c081b68667fc0b0de290c77e *R/wasserstein.R
-75f86efcb8a2891561a32b4304e9ee73 *build/vignette.rds
+7853f972527be3988e26840edfa535db *build/vignette.rds
 ee5c93c415124495d9b28c86992d2e62 *inst/doc/article.R
 46332c24ebe4f885fb3cd35438d96527 *inst/doc/article.Rnw
-eb936f9fcc8440594ef66acf6b26fcb1 *inst/doc/article.pdf
+45226971a8458d93f9131c9f1050cd0b *inst/doc/article.pdf
 0b0bb0e1005123bb2a8d17cf9d64c610 *man/TDA-internal.Rd
-6f86dfc18d129ce26a815a035ce308b6 *man/TDA-package.Rd
-169f273d870d37cf38115033ee23ad04 *man/alphaDiag.Rd
+f95b6ec30fdf04b7409196e46f1c05ee *man/TDA-package.Rd
 91a25d41e1bc1f1373d42a53fc1cc01d *man/bootstrapBand.Rd
 5e949cf6738c5a6149caec8ea1339163 *man/bootstrapDiagram.Rd
 cfa4cf097569bef2341faff83c33a1b9 *man/bottleneck.Rd
@@ -52,7 +50,7 @@ cfa4cf097569bef2341faff83c33a1b9 *man/bottleneck.Rd
 8a40484fa1c4bd450cc1c97e8307f8ab *man/clusterTree.Rd
 16cdae6b5d0933a9a975c8999c35af80 *man/distFct.Rd
 81302ef391fb2dbe589fafcc0f9252df *man/dtm.Rd
-20abded9d8430afea15eed09af0cd54d *man/gridDiag.Rd
+36963a39b542b0686795e3365a979f40 *man/gridDiag.Rd
 73a8c7677d54c18264e578e840f9d41e *man/hausdInterval.Rd
 df745fa38de6cef8f93e8f63fa6c13fa *man/kde.Rd
 1e6cb923c4cb8b4886ceb81157ca662a *man/kernelDist.Rd
@@ -63,7 +61,7 @@ e620a2bd19fe8fcfe1b0510e12b8a14d *man/multipBootstrap.Rd
 da2e546edf2162861b867e5a640139ed *man/plot.clusterTree.Rd
 19f20325040a75cfb3a8951dff780b15 *man/plot.diagram.Rd
 f59e239e439b3f3ba11702851bc2cbeb *man/plot.maxPersistence.Rd
-4456d9bf738e745565b3458f508d6b6e *man/ripsDiag.Rd
+d763ea44c0524b0ee2fb29ac109be3ab *man/ripsDiag.Rd
 6626bb6fc3e21dc5fbd66fdd5483649d *man/silhouette.Rd
 09703da0d9b0328221ba3b4412b684fa *man/sphereUnif.Rd
 088c3f0d3f0c309083220aed8c8c503a *man/summary.diagram.Rd
@@ -736,7 +734,7 @@ ba037515aab73393db1e2cf5b3fbf913 *src/CGAL/vector.h
 50f2866a101c132fc39f64fe61045e95 *src/CGAL/version.h
 70ebb7af21e689121b64d398833cb766 *src/CGAL/wmult.h
 627b8a07238ea87544576953e76694f1 *src/Makevars
-dc066759b2211a12acb4d4f83ef405eb *src/RcppExports.cpp
+b68e6968698ab33b357ea2492831d6ca *src/RcppExports.cpp
 36a083fc835eb71518585d7fd6c0b5a3 *src/boost/multi_index/detail/rnd_index_loader.hpp
 6eaf93cd2aaf4f06f6a89a570aa580c0 *src/boost/multi_index/detail/rnd_index_node.hpp
 09da51a2d4403887197ca45704c9da33 *src/boost/multi_index/detail/rnd_index_ops.hpp
@@ -745,7 +743,7 @@ d8defb50f6b8cb67914427f0c82a9751 *src/boost/multi_index/detail/rnd_node_iterator
 c50cd86de203ae47cc80615187aa3112 *src/boost/multi_index/random_access_index.hpp
 4a8a132fa9c20a42b93c8514b43297d6 *src/boost/multi_index/random_access_index_fwd.hpp
 531b46141b7facdb18e0a70395b8f04c *src/boost/serialization/binary_object.hpp
-896dbbd1fe1b68296f6020f7cf49a0f6 *src/diag.cpp
+c19584134062d88c308d87932689b8bb *src/diag.cpp
 6bf40fb560e81d33f467a3debd9f0eae *src/geometry/Arbitdistance.h
 4c4d0927a3df3ebb2e56d294f98c3500 *src/geometry/NOTES
 edfbe6d6688975f9eab8f29a4d6c8597 *src/geometry/distances.h

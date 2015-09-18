@@ -87,7 +87,7 @@ ripsDiag(X, maxdimension, maxscale, dist = "euclidean", library = "GUDHI",
 }
 
 \seealso{
-  \code{\link{summary.diagram}}, \code{\link{plot.diagram}}, \code{\link{alphaDiag}}, \code{\link{gridDiag}}
+  \code{\link{summary.diagram}}, \code{\link{plot.diagram}}, \code{\link{gridDiag}}
 }
 
 \examples{

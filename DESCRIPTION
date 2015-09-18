@@ -1,7 +1,7 @@
 Package: TDA
 Type: Package
 Title: Statistical Tools for Topological Data Analysis
-Version: 1.4
+Version: 1.4.1
 Date: 2015-08-20
 Author: Brittany T. Fasy, Jisu Kim, Fabrizio Lecci, Clement Maria, Vincent Rouvreau. The included GUDHI is authored by Clement Maria, Dionysus by Dmitriy Morozov, and PHAT by Ulrich Bauer, Michael Kerber, and Jan Reininghaus.
 Maintainer: Jisu Kim <jisuk1@andrew.cmu.edu>
@@ -12,5 +12,5 @@ License: GPL-3
 Imports: FNN, igraph, parallel, scales, Rcpp (>= 0.11.0)
 LinkingTo: Rcpp, BH (>= 1.58.0-1)
 NeedsCompilation: yes
-Packaged: 2015-09-12 02:46:56 UTC; rupikot
-Date/Publication: 2015-09-15 15:27:15
+Packaged: 2015-09-17 22:27:42 UTC; rupikot
+Date/Publication: 2015-09-18 08:58:27
