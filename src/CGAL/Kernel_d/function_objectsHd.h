@@ -128,6 +128,7 @@ typedef typename R::LA LA;
 template <class Forward_iterator>
 Point_d operator()(Forward_iterator start, Forward_iterator end) const
 { CGAL_assertion(start!=end);
+  CGAL_USE(end);
   int d = start->dimension();
   typename LA::Matrix M(d);
   typename LA::Vector b(d);
@@ -205,7 +206,7 @@ template <class ForwardIterator, class OutputIterator>
 OutputIterator operator()(ForwardIterator first, ForwardIterator last, 
   const Point_d& p, OutputIterator result)
 { TUPLE_DIM_CHECK(first,last,Barycentric_coordinates_d);
-  int d = p.dimension();
+  CGAL_assertion_code( int d = p.dimension(); )
   typename R::Affine_rank_d affine_rank;
   CGAL_assertion(affine_rank(first,last)==d);
   typename LA::Matrix M(first,last);

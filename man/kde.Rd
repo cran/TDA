@@ -7,9 +7,11 @@
 }
 
 \description{
-  Given a point cloud \code{X} (\eqn{n} points), this function computes the Kernel Density Estimator over a grid of points. The kernel is a Gaussian Kernel with smoothing parameter \code{h}. For each \eqn{x \in R^d}, the Kernel Density estimator is defined as
+  Given a point cloud \code{X} (\eqn{n} points), the function \code{kde} computes the Kernel Density Estimator over a grid of points. The kernel is a Gaussian Kernel with smoothing parameter \code{h}. For each \eqn{x \in R^d}{x in R^d}, the Kernel Density estimator is defined as
   \deqn{
-    p_X(x)=\frac{1}{n (\sqrt{2 \pi} h )^d} \sum_{i=1}^n \exp \left( \frac{- \Vert x-X_i \Vert_2^2}{2h^2} \right).
+    p_X (x) = \frac{1}{n (\sqrt{2 \pi} h )^d} \sum_{i=1}^n \exp \left( \frac{- \Vert x-X_i \Vert_2^2}{2h^2} \right).
+  }{
+    p_X (x) = 1/(n (\sqrt(2\pi) h)^d) \sum_{i=1}^n exp( -(||x-X_i||^2)/(2h^2) ).
   }   
 }
 
@@ -31,16 +33,16 @@
   }
 
   \item{weight}{
-    either a number, or a vector of length \eqn{n}. If it is a number, then same weight is applied to each points of \code{X}. If it is a vector, \code{weight} represents weights of each points of \code{X}.
+    either a number, or a vector of length \eqn{n}. If it is a number, then same weight is applied to each points of \code{X}. If it is a vector, \code{weight} represents weights of each points of \code{X}. The default value is \code{1}.
   }
 
   \item{printProgress}{
-    if TRUE a progress bar is printed. Default is \code{FALSE}.
+    if \code{TRUE}, a progress bar is printed. The default value is \code{FALSE}.
   }
 }
 
 \value{
-  \code{kde} returns a vector of length \eqn{m} (the number of points in the grid) containing the value of the kernel density estimator for each point in the grid.
+  The function \code{kde} returns a vector of length \eqn{m} (the number of points in the grid) containing the value of the kernel density estimator for each point in the grid.
 }
 
 \references{
@@ -50,7 +52,7 @@
 }
 
 \author{
-  Jisu Kim, Fabrizio Lecci
+  Jisu Kim and Fabrizio Lecci
 }
 
 \seealso{

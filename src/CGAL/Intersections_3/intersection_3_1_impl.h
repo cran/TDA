@@ -1564,8 +1564,9 @@ intersection(const typename K::Segment_3 &seg,
     if (_max == _min) {
         return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Iso_cuboid_3>(Point_3(_ref_point + _dir * _min ));
     }
+   
     return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Iso_cuboid_3>(
-        Segment_3(_ref_point + _dir*_min, _ref_point + _dir*_max));
+            Segment_3(_ref_point + _dir*_min, _ref_point + _dir*_max));
 }
 
 
@@ -1654,7 +1655,7 @@ template <class R>
 inline bool
 do_intersect(const Plane_3<R>& plane1, const Plane_3<R>& plane2, const R&)
 {
-  return intersection(plane1, plane2);
+  return bool(intersection(plane1, plane2));
 }
 
 
@@ -1663,7 +1664,7 @@ inline bool
 do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
              const Plane_3<R> &plane3, const R&)
 {
-  return intersection(plane1, plane2, plane3);
+  return bool(intersection(plane1, plane2, plane3));
 }
 
 
@@ -1671,49 +1672,49 @@ template <class R>
 inline bool
 do_intersect(const Iso_cuboid_3<R> &i, const Iso_cuboid_3<R> &j, const R&)
 {
-	return CGAL::intersection(i, j);
+  return bool(CGAL::intersection(i, j));
 }
 
 template <class R>
 inline bool
 do_intersect(const Line_3<R> &l, const Iso_cuboid_3<R> &j, const R&)
 {
-	return CGAL::intersection(l, j);
+  return bool(CGAL::intersection(l, j));
 }
 
 template <class R>
 inline bool
 do_intersect(const Iso_cuboid_3<R> &j, const Line_3<R> &l, const R&)
 {
-	return CGAL::intersection(l, j);
+  return bool(CGAL::intersection(l, j));
 }
 
 template <class R>
 inline bool
 do_intersect(const Ray_3<R> &r, const Iso_cuboid_3<R> &j, const R&)
 {
-	return CGAL::intersection(r, j);
+  return bool(CGAL::intersection(r, j));
 }
 
 template <class R>
 inline bool
 do_intersect(const Iso_cuboid_3<R> &j, const Ray_3<R> &r, const R&)
 {
-	return CGAL::intersection(r, j);
+  return bool(CGAL::intersection(r, j));
 }
 
 template <class R>
 inline bool
 do_intersect(const Segment_3<R> &s, const Iso_cuboid_3<R> &j, const R&)
 {
-	return CGAL::intersection(s, j);
+  return bool(CGAL::intersection(s, j));
 }
 
 template <class R>
 inline bool
 do_intersect(const Iso_cuboid_3<R> &j, const Segment_3<R> &s, const R&)
 {
-	return CGAL::intersection(s, j);
+  return bool(CGAL::intersection(s, j));
 }
 
 } // namespace internal

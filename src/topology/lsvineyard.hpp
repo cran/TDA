@@ -171,7 +171,9 @@ bool
 LSVineyard<V,VE,S,F>::
 transpose_vertices(VertexIndex vi)
 {
+#ifdef COUNTERS
     Count(cVertexTransposition);
+#endif // COUNTERS
     rLog(rlLSVineyard, "Transposing vertices (%d:%d, %d:%d)", vi->vertex(),             (vi -  vertices_.begin()),
                                                               b::next(vi)->vertex(),    (b::next(vi) - vertices_.begin()));
 
@@ -212,7 +214,9 @@ transpose_vertices(VertexIndex vi)
         rLog(rlLSVineyardDebug, "  Considering %s", tostring(pfmap(j)).c_str());
         if (pfmap(j).contains(v))       // j becomes attached to v and does not move
         {
+#ifdef COUNTERS
             Count(cAttachment);
+#endif // COUNTERS
             rLog(rlLSVineyardDebug, "  Attachment changed for %s to %d", tostring(pfmap(j)).c_str(), vi->vertex());
             set_attachment(j, vi);
             AssertMsg(fpmap[vi->simplex_index()] < j, "The simplex must be attached to a preceding vertex");

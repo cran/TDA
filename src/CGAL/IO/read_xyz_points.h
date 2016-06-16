@@ -49,11 +49,11 @@ namespace CGAL {
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
 /// @tparam OutputIterator iterator over output points.
-/// @tparam PointPMap is a model of `WritablePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if OutputIterator value_type is convertible to Point_3<Kernel>.
-/// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = Vector_3<Kernel>.
+/// @tparam PointPMap is a model of `WritablePropertyMap` with  value type `Point_3<Kernel>`.
+///        It can be omitted if the value type of OutputIterator value_type is convertible to `Point_3<Kernel>`.
+/// @tparam NormalPMap is a model of `WritablePropertyMap` with value type  `Vector_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///
 /// @return true on success.
 
@@ -76,7 +76,8 @@ read_xyz_points_and_normals(
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   //typedef typename value_type_traits<OutputIterator>::type Enriched_point;
   typedef OutputIteratorValueType Enriched_point;
-
+  
+  typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
 
@@ -95,8 +96,8 @@ read_xyz_points_and_normals(
   while(getline(stream,line))
   {
     // position + normal
-    double x,y,z;
-    double nx,ny,nz;
+    FT x,y,z;
+    FT nx,ny,nz;
 
     lineNumber++;
 
@@ -113,15 +114,15 @@ read_xyz_points_and_normals(
     else {
       iss.clear();
       iss.str(line);
-      if (iss >> x >> y >> z)
+      if (iss >> iformat(x) >> iformat(y) >> iformat(z))
         {
           Point point(x,y,z);
           Vector normal = CGAL::NULL_VECTOR;
           // ... + normal...
-          if (iss >> nx)
+          if (iss >> iformat(nx))
             {
               // In case we could read one number, we expect that there are two more
-              if(iss  >> ny >> nz){
+              if(iss  >> iformat(ny) >> iformat(nz)){
                 normal = Vector(nx,ny,nz);
               } else {
                 //std::cerr << "Error line " << lineNumber << " of file" << std::endl;
@@ -286,10 +287,10 @@ read_xyz_points_and_normals(
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
 /// @tparam OutputIterator iterator over output points.
-/// @tparam PointPMap is a model of `WritablePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if OutputIterator value_type is convertible to Point_3<Kernel>.
+/// @tparam PointPMap is a model of `WritablePropertyMap` with value type  `Point_3<Kernel>`.
+///        It can be omitted if the value type of `OutputIterator` is convertible to `Point_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///
 /// @return true on success.
 

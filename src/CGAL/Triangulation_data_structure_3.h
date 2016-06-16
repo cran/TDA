@@ -51,14 +51,6 @@
 #include <CGAL/internal/Triangulation_ds_iterators_3.h>
 #include <CGAL/internal/Triangulation_ds_circulators_3.h>
 
-#ifdef CGAL_HAS_THREADS
-#  ifdef CGAL_LINKED_WITH_TBB
-#    include <tbb/enumerable_thread_specific.h>
-#  else
-#    include <boost/thread/tss.hpp>
-#  endif
-#endif
-
 #ifdef CGAL_LINKED_WITH_TBB
 #  include <tbb/scalable_allocator.h>
 #endif
@@ -3394,7 +3386,7 @@ is_valid(bool verbose, int level ) const
     {
       if ( number_of_vertices() < 2 ) {
         if (verbose)
-            std::cerr << "less than 2 vertices but dimension 0" << std::endl;
+            //std::cerr << "less than 2 vertices but dimension 0" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }

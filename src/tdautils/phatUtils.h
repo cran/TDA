@@ -15,7 +15,7 @@
 #include <limits>
 #include <algorithm>
 
-#include <tdautils/dionysusUtils.h>
+#include <utilities/timer.h>
 
 
 template< typename Diagrams, typename PersistencePairs, typename Evaluator,
@@ -27,10 +27,12 @@ inline void initDiagramsPhat(Diagrams& diagrams, const PersistencePairs& pairs,
 	diagrams.resize(maxdimension + 1);
 	typename Diagrams::value_type::value_type dgmPoint(2);
 
-	// Manually add 0th homology for minimum to infinity
-	dgmPoint[0] = evaluator(simplex_map_inv[0]);
-	dgmPoint[1] = std::numeric_limits< double >::infinity();
-	diagrams[0].push_back(dgmPoint);
+	// If persistence is not empty, manually add 0th homology for minimum to infinity
+	if (simplex_map_inv.size() > 0) {
+  	dgmPoint[0] = evaluator(simplex_map_inv[0]);
+  	dgmPoint[1] = std::numeric_limits< double >::infinity();
+  	diagrams[0].push_back(dgmPoint);
+	}
 
 	for (phat::index idx = 0; idx < pairs.get_num_pairs(); ++idx) {
 		const typename SimplexMapInv::value_type& b =
@@ -60,11 +62,13 @@ inline void initLocationsPhat(Locations& locations,
 	typename Locations::value_type::value_type locPoint(2);
 	locations.resize(maxdimension + 1);
 
-	// Manually trace back birth & death point
-	locPoint[0] = getLocation(simplex_map_inv[0], FUNvalues);
-	locPoint[1] = (unsigned)(std::max_element(
-			FUNvalues.begin(), FUNvalues.end()) - FUNvalues.begin() + 1);
-	locations[0].push_back(locPoint);
+	// If persistence is not empty, manually trace back birth & death point
+	if (simplex_map_inv.size() > 0) {
+  	locPoint[0] = getLocation(simplex_map_inv[0], FUNvalues);
+  	locPoint[1] = (unsigned)(std::max_element(
+  			FUNvalues.begin(), FUNvalues.end()) - FUNvalues.begin() + 1);
+  	locations[0].push_back(locPoint);
+	}
 
 	for (phat::index idx = 0; idx < pairs.get_num_pairs(); ++idx) {
 		const typename SimplexMapInv::value_type& b =

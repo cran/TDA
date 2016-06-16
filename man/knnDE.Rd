@@ -7,11 +7,13 @@
 }
 
 \description{
-  Given a point cloud \code{X} (\eqn{n} points), this function computes the k Nearest Neighbors Density Estimator over a grid of points. For each \eqn{x \in R^d}, the knn Density Estimator is defined by
+  Given a point cloud \code{X} (\eqn{n} points), The function \code{knnDE} computes the k Nearest Neighbors Density Estimator over a grid of points. For each \eqn{x \in R^d}, the knn Density Estimator is defined by
   \deqn{
     p_X(x)=\frac{k}{n \; v_d \; r_k^d(x)},
-  }   
-  where \eqn{v_n} is the volume of the Euclidean \eqn{d} dimensional unit ball and \eqn{r_k^d(x)} is the Euclidean distance form point x to its \eqn{k}'th closest neighbor.
+  }{
+    p_X (x) = k / (n * v_d * r_k^d(x)),
+  }
+  where \eqn{v_n} is the volume of the Euclidean \eqn{d} dimensional unit ball and \eqn{r_k^d(x)} is the Euclidean distance from point x to its \eqn{k}'th closest neighbor.
 }
 
 \usage{
@@ -33,7 +35,7 @@ knnDE(X, Grid, k)
 }
 
 \value{
-  \code{knnDE} returns a vector of length \eqn{m} (the number of points in the grid) containing the value of the knn Density Estimator for each point in the grid.
+  The function \code{knnDE} returns a vector of length \eqn{m} (the number of points in the grid) containing the value of the knn Density Estimator for each point in the grid.
 }
 
 % \references{
@@ -45,7 +47,7 @@ knnDE(X, Grid, k)
 }
 
 \seealso{
-  \code{\link{kde}},\code{\link{kernelDist}}, \code{\link{distFct}}, \code{\link{dtm}}
+  \code{\link{kde}}, \code{\link{kernelDist}}, \code{\link{distFct}}, \code{\link{dtm}}
 }
 
 \examples{

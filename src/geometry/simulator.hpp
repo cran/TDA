@@ -85,7 +85,9 @@ void
 Simulator<FuncKernel_, EventComparison_>::
 process()
 {
+#ifdef COUNTERS
     Count(cSimulatorProcess);
+#endif // COUNTERS
     if (reached_infinity()) return;
     rLog(rlSimulator, "Queue size: %i", queue_.size());
     Key top = queue_.top();

@@ -54,7 +54,9 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
     typename Traits::OutputMap outmap(order());
 #endif
 
+#ifdef COUNTERS
     Count(cTransposition);
+#endif // COUNTERS
     typedef                 typename Element::Trail::iterator           TrailIterator;
 
     visitor.transpose(i);
@@ -65,7 +67,9 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
     {
         swap(i_prev, i);
         rLog(rlTranspositions, "Different dimension");
+#ifdef COUNTERS
         Count(cTranspositionDiffDim);
+#endif // COUNTERS
         return false;
     }
     
@@ -91,7 +95,9 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
             swap(i_prev, i);
             rLog(rlTranspositions, "Case 1.2 --- unpaired");
             rLog(rlTranspositions, "%s", outmap(i_prev).c_str());
+#ifdef COUNTERS
             Count(cTranspositionCase12);
+#endif // COUNTERS
             return false;
         } else if (k == i_prev)
         {
@@ -101,7 +107,9 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
                 swap(i_prev, i);
                 rLog(rlTranspositions, "Case 1.2 --- unpaired");
                 rLog(rlTranspositions, outmap(i_prev).c_str());
+#ifdef COUNTERS
                 Count(cTranspositionCase12);
+#endif // COUNTERS
                 return false;
             } else
             {
@@ -111,7 +119,9 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
                 visitor.switched(i, Case12);
                 rLog(rlTranspositions, "Case 1.2 --- unpaired (pairing switch)");
                 rLog(rlTranspositions, outmap(i_prev).c_str());
+#ifdef COUNTERS
                 Count(cTranspositionCase12s);
+#endif // COUNTERS
                 return true;
             }
         }
@@ -123,7 +133,9 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
             rLog(rlTranspositions, "k is in l: %d", (bool) l->trail.contains(index(k)));       // if true, a special update would be needed to maintain lazy decomposition
             swap(i_prev, i);
             rLog(rlTranspositions, "Case 1.2");
+#ifdef COUNTERS
             Count(cTranspositionCase12);
+#endif // COUNTERS
             return false;
         } else
         {
@@ -135,7 +147,9 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
                 cycle_add(l, k->cycle);               // Add column k to l
                 trail_add(k, l->trail);               // Add row l to k
                 rLog(rlTranspositions, "Case 1.1.1");
+#ifdef COUNTERS
                 Count(cTranspositionCase111);
+#endif // COUNTERS
                 return false;
             } else
             {
@@ -146,7 +160,9 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
                 pairing_switch(i_prev, i);
                 visitor.switched(i, Case112);
                 rLog(rlTranspositions, "Case 1.1.2");
+#ifdef COUNTERS
                 Count(cTranspositionCase112);
+#endif // COUNTERS
                 return true;
             }
         }
@@ -158,7 +174,9 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
             // Case 2.2
             swap(i_prev, i);
             rLog(rlTranspositions, "Case 2.2");
+#ifdef COUNTERS
             Count(cTranspositionCase22);
+#endif // COUNTERS
             return false;
         } else
         {
@@ -176,13 +194,17 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
                 pairing_switch(i_prev, i);
                 visitor.switched(i, Case212);
                 rLog(rlTranspositions, "Case 2.1.2");
+#ifdef COUNTERS
                 Count(cTranspositionCase212);
+#endif // COUNTERS
                 return true;
             } 
             
             // Case 2.1.1
             rLog(rlTranspositions, "Case 2.1.1");
+#ifdef COUNTERS
             Count(cTranspositionCase211);
+#endif // COUNTERS
             return false;
         }
     } else if (!si && sii)
@@ -193,7 +215,9 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
             // Case 3.2
             swap(i_prev, i);
             rLog(rlTranspositions, "Case 3.2");
+#ifdef COUNTERS
             Count(cTranspositionCase32);
+#endif // COUNTERS
             return false;
         } else
         {
@@ -206,7 +230,9 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
             pairing_switch(i_prev, i);
             visitor.switched(i, Case31);
             rLog(rlTranspositions, "Case 3.1");
+#ifdef COUNTERS
             Count(cTranspositionCase31);
+#endif // COUNTERS
             return true;
         }
     } else if (si && !sii)
@@ -216,7 +242,9 @@ transpose(iterator i, const DimensionFunctor& dimension, Visitor visitor)
             rLog(rlTranspositions, "Case 4, U[i,i+1] = 1");
         swap(i_prev, i);
         rLog(rlTranspositions, "Case 4");
+#ifdef COUNTERS
         Count(cTranspositionCase4);
+#endif // COUNTERS
         return false;
     }
     

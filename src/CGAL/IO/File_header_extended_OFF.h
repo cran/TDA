@@ -108,6 +108,9 @@ std::istream& operator>>( std::istream& in, File_header_extended_OFF& h);
 
 // istream modifier skips chars until end of line.
 inline std::istream& skip_until_EOL( std::istream& in) {
+    if(in.eof()){
+        return in;
+    }
     char c;
     while ( in.get(c) && c != '\n')
         ;
@@ -124,5 +127,10 @@ inline std::istream& skip_comment_OFF( std::istream& in) {
 }
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/File_header_extended_OFF_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_IO_FILE_HEADER_EXTENDED_OFF_H //
 // EOF //

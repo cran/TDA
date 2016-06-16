@@ -119,7 +119,7 @@ par(mai = c(0.5, 0.25, 0.3, 0.1))
 persp(Xseq, Yseq, matrix(band[["band"]][, 1], ncol = length(Yseq),
       nrow = length(Xseq)),
       zlim = c(0, max(band[["band"]][posYgrid, 2])),
-      ylim = range(Yseq), xlab = "", ylab = "", zlab="",theta = 0,
+      ylim = range(Yseq), xlab = "", ylab = "", zlab = "", theta = 0,
       phi = 25, ltheta = 50, col = "pink", border = NA, d = 0.5,
       scale = FALSE, expand = 3, shade = 0.9, box = FALSE)
 
@@ -187,7 +187,7 @@ plot(Diag[["diagram"]], band = 2 * band[["width"]],
 par(mfrow = c(1, 2), mai = c(0.8, 0.8, 0.3, 0.1))
 plot(Diag[["diagram"]], rotated = TRUE, band = band[["width"]],
      main = "Rotated Diagram")
-plot(Diag[["diagram"]], barcode = TRUE,  main = "Barcode")
+plot(Diag[["diagram"]], barcode = TRUE, main = "Barcode")
 
 
 ###################################################
@@ -221,14 +221,50 @@ plot(Diag[["diagram"]])
 
 
 ###################################################
-### code chunk number 20: eq13
+### code chunk number 20: eqAlphaComplex1
+###################################################
+X <- circleUnif(n = 30)
+
+
+###################################################
+### code chunk number 21: eqAlphaComplex2
+###################################################
+DiagAlphaComplex <- alphaComplexDiag(X = X, printProgress = TRUE)
+
+
+###################################################
+### code chunk number 22: eqAlphaComplex3
+###################################################
+plot(DiagAlphaComplex[["diagram"]])
+
+
+###################################################
+### code chunk number 23: eqAlphaShape1
+###################################################
+XX <- sphereUnif(n = 500, d = 2)
+
+
+###################################################
+### code chunk number 24: eqAlphaShape2
+###################################################
+DiagAlphaShape <- alphaShapeDiag(X = XX, printProgress = FALSE)
+
+
+###################################################
+### code chunk number 25: eqAlphaShape3
+###################################################
+plot(DiagAlphaShape[["diagram"]])
+
+
+###################################################
+### code chunk number 26: eq13
 ###################################################
 Diag1 <- ripsDiag(Circle1, maxdimension = 1, maxscale = 5)
 Diag2 <- ripsDiag(Circle2, maxdimension = 1, maxscale = 5)
 
 
 ###################################################
-### code chunk number 21: eq13b
+### code chunk number 27: eq13b
 ###################################################
 print(bottleneck(Diag1[["diagram"]], Diag2[["diagram"]],
                  dimension = 1))
@@ -237,7 +273,7 @@ print(wasserstein(Diag1[["diagram"]], Diag2[["diagram"]], p = 2,
 
 
 ###################################################
-### code chunk number 22: eq14a
+### code chunk number 28: eq14a
 ###################################################
 PlotTriangles <- function(left, right) {
   n <- length(left)
@@ -303,7 +339,7 @@ axis(2)
 
 
 ###################################################
-### code chunk number 23: eq14
+### code chunk number 29: eq14
 ###################################################
 tseq <- seq(0, maxscale, length = 1000)   #domain
 Land <- landscape(Diag[["diagram"]], dimension = 1, KK = 1, tseq)
@@ -311,7 +347,7 @@ Sil <- silhouette(Diag[["diagram"]], p = 1, dimension = 1, tseq)
 
 
 ###################################################
-### code chunk number 24: eq14b
+### code chunk number 30: eq14b
 ###################################################
 par(mfrow = c(1, 2), mai = c(0.5, 0.45, 0.3, 0.3))
 plot(tseq, Land, type = "l", lwd = 3, ylab = "",
@@ -321,7 +357,7 @@ plot(tseq, Sil, type = "l", lwd = 3, ylab = "",
 
 
 ###################################################
-### code chunk number 25: eq15
+### code chunk number 31: eq15
 ###################################################
 N <- 4000
 XX1 <- circleUnif(N / 2)
@@ -330,7 +366,7 @@ X <- rbind(XX1, XX2)
 
 
 ###################################################
-### code chunk number 26: eq15b
+### code chunk number 32: eq15b
 ###################################################
 m <- 80     # subsample size
 n <- 10     # we will compute n landscapes using subsamples of size m
@@ -343,7 +379,7 @@ Lands <- matrix(0, nrow = n, ncol = length(tseq))
 
 
 ###################################################
-### code chunk number 27: eq15c
+### code chunk number 33: eq15c
 ###################################################
 for (i in seq_len(n)) {
   subX <- X[sample(seq_len(N), m), ]
@@ -354,14 +390,14 @@ for (i in seq_len(n)) {
 
 
 ###################################################
-### code chunk number 28: eq15d
+### code chunk number 34: eq15d
 ###################################################
 bootLand <- multipBootstrap(Lands, B = 100, alpha = 0.05,
                             parallel = FALSE)
 
 
 ###################################################
-### code chunk number 29: eq15e (eval = FALSE)
+### code chunk number 35: eq15e (eval = FALSE)
 ###################################################
 ## plot(tseq, bootLand[["mean"]], main = "Mean Landscape with 95% band")
 ## polygon(c(tseq, rev(tseq)),
@@ -371,7 +407,7 @@ bootLand <- multipBootstrap(Lands, B = 100, alpha = 0.05,
 
 
 ###################################################
-### code chunk number 30: eq15f
+### code chunk number 36: eq15f
 ###################################################
 par(mfrow = c(1, 2))
 par(mai = c(0.5, 0.45, 0.3, 0.3))
@@ -386,7 +422,7 @@ lines(tseq, bootLand[["mean"]], lwd = 2, col = 2)
 
 
 ###################################################
-### code chunk number 31: eq16
+### code chunk number 37: eq16
 ###################################################
 XX1 <- circleUnif(600)
 XX2 <- circleUnif(1000, r = 1.5) + 2.5
@@ -400,7 +436,7 @@ by <- 0.2
 
 
 ###################################################
-### code chunk number 32: eq16b
+### code chunk number 38: eq16b
 ###################################################
 parametersKDE <- seq(0.1, 0.6, by = 0.05)
 
@@ -409,7 +445,7 @@ alpha <- 0.1  # level of the confidence bands
 
 
 ###################################################
-### code chunk number 33: eq16c
+### code chunk number 39: eq16c
 ###################################################
 maxKDE <- maxPersistence(kde, parametersKDE, X,
               lim = cbind(Xlim, Ylim), by = by, sublevel = FALSE,
@@ -418,13 +454,13 @@ maxKDE <- maxPersistence(kde, parametersKDE, X,
 
 
 ###################################################
-### code chunk number 34: eq16d
+### code chunk number 40: eq16d
 ###################################################
 print(summary(maxKDE))
 
 
 ###################################################
-### code chunk number 35: eq16e
+### code chunk number 41: eq16e
 ###################################################
 par(mfrow = c(1, 2), mai = c(0.8, 0.8, 0.35, 0.3))
 plot(X, pch = 16, cex = 0.5, main = "Two Circles")
@@ -432,7 +468,7 @@ plot(maxKDE, main = "Max Persistence - KDE")
 
 
 ###################################################
-### code chunk number 36: eq18
+### code chunk number 42: eq18
 ###################################################
 X1 <- cbind(rnorm(300, 1, .8), rnorm(300, 5, 0.8))
 X2 <- cbind(rnorm(300, 3.5, .8), rnorm(300, 5, 0.8))
@@ -441,7 +477,7 @@ XX <- rbind(X1, X2, X3)
 
 
 ###################################################
-### code chunk number 37: eq18b
+### code chunk number 43: eq18b
 ###################################################
 Tree <- clusterTree(XX, k = 100, density = "knn",
                     printProgress = FALSE)
@@ -450,7 +486,7 @@ TreeKDE <- clusterTree(XX, k = 100, h = 0.3, density = "kde",
 
 
 ###################################################
-### code chunk number 38: eq18c (eval = FALSE)
+### code chunk number 44: eq18c (eval = FALSE)
 ###################################################
 ## plot(Tree, type = "lambda", main = "lambda Tree (knn)")
 ## plot(Tree, type = "kappa", main = "kappa Tree (knn)")
@@ -459,7 +495,7 @@ TreeKDE <- clusterTree(XX, k = 100, h = 0.3, density = "kde",
 
 
 ###################################################
-### code chunk number 39: eq18d
+### code chunk number 45: eq18d
 ###################################################
 
 par(mfrow = c(2,3))

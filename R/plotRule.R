@@ -19,7 +19,7 @@ function(Tree) {
       
       for (i in uniqueParentsNo0) {
         
-        bros <- Tree[["sons"]][[i]]
+        bros <- Tree[["children"]][[i]]
         newID <- bros
         orderID <- bros[order(Tops[bros], decreasing = TRUE)]
         newID[order(Tops[bros], decreasing=TRUE)] <- bros  
@@ -42,10 +42,10 @@ function(Tree) {
           }
             
           for (j in seq(along = newID)) {
-            if (!is.null(Tree[["sons"]][bros[j]][[1]])){
-              NewTree[["sons"]][[newID[j]]] <- Tree[["sons"]][bros[j]][[1]]
+            if (!is.null(Tree[["children"]][bros[j]][[1]])){
+              NewTree[["children"]][[newID[j]]] <- Tree[["children"]][bros[j]][[1]]
             } else {
-              NewTree[["sons"]][[newID[j]]] <- NA
+              NewTree[["children"]][[newID[j]]] <- NA
             }
           }
           

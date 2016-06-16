@@ -220,15 +220,17 @@ Comparison_result operator()(
 template <typename NT, typename LA>
 void Tuple_d<NT,LA>::print(std::ostream& os, const char* l) const
 { int i;
-  switch( os.iword(CGAL::IO::mode) ) {
+  switch( get_mode(os) ) {
     case CGAL::IO::ASCII :
       os << size() << " ";
       for (i = 0; i < size(); ++i) 
-        os << v[i] << " "; break;
+        os << v[i] << " ";
+      break;
     case CGAL::IO::BINARY :
       CGAL::write(os, size()); 
       for (i = 0; i < size(); ++i) 
-        CGAL::write(os, v[i]); break;
+        CGAL::write(os, v[i]);
+      break;
     default :
       os << l << "(" << size() << ", ";
       for (i = 0; i < size(); ++i) {
@@ -241,7 +243,7 @@ void Tuple_d<NT,LA>::print(std::ostream& os, const char* l) const
 template <typename NT, typename LA>
 void Tuple_d<NT,LA>::read(std::istream& is)
 { int i = 0, d;
-  switch( is.iword(CGAL::IO::mode) ) {
+  switch( get_mode(is) ) {
     case CGAL::IO::ASCII :
       is >> d; v = Vector(d);
       while (i < d && is >> v[i] ) ++i; 

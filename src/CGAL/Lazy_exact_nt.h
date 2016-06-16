@@ -48,6 +48,9 @@
 #include <CGAL/Sqrt_extension_fwd.h>
 #include <CGAL/Kernel/mpl.h>
 
+#include <CGAL/IO/io.h>
+
+
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,
  * where ET is an exact number type (must provide the exact operations needed).

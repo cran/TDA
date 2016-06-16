@@ -45,11 +45,19 @@ public:
 
   typedef Simple_cartesian<double>  R;
 
-        Bbox_3() {}
+  Bbox_3()
+    : rep(CGAL::make_array( std::numeric_limits<double>::infinity(),
+                            std::numeric_limits<double>::infinity(),
+                            std::numeric_limits<double>::infinity(),
+                            - std::numeric_limits<double>::infinity(),
+                            - std::numeric_limits<double>::infinity(),
+                            - std::numeric_limits<double>::infinity() ))
+  {}
 
-        Bbox_3(double x_min, double y_min, double z_min,
-               double x_max, double y_max, double z_max)
-	  : rep(CGAL::make_array(x_min, y_min, z_min, x_max, y_max, z_max)) {}
+  Bbox_3(double x_min, double y_min, double z_min,
+         double x_max, double y_max, double z_max)
+    : rep(CGAL::make_array(x_min, y_min, z_min, x_max, y_max, z_max))
+  {}
 
   inline bool operator==(const Bbox_3 &b) const;
   inline bool operator!=(const Bbox_3 &b) const;
@@ -184,7 +192,7 @@ inline
 std::ostream&
 operator<<(std::ostream &os, const Bbox_3& b)
 {
-  switch(os.iword(IO::mode))
+  switch(get_mode(os))
   {
     case IO::ASCII :
         return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin()
@@ -197,6 +205,7 @@ operator<<(std::ostream &os, const Bbox_3& b)
         write(os, b.ymax());
         write(os, b.zmax());
         return os;
+    case IO::PRETTY :
     default:
         os << "Bbox_3((" << b.xmin()
            << ", "       << b.ymin()
@@ -212,9 +221,14 @@ inline
 std::istream&
 operator>>(std::istream &is, Bbox_3& b)
 {
-  double xmin, ymin, zmin, xmax, ymax, zmax;
+    double xmin = 0;
+    double ymin = 0;
+    double zmin = 0;
+    double xmax = 0;
+    double ymax = 0;
+    double zmax = 0;
 
-  switch(is.iword(IO::mode))
+  switch(get_mode(is))
   {
     case IO::ASCII :
       is >> iformat(xmin) >> iformat(ymin) >> iformat(zmin)
@@ -228,6 +242,8 @@ operator>>(std::istream &is, Bbox_3& b)
         read(is, ymax);
         read(is, zmax);
         break;
+    case IO::PRETTY :
+      break;
   }
   if (is)
     b = Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax);

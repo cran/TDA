@@ -28,7 +28,9 @@
 
 
 #include <cstdio>
+#include <cctype>
 #include <string>
+#include <locale>
 #include <iostream>
 #include <CGAL/tags.h>
 #include <CGAL/IO/io_tags.h>
@@ -39,7 +41,17 @@ namespace CGAL {
 
 class IO {
 public:
-    CGAL_EXPORT static int mode;
+#ifndef CGAL_HEADER_ONLY
+  CGAL_EXPORT static int mode;
+  static int& get_static_mode()
+  { return IO::mode; }
+#else // CGAL_HEADER_ONLY
+  static int& get_static_mode()
+  {
+    static int mode = std::ios::xalloc();
+    return mode;
+  }
+#endif // CGAL_HEADER_ONLY
     enum Mode {ASCII = 0, PRETTY, BINARY};
 };
 
@@ -90,6 +102,62 @@ public:
     //! perform the input, calls \c operator\>\> by default.
     std::istream& operator()( std::istream& in) const { return (in >> t); }
 };
+
+#if CGAL_FORCE_IFORMAT_DOUBLE || \
+  ( ( _MSC_VER > 1600 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
+template <>
+class Input_rep<double> {
+    double& t;
+public:
+  //! initialize with a reference to \a t.
+  Input_rep( double& tt) : t(tt) {}
+
+  std::istream& operator()( std::istream& is) const 
+  {
+    typedef std::istream istream;
+    typedef istream::char_type char_type;
+    typedef istream::int_type int_type;
+    typedef istream::traits_type traits_type;
+
+    std::string buffer;
+    buffer.reserve(32);
+
+    char_type c;
+    do {
+      const int_type i = is.get();
+      if(i == traits_type::eof()) {
+	return is;
+      }
+      c = static_cast<char_type>(i);
+    }while (std::isspace(c));
+    if(c == '-'){
+      buffer += '-';
+    } else if(c != '+'){
+      is.unget();
+    }
+    do {
+      const int_type i = is.get();
+      if(i == traits_type::eof()) {
+	is.clear(is.rdstate() & ~std::ios_base::failbit);
+	break;
+      }
+      c = static_cast<char_type>(i);
+      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-')){
+        buffer += c;
+      }else{
+	is.unget();
+	break;
+      }
+    }while(true);
+
+    if(sscanf(buffer.c_str(), "%lf", &t) != 1) {
+      // if a 'buffer' does not contain a double, set the fail bit.
+      is.setstate(std::ios_base::failbit);
+    }
+    return is; 
+  }
+};
+#endif
 
 /*! \relates Input_rep
     \brief stream input to the \c Input_rep calls its \c operator().
@@ -168,18 +236,6 @@ bool
 is_binary(std::ios& i);
 
 
-  inline std::istream& extract(std::istream& is, double &d)
-{
-#if defined( _MSC_VER ) && ( _MSC_VER > 1600 )
-  std::string s;
-  is >> s;
-  sscanf(s.c_str(), "%lf", &d);
-#else
-  is >> d;
-#endif
-  return is;
-}
-
 template < class T >
 inline
 void
@@ -255,7 +311,7 @@ read(std::istream& is, T& t)
 inline
 std::ostream& operator<<( std::ostream& out, const Color& col)
 {
-    switch(out.iword(IO::mode)) {
+    switch(get_mode(out)) {
     case IO::ASCII :
         return out << static_cast<int>(col.red())   << ' '
 		   << static_cast<int>(col.green()) << ' '
@@ -276,7 +332,7 @@ inline
 std::istream &operator>>(std::istream &is, Color& col)
 {
     int r = 0, g = 0, b = 0;
-    switch(is.iword(IO::mode)) {
+    switch(get_mode(is)) {
     case IO::ASCII :
         is >> r >> g >> b;
         break;
@@ -305,7 +361,174 @@ CGAL_EXPORT
 void swallow(std::istream &is, const std::string& s );
 
 
+  namespace internal {
+inline
+void eat_white_space(std::istream &is)
+{
+  std::istream::int_type c;
+  do {
+    c= is.peek();
+    if (c== std::istream::traits_type::eof())
+      return;
+    else {
+      std::istream::char_type cc= c;
+      if ( std::isspace(cc, std::locale::classic()) ) {
+        is.get();
+        // since peek succeeded, this should too
+        CGAL_assertion(!is.fail());
+      } else {
+        return;
+      }
+    }
+  } while (true);
+}
+ 
+
+  inline
+  bool is_space (const std::istream& /*is*/, std::istream::int_type c)
+  {
+    std::istream::char_type cc= c;
+    return (c == std::istream::traits_type::eof()) ||
+           std::isspace(cc, std::locale::classic() );
+  }
+
+  inline
+  bool is_eof (const std::istream& /*is*/, std::istream::int_type c)
+  {
+    return c == std::istream::traits_type::eof();
+  }
+
+  inline
+  bool is_digit (const std::istream& /*is*/, std::istream::int_type c)
+  {
+    std::istream::char_type cc= c;
+    return std::isdigit(cc, std::locale::classic() );
+  }
+
+  inline std::istream::int_type peek(std::istream& is)
+  {
+    // Workaround for a bug in the version of libc++ that is shipped with
+    // Apple-clang-3.2. See the long comment in the function
+    // gmpz_new_read() in <CGAL/GMP/Gmpz_type.h>.
+
+    if(is.eof())
+      return std::istream::traits_type::eof();
+    else
+      return is.peek();
+  }
+   
+    
+template <typename ET>
+inline void read_float_or_quotient(std::istream & is, ET& et)
+{
+  is >> et;
+}   
+
+
+
+template <typename Int, typename Rat>
+inline void read_float_or_quotient(std::istream& is, Rat &z)
+{
+  // reads rational and floating point literals.
+  const std::istream::char_type zero = '0';
+  std::istream::int_type c;
+  std::ios::fmtflags old_flags = is.flags();
+
+  is.unsetf(std::ios::skipws);
+  internal::eat_white_space(is);
+
+  Int n(0);             // unsigned number before '/' or '.'
+  Int d(1);             // number after '/', or denominator (fp-case)
+  bool negative = false; // do we have a leading '-'?
+  bool digits = false;   // for fp-case: are there any digits at all?
+
+  c = internal::peek(is);
+  if (c != '.') {
+    // is there a sign?
+    if (c == '-' || c == '+') {
+      is.get();
+      negative = (c == '-');
+      internal::eat_white_space(is);
+      c=internal::peek(is);
+    }
+    // read n (could be empty)
+    while (!internal::is_eof(is, c) && internal::is_digit(is, c)) {
+      digits = true;
+      n = n*10 + (c-zero);
+      is.get();
+      c = internal::peek(is);
+    }
+    // are we done?
+    if (internal::is_eof(is, c) || internal::is_space(is, c)) {
+      is.flags(old_flags);
+      if (digits && !is.fail())
+        z = negative? Rat(-n,1): Rat(n,1);
+      return;
+    }
+  } else
+    n = 0;
+
+  // now we have read n, we are not done, and c is the next character
+  // in the stream
+  if (c == '/' || c == '.') {
+    is.get();
+    if (c == '/') {
+      // rational case
+      is >> d;
+      is.flags(old_flags);
+      if (!is.fail())
+        z = negative? Rat(-n,d): Rat(n,d);
+      return;
+    }
+
+    // floating point case; read number after '.' (may be empty)
+    while (true) {
+      c = internal::peek(is);
+      if (internal::is_eof(is, c) || !internal::is_digit(is, c))
+        break;
+      // now we have a digit
+      is.get();
+      digits = true;
+      d *= 10;
+      n = n*10 + (c-zero);
+    }
+  }
+
+  // now we have read all digits after '.', and c is the next character;
+  // read the exponential part (optional)
+  int e = 0;
+  if (c == 'e' || c == 'E') {
+    is.get();
+    is >> e;
+  }
+
+  // now construct the Gmpq
+  if (!digits) {
+    // illegal floating-point number
+    is.setstate(std::ios_base::failbit);
+    is.flags(old_flags);
+    return;
+  }
+
+  // handle e
+  if (e > 0)
+    while (e--) n *= 10;
+  else
+    while (e++) d *= 10;
+  is.flags(old_flags);
+  if (!is.fail())
+    z = (negative ? Rat(-n,d) : Rat(n,d));
+
+} 
+    
+    
+  } // namespace internal
 
 } //namespace CGAL
+
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/io_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_IO_H

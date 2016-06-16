@@ -1,79 +1,144 @@
 \name{clusterTree}
+
 \alias{clusterTree}
 \alias{print.clusterTree}
+
 \title{
-Density clustering: the cluster tree
+  Density clustering: the cluster tree
 }
+
 \description{
-Given a point cloud, or a matrix of distances, this function computes a density estimator and returns the corresponding cluster tree of superlevel sets (lambda tree and kappa tree; see references).
+  Given a point cloud, or a matrix of distances, the function \code{clusterTree} computes a density estimator and returns the corresponding cluster tree of superlevel sets (lambda tree and kappa tree; see references).
 }
+
 \usage{
 clusterTree(X, k, h = NULL, density = "knn", dist = "euclidean", d = NULL,
             Nlambda = 100, printProgress = FALSE)
 }
+
 \arguments{
   \item{X}{
-    If \code{dist = "euclidean"} then \code{X} is an \eqn{n} by \eqn{d} matrix of coordinates, where \eqn{n} is the number of points stored in \code{X} and \eqn{d} is the dimension of the space.
-    If \code{dist = "arbitrary"} then \code{X} is an \eqn{n} by \eqn{n} matrix of distances. Default is \code{"euclidean"}
-}
+    If \code{dist="euclidean"}, then \code{X} is an \eqn{n} by \eqn{d} matrix of coordinates, where \eqn{n} is the number of points stored in \code{X} and \eqn{d} is the dimension of the space.
+    If \code{dist="arbitrary"}, then \code{X} is an \eqn{n} by \eqn{n} matrix of distances.
+  }
+
   \item{k}{
-    an integer value specifying the parameter of the underlying k-nearest neighbor similarity graph, used to determine connected components. If \code{density = "knn"}, then \code{k} is also used to compute the k-nearest neighbor density estimator.
-}
+    an integer value specifying the parameter of the underlying k-nearest neighbor similarity graph, used to determine connected components. If \code{density="knn"}, then \code{k} is also used to compute the k-nearest neighbor density estimator.
+  }
+
   \item{h}{
-    real value: if \code{density = "kde"}, then \code{h} is used to compute the kernel density estimator with bandwidth \code{h}. Default is \code{NULL}.
-}
+    real value: if \code{density = "kde"}, then \code{h} is used to compute the kernel density estimator with bandwidth \code{h}. The default value is \code{NULL}.
+  }
+
   \item{density}{
     string: if \code{"knn"} then the k-nearest neighbor density estimator is used to compute the cluster tree;
     if \code{"kde"} then the kernel density estimator is used to compute the cluster tree.
-    Default is "knn".
-}
-  \item{dist}{
-string: can be \code{"euclidean"}, when \code{X} is a point cloud or \code{"arbitrary"}, when \code{X} is a matrix of distances. Default is 'euclidean'
-}
-  \item{d}{
-    integer: if \code{dist = "arbitrary"}, then \code{d} is the dimension of the underlying space.
-}
-  \item{Nlambda}{
-    integer: size of the grid of values of the density estimator, used to compute the cluster tree. High \code{Nlambda} (i.e. a fine grid) means a more accurate cluster Tree.
-}
-  \item{printProgress}{
-  logical: if TRUE a progress bar is printed. Default is \code{FALSE}.
-}
-}
-\details{
-This function is an implementation of Algorithm 1 in the first reference.
-}
-\value{
-This function returns an object of class \code{clusterTree}, a list with the following components
-\item{density}{Vector of length \code{n}: the values of the density estimator evaluated at each of the points stored in \code{X}}
-\item{DataPoints}{A list whose elements are the points of \code{X} corresponding to each branch, in the same order of \code{id}}
-\item{n}{The number of points stored in the input matrix \code{X}}
-\item{id}{Vector: the IDs associated to the branches of the cluster tree}
-\item{sons}{A list whose elements are the IDs of the sons of each branch, in the same order of \code{id}}
-\item{parent}{Vector: the IDs of the parents of each branch, in the same order of \code{id}}
-\item{silo}{A list whose elements are the horizontal coordinates of the silo of each branch, in the same order of \code{id}}
-\item{Xbase}{Vector: the horiontal coordinates of the branches of the cluster tree, in the same order of \code{id}}
-\item{lambdaBottom}{Vector: the vertical bottom coordinates of the branches of the lambda tree, in the same order of \code{id}}
-\item{lambdaTop}{Vector: the vertical top coordinates of the branches of the lambda tree, in the same order of \code{id}}
-\item{rBottom}{(only if \code{density = "knn"}) Vector: the vertical bottom coordinates of the branches of the r tree, in the same order of \code{id}}
-\item{rTop}{(only if \code{density = "knn"}) Vector: the vertical top coordinates of the branches of the r tree, in the same order of \code{id}}
-\item{alphaBottom}{Vector: the vertical bottom coordinates of the branches of the alpha tree, in the same order of \code{id}}
-\item{alphaTop}{Vector: the vertical top coordinates of the branches of the alpha tree, in the same order of \code{id}}
-\item{Kbottom}{Vector: the vertical bottom coordinates of the branches of the kappa tree, in the same order of \code{id}}
-\item{Ktop}{Vector: the vertical top coordinates of the branches of the kappa tree, in the same order of \code{id}}
-}
-\references{
-Brian P. Kent, Alessandro Rinaldo, and Timothy Verstynen, (2013), "DeBaCl: A Python Package for Interactive DEnsity-BAsed CLustering."arXiv:1307.8136 
+    The default value is \code{"knn"}.
+  }
 
-Fabrizio Lecci, Alessandro Rinaldo, and Larry Wasserman, (2014), "Metric Embeddings for Cluster Trees"
+  \item{dist}{
+    string: can be \code{"euclidean"}, when \code{X} is a point cloud or \code{"arbitrary"}, when \code{X} is a matrix of distances. The default value is \code{"euclidean"}.
+  }
+
+  \item{d}{
+    integer: if \code{dist="arbitrary"}, then \code{d} is the dimension of the underlying space. The default value is \code{"NULL"}.
+  }
+
+  \item{Nlambda}{
+    integer: size of the grid of values of the density estimator, used to compute the cluster tree. High \code{Nlambda} (i.e. a fine grid) means a more accurate cluster Tree. The default value is \code{100}.
+  }
+
+  \item{printProgress}{
+    logical: if \code{TRUE}, a progress bar is printed. The default value is \code{FALSE}.
+  }
 }
+
+\details{
+  The function \code{clusterTree} is an implementation of Algorithm 1 in the first reference.
+}
+
+\value{
+  The function \code{clusterTree} returns an object of class \code{clusterTree}, a list with the following components
+
+  \item{density}{
+    Vector of length \code{n}: the values of the density estimator evaluated at each of the points stored in \code{X}
+  }
+
+  \item{DataPoints}{
+    A list whose elements are the points of \code{X} corresponding to each branch, in the same order of \code{id}
+  }
+
+  \item{n}{
+    The number of points stored in the input matrix \code{X}
+  }
+
+  \item{id}{
+    Vector: the IDs associated to the branches of the cluster tree
+  }
+
+  \item{children}{
+    A list whose elements are the IDs of the children of each branch, in the same order of \code{id}
+  }
+
+  \item{parent}{
+    Vector: the IDs of the parents of each branch, in the same order of \code{id}
+  }
+
+  \item{silo}{
+    A list whose elements are the horizontal coordinates of the silo of each branch, in the same order of \code{id}
+  }
+
+  \item{Xbase}{
+    Vector: the horiontal coordinates of the branches of the cluster tree, in the same order of \code{id}
+  }
+
+  \item{lambdaBottom}{
+    Vector: the vertical bottom coordinates of the branches of the lambda tree, in the same order of \code{id}
+  }
+
+  \item{lambdaTop}{
+    Vector: the vertical top coordinates of the branches of the lambda tree, in the same order of \code{id}
+  }
+
+  \item{rBottom}{
+    (only if \code{density="knn"}) Vector: the vertical bottom coordinates of the branches of the r tree, in the same order of \code{id}
+  }
+
+  \item{rTop}{
+    (only if \code{density="knn"}) Vector: the vertical top coordinates of the branches of the r tree, in the same order of \code{id}
+  }
+
+  \item{alphaBottom}{
+    Vector: the vertical bottom coordinates of the branches of the alpha tree, in the same order of \code{id}
+  }
+
+  \item{alphaTop}{
+    Vector: the vertical top coordinates of the branches of the alpha tree, in the same order of \code{id}
+  }
+
+  \item{Kbottom}{
+    Vector: the vertical bottom coordinates of the branches of the kappa tree, in the same order of \code{id}
+  }
+
+  \item{Ktop}{
+    Vector: the vertical top coordinates of the branches of the kappa tree, in the same order of \code{id}
+  }
+}
+
+\references{
+  Kent BP, Rinaldo A, Verstynen T (2013). "DeBaCl: A Python Package for Interactive DEnsity-BAsed CLustering." arXiv:1307.8136 
+
+  Lecci F, Rinaldo A, Wasserman L (2014). "Metric Embeddings for Cluster Trees"
+}
+
 \author{
-Fabrizio Lecci
+  Fabrizio Lecci
 }
 
 \seealso{
-\code{\link{plot.clusterTree}}
+  \code{\link{plot.clusterTree}}
 }
+
 \examples{
 ## Generate data: 3 clusters
 n <- 1200    #sample size
@@ -104,4 +169,5 @@ for (i in Tree[["id"]]){
 plot(Tree, type = "kappa", main = "kappa Tree (knn)")
 plot(TreeKDE, type = "kappa", main = "kappa Tree (kde)")
 }
+
 \keyword{nonparametric}

@@ -4,9 +4,8 @@ function(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
          sublevel = TRUE, library = "Dionysus", location = FALSE,
          printProgress = FALSE, diagLimit = NULL, ...) {
 
-  if (!xor(is.null(X) || is.null(FUN) || is.null(lim) || is.null(by),
-      is.null(FUNvalues))) {
-    stop("either values of X, FUN, lim, and by should be set, or a value of FUNvalues should be set, but not both")
+  if (!xor(is.null(X) || is.null(FUN), is.null(FUNvalues))) {
+    stop("either values of X, FUN should be set, or a value of FUNvalues should be set, but not both")
   }
   if (!is.null(X) && !is.null(FUN)) {
     if (!is.numeric(X) && !is.data.frame(X)) {
@@ -14,6 +13,9 @@ function(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
     }
     if (!is.function(FUN)) {
       stop("FUN should be a function")
+    }
+    if (is.null(lim) || is.null(by)) {
+      stop("When X and FUN are set, lim and by should also be set")
     }
   }
   if (!is.null(lim) && !is.null(by)) {
@@ -56,6 +58,9 @@ function(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
   if (!is.logical(location)) {
     stop("location should be logical")
   }
+  if(location == TRUE && (is.null(lim) || is.null(by))) {
+    stop("If location is TRUE, both lim and by should be set")
+  }
   if (!is.logical(printProgress)) {
     stop("printProgress should be logical")
   }
@@ -64,12 +69,15 @@ function(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
     stop("diagLimit should be a positive number")
   }
 
-  if (is.null(FUNvalues)) {
+  if (!is.null(X)) {
     X <- as.matrix(X)
-    maxdimension <- min(maxdimension, NCOL(X) - 1)
+  }
+  if (!is.null(lim) && !is.null(by)) {
     Grid <- gridBy(lim = lim, by = by)
+  }
+  if (is.null(FUNvalues)) {
     FUNvalues <- FUN(X, Grid[["grid"]], ...)
-    gridDim <- Grid[["dim"]]    
+    gridDim <- Grid[["dim"]]
   } else {
     if (is.data.frame(FUNvalues)) {
       FUNvalues <- as.matrix(FUNvalues)
@@ -79,7 +87,12 @@ function(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
     gridDim <- dim(FUNvalues)
   }
 
-  maxdimension <- length(gridDim) - 1
+  if (!is.null(lim) && !is.null(by) &&
+      length(Grid[["dim"]]) != length(gridDim)) {
+    stop("dimension of FUNvalues does not match with lim and by")
+  }
+
+  maxdimension <- min(maxdimension, length(gridDim) - 1)
   if (sublevel == FALSE) {
     FUNvalues <- -FUNvalues
   }
@@ -98,9 +111,9 @@ function(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
   if (location == TRUE) {
     BirthLocation <- Grid[["grid"]][gridOut[[2]][, 1], ]
     DeathLocation <- Grid[["grid"]][gridOut[[2]][, 2], ]
-    if (library == "Dionysus")
-    {
-      CycleLocation <- lapply(gridOut[[3]], function(c) {Grid[["grid"]][c, ]})
+    if (library == "Dionysus") {
+      CycleLocation <- lapply(gridOut[[3]], function(bdy) {
+          array(Grid[["grid"]][bdy, ], dim = c(dim(bdy), NCOL(Grid[["grid"]])))})
     }
   }
 

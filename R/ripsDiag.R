@@ -7,7 +7,7 @@ function(X, maxdimension, maxscale, dist = "euclidean", library = "GUDHI",
   }
   if (!is.numeric(maxdimension) ||
       length(maxdimension) != 1 || maxdimension < 0) {
-    stop("maxdimnsion should be a nonnegative integer")
+    stop("maxdimension should be a nonnegative integer")
   }
   if (!is.numeric(maxscale) || length(maxscale) != 1) {
     stop("maxscale should be a number")
@@ -58,9 +58,9 @@ function(X, maxdimension, maxscale, dist = "euclidean", library = "GUDHI",
     if (dist == "euclidean") {
       BirthLocation <- X[ripsOut[[2]][, 1], ]
       DeathLocation <- X[ripsOut[[2]][, 2], ]
-      if (library == "Dionysus")
-      {
-        CycleLocation <- lapply(ripsOut[[3]], function(c) {X[c, ]})
+      if (library == "Dionysus") {
+        CycleLocation <- lapply(ripsOut[[3]], function(bdy) {
+            array(X[bdy, ], dim = c(dim(bdy), NCOL(X)))})
       }
     } else {
       BirthLocation <- ripsOut[[2]][, 1]

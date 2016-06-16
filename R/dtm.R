@@ -1,5 +1,5 @@
 dtm <-
-function(X, Grid, m0, weight = 1) {
+function(X, Grid, m0, r = 2, weight = 1) {
 
   if (!is.numeric(X) && !is.data.frame(X)) {
     stop("X should be a matrix of coordinates")
@@ -13,6 +13,9 @@ function(X, Grid, m0, weight = 1) {
   if (!is.numeric(m0) || length(m0) != 1 || m0 < 0 || m0 > 1) {
     stop("m0 should be a number between 0 and 1")
   }
+  if (!is.numeric(r) || length(r) != 1 || r < 1) {
+    stop("r should be a number greater than or equal to 1")
+  }
   if (!is.numeric(weight) || 
       (length(weight) != 1 && length(weight) != NROW(X))) {
     stop("weight should be either a number or a vector of length equals the number of sample")
@@ -20,11 +23,12 @@ function(X, Grid, m0, weight = 1) {
 
   # without weight
   if (length(weight) == 1) {
-    X <- as.matrix(X) 
-    k0 <- ceiling(m0 * NROW(X))
-    distances <- FNN::knnx.dist(X, as.matrix(Grid), k = k0,
-        algorithm = c("kd_tree"))
-    return (sqrt(apply(distances^2, 1, sum)/k0))
+    X <- as.matrix(X)
+    weightBound <- m0 * NROW(X)
+    knnDistance <- FNN::knnx.dist(
+		data = X, query = as.matrix(Grid), k = ceiling(weightBound),
+		algorithm = c("kd_tree"))
+    return (Dtm(knnDistance = knnDistance, weightBound = weightBound, r = r))
 
   # with weight
   } else {
@@ -39,10 +43,10 @@ function(X, Grid, m0, weight = 1) {
         break
       }
     }
-    indexDistance <- FNN::get.knnx(X0, as.matrix(Grid), k = k0,
-        algorithm = c("kd_tree"))
-    return (Dtm(knnIndex = indexDistance[["nn.index"]],
-        knnDistance = indexDistance[["nn.dist"]], weight = weight0,
-        weightBound = weightBound))
+    knnDistanceIndex <- FNN::get.knnx(
+	    data = X0, query = as.matrix(Grid), k = k0, algorithm = c("kd_tree"))
+    return (DtmWeight(
+	    knnDistance = knnDistanceIndex[["nn.dist"]], weightBound = weightBound,
+		r = r, knnIndex = knnDistanceIndex[["nn.index"]], weight = weight0))
   }
 }

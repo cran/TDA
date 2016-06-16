@@ -7,7 +7,7 @@
 }
 
 \description{
-  This function samples \code{n} points from the 3D torus, uniformly with respect to its surface.
+  The function \code{torusUnif} samples \code{n} points from the 3D torus, uniformly with respect to its surface.
 }
 
 \usage{
@@ -30,15 +30,15 @@
 }
 
 \details{
-  This function is an implementation of Algorithm 1 in the reference.
+  This function \code{torusUnif} is an implementation of Algorithm 1 in the reference.
 }
 
 \value{
-  \code{torusUnif} returns an \code{n} by 3 matrix of coordinates.
+  The function \code{torusUnif} returns an \code{n} by 3 matrix of coordinates.
 }
 
 \references{
-  Persi Diaconis, Susan Holmes, and Mehrdad Shahshahani, (2013), "Sampling from a manifold." Advances in Modern Statistical Theory and Applications: A Festschrift in honor of Morris L. Eaton. Institute of Mathematical Statistics, 102-125.
+  Diaconis P, Holmes S, and Shahshahani M (2013). "Sampling from a manifold." Advances in Modern Statistical Theory and Applications: A Festschrift in honor of Morris L. Eaton. Institute of Mathematical Statistics, 102-125.
 }
 
 \author{

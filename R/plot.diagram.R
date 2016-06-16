@@ -28,7 +28,7 @@ function(x, diagLim = NULL, dimension = NULL, col = NULL, rotated = FALSE,
   }
 
   if (is.numeric(x)) {
-    x <- matrix(x, ncol = 3, dimnames = list(NULL, names(x)))
+    x <- matrix(x, ncol = 3, dimnames = list(NULL, colnames(x)))
   }
 
   ################################################

@@ -1,5 +1,5 @@
 findKtree <-
-function(bb, parent, sons, compBranch, n) {
+function(bb, parent, children, compBranch, n) {
   kappaTop <- numeric(bb)
   kappaBottom <- numeric(bb)
   for (i in seq_len(bb)) {
@@ -8,11 +8,11 @@ function(bb, parent, sons, compBranch, n) {
       kappaTop[i] <- NA
     } else if (parent[i] == 0) { 
         kappaBottom[i] <- 0 
-        if (i <= length(sons)) {
-          Ksons <- sons[[i]]
-          if (!is.null(Ksons) && !is.na(Ksons)) {
+        if (i <= length(children)) {
+          Kchildren <- children[[i]]
+          if (!is.null(Kchildren) && !is.na(Kchildren)) {
           kappaTop[i] <-
-              (length(compBranch[[i]]) - length(unlist(compBranch[Ksons]))) / n
+              (length(compBranch[[i]]) - length(unlist(compBranch[Kchildren]))) / n
           } else {
             kappaTop[i] <- length(compBranch[[i]]) / n
           }
@@ -21,11 +21,11 @@ function(bb, parent, sons, compBranch, n) {
         }
       } else {
         kappaBottom[i] <- kappaTop[parent[i]]
-        if (i <= length(sons)) {
-          Ksons <- sons[[i]]
-          if (!is.null(Ksons) && length(Ksons) != 0 && !is.na(Ksons)) {
+        if (i <= length(children)) {
+          Kchildren <- children[[i]]
+          if (!is.null(Kchildren) && length(Kchildren) != 0 && !is.na(Kchildren)) {
             kappaTop[i] <- kappaBottom[i] + (length(compBranch[[i]]) -
-                length(unlist(compBranch[Ksons]))) / n
+                length(unlist(compBranch[Kchildren]))) / n
           } else {
             kappaTop[i] <- kappaBottom[i] + length(compBranch[[i]]) / n
           }

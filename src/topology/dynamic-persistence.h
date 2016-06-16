@@ -159,8 +159,16 @@ class DynamicPersistenceTrails:
                                         PairingTrailsVisitor(Order& order, ConsistencyComparison ccmp, unsigned size):
                                             Parent::PairVisitor(size), order_(order), ccmp_(ccmp)   {}
 
-            void                        init(iterator i) const                          { order_.modify(i,                                  boost::bind(&Element::template trail_append<ConsistencyComparison>, bl::_1, &*i, ccmp_)); Count(cTrailLength); }        // i->trail_append(&*i, ccmp)
-            void                        update(iterator j, iterator i) const            { order_.modify(order_.iterator_to(*(i->pair)),     boost::bind(&Element::template trail_append<ConsistencyComparison>, bl::_1, &*j, ccmp_)); Count(cTrailLength); }        // i->pair->trail_append(&*j, ccmp)
+            void                        init(iterator i) const                          { order_.modify(i,                                  boost::bind(&Element::template trail_append<ConsistencyComparison>, bl::_1, &*i, ccmp_));
+#ifdef COUNTERS
+            Count(cTrailLength);
+#endif // COUNTERS
+            }        // i->trail_append(&*i, ccmp)
+            void                        update(iterator j, iterator i) const            { order_.modify(order_.iterator_to(*(i->pair)),     boost::bind(&Element::template trail_append<ConsistencyComparison>, bl::_1, &*j, ccmp_));
+#ifdef COUNTERS
+            Count(cTrailLength);
+#endif // COUNTERS
+            }        // i->pair->trail_append(&*j, ccmp)
             void                        finished(iterator i) const                      { Parent::PairVisitor::finished(i); }
 
             Order&                      order_;

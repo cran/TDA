@@ -1,5 +1,18 @@
+### TDA: version 1.5
+- fixed bugs
+- dtm now takes additional tuning parameter r
+- alphaShapeDiag function is added
+- alphaComplexDiag feature
+- update boost with version 1.60.0
+- update CGAL with version 4.8
+- update GUDHI with version 1.3.0
+- in clusterTree(), sons is changed to children
+
+### TDA: version 1.4.1
+- remove alphaDiag function temporarily for installation error in Windows
+
 ### TDA: version 1.4
-- Fixed bugs
+- fixed bugs
 - Rcpp is used in gridDiag, bottleneck & wasserstein distance, kde, kernel distance, dtm, ripsDiag, and alphaDiag
 - inputTDA.txt and outputTDA.txt are no longer used
 - kde, kernel distance, and dtm have weighted version
@@ -12,20 +25,20 @@
 - In landscape(), KK is vectorized, and in silhouette(), p is vectorized
 
 ### TDA: version 1.3
-- Fixed bugs (memory leak in GUDHI, "1.#INF" code in Windows)
+- fixed bugs (memory leak in GUDHI, "1.#INF" code in Windows)
 - gridDiag now returns also location of representative cycles
 - clusterTree now returns r-Tree, lambda-Tree, alpha-Tree and kappa-Tree
 
 ### TDA: version 1.2
-- Fixed bugs
+- fixed bugs
 - gridDiag extended to arbitrary dimension
 - PHAT can be used in gridDiag
 - GUDHI can be used in ripsDiag (requires R>=3.1.0)
 - Minor improvements for displaying the results (plot.diagram, plot.maxPersistence)
 
 ### TDA: version 1.1
-- Fixed bug in diag.cpp, line 421 [ fcnvalues.at(curidx) = x ]
+- fixed bug in diag.cpp, line 421 [ fcnvalues.at(curidx) = x ]
 - ripsDiag works in 32-bit machines now (l2distance.h is bypassed)
 
 ### TDA: version 1.0
-- Initial release
+- initial release

@@ -7,7 +7,7 @@
 }
 
 \description{
-  \code{bootstrapBand} computes a uniform symmetric confidence band around a function of the data \code{X}, evaluated on a \code{Grid}, using the bootstrap algorithm. See Details and References.
+  The function \code{bootstrapBand} computes a uniform symmetric confidence band around a function of the data \code{X}, evaluated on a \code{Grid}, using the bootstrap algorithm. See Details and References.
 }
 
 \usage{
@@ -21,7 +21,7 @@ bootstrapBand(X, FUN, Grid, B = 30, alpha = 0.05, parallel = FALSE,
   }
 
   \item{FUN}{
-    a function whose inputs are an \eqn{n} by \eqn{d} matrix of coordinates \code{X}, an \eqn{m} by \eqn{d} matrix of coordinates \code{Grid} and returns a numeric vector of length \eqn{m}. For example see \code{\link{distFct}},  \code{\link{kde}}, and \code{\link{dtm}}  which compute the distance function, the kernel density estimator and the distance to measure over a grid of points, using the input \code{X}.
+    a function whose inputs are an \eqn{n} by \eqn{d} matrix of coordinates \code{X}, an \eqn{m} by \eqn{d} matrix of coordinates \code{Grid} and returns a numeric vector of length \eqn{m}. For example see \code{\link{distFct}}, \code{\link{kde}}, and \code{\link{dtm}}  which compute the distance function, the kernel density estimator and the distance to measure over a grid of points, using the input \code{X}.
   }
 
   \item{Grid}{
@@ -33,19 +33,19 @@ bootstrapBand(X, FUN, Grid, B = 30, alpha = 0.05, parallel = FALSE,
   }
 
   \item{alpha}{
-    \code{bootstrapBand} returns a (1-\code{alpha}) confidence band.
+    \code{bootstrapBand} returns a (\code{1-alpha}) confidence band. The default value is \code{0.05}.
   }
 
   \item{parallel}{
-    logical: if \code{TRUE} the bootstrap iterations are parallelized, using the library \code{parallel}.
+    logical: if \code{TRUE} the bootstrap iterations are parallelized, using the library \code{parallel}. The default value is \code{FALSE}.
   }
 
   \item{printProgress}{
-    if TRUE a progress bar is printed. Default is \code{FALSE}.
+    if \code{TRUE}, a progress bar is printed. The default value is \code{FALSE}.
   }
 
   \item{weight}{
-    either NULL, a number, or a vector of length \eqn{n}. If it is NULL, weight is not used. If it is a number, then same weight is applied to each points of \code{X}. If it is a vector, \code{weight} represents weights of each points of \code{X}.
+    either NULL, a number, or a vector of length \eqn{n}. If it is NULL, weight is not used. If it is a number, then same weight is applied to each points of \code{X}. If it is a vector, \code{weight} represents weights of each points of \code{X}. The default value is \code{NULL}.
   }
 
   \item{...}{
@@ -54,14 +54,14 @@ bootstrapBand(X, FUN, Grid, B = 30, alpha = 0.05, parallel = FALSE,
 }
 
 \details{
-  First, the input function \code{FUN} is evaluated on the \code{Grid} using the original data \code{X}. Then, for \code{B} times, the bootstrap algorithm subsamples \code{n} points of \code{X} (with replacement), evaluates the function \code{FUN} on the \code{Grid} using the subsample, and computes the \eqn{\ell_\infty} distance between the original function and the bootstrapped one. The result is a sequence of \code{B} values. The (1-\code{alpha}) confidence band is constructed by taking the (1-\code{alpha}) quantile of these values.
+  First, the input function \code{FUN} is evaluated on the \code{Grid} using the original data \code{X}. Then, for \code{B} times, the bootstrap algorithm subsamples \code{n} points of \code{X} (with replacement), evaluates the function \code{FUN} on the \code{Grid} using the subsample, and computes the \eqn{\ell_\infty}{l_\infty} distance between the original function and the bootstrapped one. The result is a sequence of \code{B} values. The (\code{1-alpha}) confidence band is constructed by taking the (\code{1-alpha}) quantile of these values.
 }
 
 \value{
-  Returns a list with the following elements:
+  The function \code{bootstrapBand} returns a list with the following elements:
 
   \item{width}{
-    number: (1-\code{alpha}) quantile of the values computed by the bootstrap algorithm. It corresponds to half of the width of the unfiorm confidence band; that is, \code{width} is the distance of the upper and lower limits of the band from the function evaluated using the original dataset \code{X}.
+    number: (\code{1-alpha}) quantile of the values computed by the bootstrap algorithm. It corresponds to half of the width of the unfiorm confidence band; that is, \code{width} is the distance of the upper and lower limits of the band from the function evaluated using the original dataset \code{X}.
   }
 
   \item{fun}{
@@ -74,15 +74,15 @@ bootstrapBand(X, FUN, Grid, B = 30, alpha = 0.05, parallel = FALSE,
 }
 
 \references{
-  Larry Wasserman (2004), "All of statistics: a concise course in statistical inference", Springer.
+  Wasserman L (2004). "All of statistics: a concise course in statistical inference." Springer.
 
-  Brittany T. Fasy, Fabrizio Lecci, Alessandro Rinaldo, Larry Wasserman, Sivaraman Balakrishnan, and Aarti Singh. (2013), "Statistical Inference For Persistent Homology: Confidence Sets for Persistence Diagrams", (arXiv:1303.7117). To appear, Annals of Statistics.
+  Fasy BT, Lecci F, Rinaldo A, Wasserman L, Balakrishnan S, Singh A (2013). "Statistical Inference For Persistent Homology: Confidence Sets for Persistence Diagrams." (arXiv:1303.7117). Annals of Statistics.
 
   Chazal F, Fasy BT, Lecci F, Michel B, Rinaldo A, Wasserman L (2014). "Robust Topological Inference: Distance-To-a-Measure and Kernel Distance." Technical Report. 
 }
 
 \author{
-  Jisu Kim, Fabrizio Lecci
+  Jisu Kim and Fabrizio Lecci
 }
 
 \seealso{

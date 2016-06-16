@@ -7,7 +7,7 @@
 }
 
 \description{
-  This function computes a confidence band for the average landscape (or the average silhouette) using the multiplier bootstrap.
+  The function \code{multipBootstrap} computes a confidence band for the average landscape (or the average silhouette) using the multiplier bootstrap.
 }
 
 \usage{
@@ -32,7 +32,7 @@ multipBootstrap(Y, B = 30, alpha = 0.05, parallel = FALSE, printProgress = FALSE
   }
 
   \item{printProgress}{
-    logical: if \code{TRUE} a progress bar is printed. Default is \code{FALSE}.
+    logical: if \code{TRUE} a progress bar is printed. The default value is \code{FALSE}.
   }
 }
 \details{
@@ -40,7 +40,8 @@ multipBootstrap(Y, B = 30, alpha = 0.05, parallel = FALSE, printProgress = FALSE
 }
 
 \value{
-  Returns a list with the following elements:
+  The function \code{multipBootstrap} returns a list with the following elements:
+
   \item{width}{
     number: half of the width of the unfiorm confidence band; that is, the distance of the upper and lower limits of the band from the empirical average landscape (or silhouette).
   }
@@ -55,7 +56,7 @@ multipBootstrap(Y, B = 30, alpha = 0.05, parallel = FALSE, printProgress = FALSE
 }
 
 \references{
-  Chazal, F., Fasy, B.T., Lecci, F., Rinaldo, A., and Wasserman, L., (2014), "Stochastic Convergence of Persistence Landscapes and Silhouettes", Proceedings of the 30th Symposium of Computational Geometry (SoCG). (arXiv:1312.0308)
+  Chazal F, Fasy BT, Lecci F, Rinaldo A, Wasserman L (2014). "Stochastic Convergence of Persistence Landscapes and Silhouettes." Proceedings of the 30th Symposium of Computational Geometry (SoCG). (arXiv:1312.0308)
 }
 
 \author{

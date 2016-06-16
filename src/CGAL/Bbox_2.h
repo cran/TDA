@@ -48,11 +48,17 @@ public:
 
   typedef Simple_cartesian<double>  R;
 
-             Bbox_2() {}
+  Bbox_2()
+    : rep(CGAL::make_array(std::numeric_limits<double>::infinity(),
+                           std::numeric_limits<double>::infinity(),
+                           - std::numeric_limits<double>::infinity(),
+                           - std::numeric_limits<double>::infinity() ))
+  {}
 
-             Bbox_2(double x_min, double y_min,
-                    double x_max, double y_max)
-		 : rep(CGAL::make_array(x_min, y_min, x_max, y_max)) {}
+  Bbox_2(double x_min, double y_min,
+         double x_max, double y_max)
+    : rep(CGAL::make_array(x_min, y_min, x_max, y_max))
+{}
 
   inline bool       operator==(const Bbox_2 &b) const;
   inline bool       operator!=(const Bbox_2 &b) const;
@@ -166,7 +172,7 @@ inline
 std::ostream&
 operator<<(std::ostream &os, const Bbox_2 &b)
 {
-    switch(os.iword(IO::mode)) {
+    switch(get_mode(os)) {
     case IO::ASCII :
         os << b.xmin() << ' ' << b.ymin() << ' '
            << b.xmax() << ' ' << b.ymax();
@@ -177,6 +183,7 @@ operator<<(std::ostream &os, const Bbox_2 &b)
         write(os, b.xmax());
         write(os, b.ymax());
         break;
+    case IO::PRETTY :
     default:
         os << "Bbox_2(" << b.xmin() << ", " << b.ymin() << ", "
                         << b.xmax() << ", " << b.ymax() << ")";
@@ -189,9 +196,12 @@ inline
 std::istream&
 operator>>(std::istream &is, Bbox_2 &b)
 {
-    double xmin, ymin, xmax, ymax;
-
-    switch(is.iword(IO::mode)) {
+    double xmin = 0;
+    double ymin = 0;
+    double xmax = 0;
+    double ymax = 0;
+    
+    switch(get_mode(is)) {
     case IO::ASCII :
         is >> iformat(xmin) >> iformat(ymin) >> iformat(xmax) >> iformat(ymax);
         break;
@@ -200,6 +210,8 @@ operator>>(std::istream &is, Bbox_2 &b)
         read(is, ymin);
         read(is, xmax);
         read(is, ymax);
+        break;
+    case IO::PRETTY :
         break;
     }
     if (is)

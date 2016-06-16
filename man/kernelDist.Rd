@@ -7,13 +7,17 @@
 }
 
 \description{
-  Given a point cloud \code{X}, this function computes the kernel distance over a grid of points. The kernel is a Gaussian Kernel with smoothing parameter h:
+  Given a point cloud \code{X}, the function \code{kernelDist} computes the kernel distance over a grid of points. The kernel is a Gaussian Kernel with smoothing parameter h:
   \deqn{
     K_h(x,y)=\exp\left( \frac{- \Vert x-y \Vert_2^2}{2h^2} \right).
+  }{
+    K_h (x,y) = exp( -(||x-y||^2)/(2h^2) ).
   }
-  For each \eqn{x \in R^d} the Kernel distance is defined by
+  For each \eqn{x \in R^d}{x in R^d}, the Kernel distance is defined by
   \deqn{
     \kappa_X(x)=\sqrt{ \frac{1}{n^2} \sum_{i=1}^n\sum_{j=1}^n K_h(X_i, X_j) + K_h(x,x) - 2 \frac{1}{n} \sum_{i=1}^n K_h(x,X_i)  }. 
+  }{
+    \kappa_X (x) = \sqrt( 1/(n^2) \sum_{i=1}^n\sum_{j=1}^n K_h(X_i, X_j) + K_h(x,x) - 2/n \sum_{i=1}^n K_h(x,X_i) ). 
   }
 }
 
@@ -35,26 +39,26 @@ kernelDist(X, Grid, h, weight = 1, printProgress = FALSE)
   }
 
   \item{weight}{
-    either a number, or a vector of length \eqn{n}. If it is a number, then same weight is applied to each points of \code{X}. If it is a vector, \code{weight} represents weights of each points of \code{X}.
+    either a number, or a vector of length \eqn{n}. If it is a number, then same weight is applied to each points of \code{X}. If it is a vector, \code{weight} represents weights of each points of \code{X}. The default value is \code{1}.
   }
 
   \item{printProgress}{
-    if TRUE a progress bar is printed. Default is \code{FALSE}.
+    if \code{TRUE}, a progress bar is printed. The default value is \code{FALSE}.
   }
 }
 
 \value{
-  \code{kernelDist} returns a vector of lenght \eqn{m} (the number of points in the grid) containing the value of the Kernel distance for each point in the grid.
+  The function \code{kernelDist} returns a vector of lenght \eqn{m} (the number of points in the grid) containing the value of the Kernel distance for each point in the grid.
 }
 
 \references{
-  Jeff M. Phillips, Bei Wang, and Yan Zheng (2013), "Geometric Inference on Kernel Density Estimates," arXiv:1307.7760.
+  Phillips JM, Wang B, Zheng Y (2013). "Geometric Inference on Kernel Density Estimates." arXiv:1307.7760.
 
   Chazal F, Fasy BT, Lecci F, Michel B, Rinaldo A, Wasserman L (2014). "Robust Topological Inference: Distance-To-a-Measure and Kernel Distance." Technical Report. 
 }
 
 \author{
-  Jisu Kim, Fabrizio Lecci
+  Jisu Kim and Fabrizio Lecci
 }
 
 \seealso{

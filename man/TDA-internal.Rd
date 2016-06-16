@@ -5,9 +5,11 @@
 \alias{plotRule}
 \alias{rMultinom}
 \alias{siloF}
-\alias{AlphaDiagGUDHI}
+\alias{AlphaComplexDiagGUDHI}
+\alias{AlphaShapeDiagGUDHI}
 \alias{Bottleneck}
 \alias{Dtm}
+\alias{DtmWeight}
 \alias{GridDiag}
 \alias{Kde}
 \alias{KdeDist}

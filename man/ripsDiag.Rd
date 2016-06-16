@@ -7,7 +7,7 @@
 }
 
 \description{
-  This function computes the persistence diagram of the Rips filtration built on top of a point cloud.
+  The function \code{ripsDiag} computes the persistence diagram of the Rips filtration built on top of a point cloud.
 }
 
 \usage{
@@ -17,8 +17,8 @@ ripsDiag(X, maxdimension, maxscale, dist = "euclidean", library = "GUDHI",
 
 \arguments{
   \item{X}{
-    If \code{dist = "euclidean"}, \code{X} is an \eqn{n} by \eqn{d} matrix of coordinates, where \eqn{n} is the number of points in the \eqn{d}-dimensional euclidean space.
-    If \code{dist = "arbitrary"}, \code{X} is an \eqn{n} by \eqn{n} matrix of distances of \eqn{n} points.
+    If \code{dist="euclidean"}, \code{X} is an \eqn{n} by \eqn{d} matrix of coordinates, where \eqn{n} is the number of points in the \eqn{d}-dimensional euclidean space.
+    If \code{dist="arbitrary"}, \code{X} is an \eqn{n} by \eqn{n} matrix of distances of \eqn{n} points.
   }
 
   \item{maxdimension}{
@@ -34,52 +34,52 @@ ripsDiag(X, maxdimension, maxscale, dist = "euclidean", library = "GUDHI",
   }
 
   \item{library}{
-    If \code{dist = 'euclidean'}, the user can compute the Rips persistence diagram using either the library 'GUDHI', 'Dionysus', or 'PHAT'. If \code{dist = 'arbitrary'}, the user can compute the Rips persistence diagram using either the library 'Dionysus' or 'PHAT'. Default is 'GUDHI' if \code{dist = 'euclidean'}, and 'Dionysus' if \code{dist == 'arbitrary'}. When 'GUDHI' is used for \code{dist = 'arbitrary'}, 'Dionysus' is implicitly used.
+    If \code{dist = "euclidean"}, the user can compute the Rips persistence diagram using either the library \code{"GUDHI"}, \code{"Dionysus"}, or \code{"PHAT"}. If \code{dist = "arbitrary"}, the user can compute the Rips persistence diagram using either the library \code{"Dionysus"} or \code{"PHAT"}. The default value is \code{"GUDHI"} if \code{dist = "euclidean"}, and \code{"Dionysus"} if \code{dist == "arbitrary"}. When \code{"GUDHI"} is used for \code{dist = "arbitrary"}, \code{"Dionysus"} is implicitly used.
   }
 
   \item{location}{
-    if \code{TRUE}, location of birth point and death point of each homological feature is returned. Additionaly if \code{library = "Dionysus"}, location of representative cycles of each homological feature is also returned.
+    if \code{TRUE}, location of birth point and death point of each homological feature is returned. Additionaly if \code{library="Dionysus"}, location of representative cycles of each homological feature is also returned.
   }
 
   \item{printProgress}{
-    logical: if \code{TRUE}, a progress bar is printed. Default is \code{FALSE}.
+    logical: if \code{TRUE}, a progress bar is printed. The default value is \code{FALSE}.
   }
 }
 
 \details{
-  For Rips Diagrams based on Euclidean distance of the input point cloud, the user can decide to use either the C++ library GUDHI, the C++ library Dionysus, or the C++ library PHAT.
-  For Rips Diagrams based on arbitrary distance, the user can decide to use either the C++ library Dionysus, or the C++ library PHAT.
+  For Rips Diagrams based on Euclidean distance of the input point cloud, the user can decide to use either the C++ library \href{ https://project.inria.fr/gudhi/software }{GUDHI}, \href{ http://www.mrzv.org/software/dionysus }{Dionysus}, or \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}.
+  For Rips Diagrams based on arbitrary distance, the user can decide to use either the C++ library \href{ http://www.mrzv.org/software/dionysus }{Dionysus} or \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}.
   See refereneces.
 }
 
 \value{
-  \code{ripsDiag} returns a list with the following elements:
+  The function \code{ripsDiag} returns a list with the following elements:
 
   \item{diagram}{
     an object of class \code{diagram}, a \eqn{P} by 3 matrix, where \eqn{P} is the number of points in the resulting persistence diagram. The first column contains the dimension of each feature (0 for components, 1 for loops, 2 for voids, etc.). Second and third columns are Birth and Death of the features.
   }
 
   \item{birthLocation}{
-    only if \code{location = TRUE} and \code{library = 'Dionysus'}, or \code{location = TRUE} and \code{library = 'PHAT'}: if \code{dist = 'euclidean'}, then \code{birthLocation} is a \eqn{P} by \eqn{d} matrix, where \eqn{P} is the number of points in the resulting persistence diagram. Each row represents the location of the data point completing the simplex that gives birth to an homological feature. If \code{dist = 'arbitrary'}, then \code{birthLocation} is a vector of length \eqn{P}. Each row represents the index of the data point completing the simplex that gives birth to an homological feature.
+    only if \code{location=TRUE} and \code{library="Dionysus"}, or \code{location=TRUE} and \code{library="PHAT"}: if \code{dist="euclidean"}, then \code{birthLocation} is a \eqn{P} by \eqn{d} matrix, where \eqn{P} is the number of points in the resulting persistence diagram. Each row represents the location of the data point completing the simplex that gives birth to an homological feature. If \code{dist="arbitrary"}, then \code{birthLocation} is a vector of length \eqn{P}. Each row represents the index of the data point completing the simplex that gives birth to an homological feature.
   }
 
   \item{deathLocation}{
-    only if \code{location = TRUE} and \code{library = 'Dionysus'}, or \code{location = TRUE} and \code{library = 'PHAT'}: if \code{dist = 'euclidean'}, then \code{deathLocation} is a \eqn{P} by \eqn{d} matrix, where \eqn{P} is the number of points in the resulting persistence diagram. Each row represents the location of the data point completing the simplex that kills an homological feature. If \code{dist = 'arbitrary'}, then \code{deathLocation} is a vector of length \eqn{P}. Each row represents the index of the data point completing the simplex that kills an homological feature.
+    only if \code{location=TRUE} and \code{library="Dionysus"}, or \code{location=TRUE} and \code{library="PHAT"}: if \code{dist="euclidean"}, then \code{deathLocation} is a \eqn{P} by \eqn{d} matrix, where \eqn{P} is the number of points in the resulting persistence diagram. Each row represents the location of the data point completing the simplex that kills an homological feature. If \code{dist="arbitrary"}, then \code{deathLocation} is a vector of length \eqn{P}. Each row represents the index of the data point completing the simplex that kills an homological feature.
   }
 
   \item{cycleLocation}{
-    only if \code{location = TRUE} and \code{library = "Dionysus"}: if \code{dist = 'euclidean'}, then \code{cycleLocation} is a list of length \eqn{P}, where \eqn{P} is the number of points in the resulting persistence diagram. Each element is a \eqn{P_i} by \eqn{d} matrix and represents location of \eqn{P_i} data points on a representative cycle of each homological feature. If \code{dist = 'arbitrary'}, then each element is a vector of length \eqn{P_i} and represents index of \eqn{P_i} data points on a representative cycle of each homological feature. 
+    only if \code{location=TRUE} and \code{library="Dionysus"}: if \code{dist="euclidean"}, then \code{cycleLocation} is a list of length \eqn{P}, where \eqn{P} is the number of points in the resulting persistence diagram. Each element is a \eqn{P_i} by \eqn{h_i +1} by \eqn{d} array for \eqn{h_i} dimensional homological feature. It represents location of \eqn{h_i +1} vertices of \eqn{P_i} simplices, where \eqn{P_i} simplices constitutes the \eqn{h_i} dimensional homological feature. If \code{dist = "arbitrary"}, then each element is a \eqn{P_i} by \eqn{h_i +1} matrix for  for \eqn{h_i} dimensional homological feature. It represents index of \eqn{h_i +1} vertices of \eqn{P_i} simplices on a representative cycle of the \eqn{h_i} dimensional homological feature.
   }
 }
 
 \references{
-  Jean-Daniel Boissonnat, Marc Glisse, Clement Maria, Vincent Rouvreau, "GUDHI, Simplicial Complexes and Persistent Homology Packages". https://project.inria.fr/gudhi/software/.
+  Maria C (2014). "GUDHI, Simplicial Complexes and Persistent Homology Packages." \url{ https://project.inria.fr/gudhi/software/ }.
 
-  Dmitriy Morozov, "Dionysus, a C++ library for computing persistent homology". http://www.mrzv.org/software/dionysus/
+  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology". \url{ http://www.mrzv.org/software/dionysus/ }
 
-  Herbert Edelsbrunner and John Harer (2010), Computational topology: an introduction. American Mathematical Society.
+  Edelsbrunner H, Harer J (2010). "Computational topology: an introduction." American Mathematical Society.
 
-  Brittany Fasy, Fabrizio Lecci, Alessandro Rinaldo, Larry Wasserman, Sivaraman Balakrishnan, and Aarti Singh. (2013), "Statistical Inference For Persistent Homology", (arXiv:1303.7117). To appear, Annals of Statistics.
+  Fasy B, Lecci F, Rinaldo A, Wasserman L, Balakrishnan S, Singh A (2013). "Statistical Inference For Persistent Homology." (arXiv:1303.7117). Annals of Statistics.
 }
 
 \author{
@@ -96,7 +96,22 @@ XX <- circleUnif(30)
 maxscale <- 5
 maxdimension <- 1
 ## note that the input XX is a point cloud
-Diag <- ripsDiag(XX, maxdimension, maxscale, printProgress = TRUE)
+Diag <- ripsDiag(XX, maxdimension, maxscale, library = "Dionysus",
+    location = TRUE, printProgress = TRUE)
+
+# plot
+layout(matrix(c(1, 3, 2, 2), 2, 2))
+plot(XX, cex = 0.5, pch = 19)
+title(main = "Data")
+plot(Diag[["diagram"]])
+title(main = "rips Diagram")
+one <- which(Diag[["diagram"]][, 1] == 1)
+plot(XX, col = 2, main = "Representative loop of data points")
+for (i in seq(along = one)) {
+  for (j in seq_len(dim(Diag[["cycleLocation"]][[one[i]]])[1])) {
+    lines(Diag[["cycleLocation"]][[one[i]]][j, , ], pch = 19, cex = 1, col = i)
+  }
+}
 
 
 ## EXAMPLE 2: rips diagram with arbitrary distance

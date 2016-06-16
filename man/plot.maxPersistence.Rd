@@ -7,7 +7,7 @@
 }
 
 \description{
-  This function plots an object of class \code{maxPersistence}, for the selection of the optimal smoothing parameter for persistent homology.
+  The function \code{plot.maxPersistence} plots an object of class \code{maxPersistence}, for the selection of the optimal smoothing parameter for persistent homology.
   For each value of the smoothing parameter, the plot shows the number of detected features, their persistence, and a bootstrap confidence band.
 }
 
@@ -38,9 +38,9 @@
 }
 
 \references{
-  Frederic Chazal,  Jessi Cisewski, Brittany T. Fasy, Fabrizio Lecci, Bertrand Michel, Alessandro Rinaldo, and Larry Wasserman, (2014), "Robust Topological Inference: distance-to-a-measure and kernel distance"
+  Chazal F, Cisewski J, Fasy BT, Lecci F, Michel B, Rinaldo A, Wasserman L (2014). "Robust Topological Inference: distance-to-a-measure and kernel distance."
 
-  Brittany T. Fasy, Fabrizio Lecci, Alessandro Rinaldo, Larry Wasserman, Sivaraman Balakrishnan, and Aarti Singh. (2013), "Statistical Inference For Persistent Homology", (arXiv:1303.7117). To appear, Annals of Statistics.
+  Fasy BT, Lecci F, Rinaldo A, Wasserman L, Balakrishnan S, Singh A (2013). "Statistical Inference For Persistent Homology." (arXiv:1303.7117). Annals of Statistics.
 }
 
 \author{

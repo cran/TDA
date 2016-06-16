@@ -1,7 +1,7 @@
 \documentclass[article, nojss]{jss}
 
 %\VignetteIndexEntry{Introduction to TDA}
-%% need no \usepackage{Sweave.sty}
+%% need no \usepackage{Sweave.sty
 
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows}
@@ -78,8 +78,8 @@
 \fvset{listparameters={\setlength{\topsep}{0pt}}}
 \renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
 
-\author{Brittany T. Fasy, Jisu Kim, Fabrizio Lecci \and Cl\'ement Maria \\ \small{In collaboration with the CMU TopStat Group}}
-\Plainauthor{Brittany Terese Fasy, Jisu Kim, Fabrizio Lecci, Cl\'ement Maria}
+\author{Brittany T. Fasy, Jisu Kim, Fabrizio Lecci, Cl\'ement Maria, \and Vincent Rouvreau \\ \small{In collaboration with the CMU TopStat Group}}
+\Plainauthor{Brittany Terese Fasy, Jisu Kim, Fabrizio Lecci, Cl\'ement Maria, Vincent Rouvreau}
 
 \title{Introduction to the \proglang{R} package \pkg{TDA}}
 \Plaintitle{Introduction to the R package TDA}
@@ -91,7 +91,7 @@ topological information about the underlying space, such as the distance functio
 the kNN density estimator, the kernel density estimator, and the kernel distance.
 The salient topological features of the sublevel sets (or superlevel sets) of these functions
 can be quantified with persistent homology. We provide an \proglang{R} interface
-for the efficient algorithms of the \proglang{C++} libraries \pkg{GUDHI}, \pkg{Dionysus} and \pkg{PHAT}, 
+for the efficient algorithms of the \proglang{C++} libraries \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}, \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}, and \href{ https://bitbucket.org/phat-code/phat }{\pkg{PHAT}}, 
 including a function for the persistent homology of the Rips filtration, 
 and one for the persistent homology of sublevel
 sets (or superlevel sets) of arbitrary functions evaluated over a grid of points.
@@ -99,7 +99,7 @@ The significance of the features in the resulting persistence diagrams can be
 analyzed with functions that implement the methods discussed in \cite{fasy2014statistical},
 \cite{chazal2014stochastic} and \cite{chazal2014robust}.
 The \proglang{R} package \pkg{TDA} also includes the implementation of an algorithm for density 
-clustering, which  allows us to identify  the spatial organization of the probability mass associated to 
+clustering, which allows us to identify the spatial organization of the probability mass associated to 
 a density function and visualize it by means of a dendrogram, the cluster tree. 
 }
 \Keywords{Topological Data Analysis, Persistent Homology, Density Clustering}
@@ -107,27 +107,33 @@ a density function and visualize it by means of a dendrogram, the cluster tree.
 \Address{
   Brittany T. Fasy\\
   Computer Science Department\\
-  Tulane University\\
+  Montana State University\\
+  Website: \url{ http://www.cs.montana.edu/brittany/ } \\
   Email: \email{brittany.fasy@alumni.duke.edu}\\
 
   Jisu Kim\\
   Department of Statistics\\
   Carnegie Mellon University\\
+  Website: \url{ http://www.stat.cmu.edu/~jisuk/ } \\
   Email: \email{jisuk1@andrew.cmu.edu}\\
 
+  Fabrizio Lecci\\
+  Email: \email{fabrizio.lecci@gmail.com}\\
+
   Cl\'ement Maria\\
-  Geometrica Group\\
-  INRIA Sophia Antipolis-M\'editerran\'ee\\
+  School of Mathematics and Physics\\
+  The University of Queensland\\
+  Website: \url{ http://www-sop.inria.fr/members/Clement.Maria/ } \\
   Email: \email{clement.maria@inria.fr}\\
 
-  Fabrizio Lecci\\
-  Department of Statistics\\
-  Carnegie Mellon University\\
-  Email: \email{lecci@cmu.edu}\\
+  Vincent Rouvreau\\
+  GUDHI Group\\
+  INRIA Saclay\\
+  Email: \email{vincent.rouvreau@inria.fr}\\
 
   TopStat Group\\
   Carnegie Mellon University\\
-  Website: \url{http://www.stat.cmu.edu/topstat/} \\
+  Website: \url{ http://www.stat.cmu.edu/topstat/ } \\
   Email: \email{topstat@stat.cmu.edu}
 
 }
@@ -158,7 +164,7 @@ This information is encoded in the persistence diagram, a multiset of points in 
 %\textsf{\textbf{phom}}\footnote{
 %http://cran.r-project.org/web/packages/phom/index.html} is an R package written
 %by Andrew Tausz;
-%\textsf{\textbf{PHAT}}\footnote{https://code.google.com/p/phat/} is a C++
+%\textsf{\textbf{PHAT}}\footnote{https://bitbucket.org/phat-code/phat/} is a C++
 %library developed at the Institute of Science and Technology Austria;
 %\textsf{\textbf{Dionysus}}\footnote{http://www.mrzv.org/software/dionysus/} is
 %a
@@ -174,7 +180,7 @@ This information is encoded in the persistence diagram, a multiset of points in 
 
 This paper is devoted to the presentation of the \proglang{R} package \pkg{TDA},
 which provides a user-friendly interface for the efficient algorithms of the 
-\proglang{C++} libraries \pkg{GUDHI} \citep{gudhi_stpcoh}, \pkg{Dionysus} \citep{dionysus_C}, and \pkg{PHAT} \citep{phat_C}.
+\proglang{C++} libraries \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}} \citep{gudhi_stpcoh}, \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}} \citep{dionysus_C}, and \href{ https://bitbucket.org/phat-code/phat }{\pkg{PHAT}} \citep{phat_C}.
 
 In Section \ref{sec:distances}, we describe how to compute some widely studied functions that, starting from a point cloud, provide some topological information about the underlying space: the distance function (\code{distFct}), the distance to a measure function (\code{dtm}), the k Nearest Neighbor density estimator (\code{knnDE}), the kernel density estimator (\code{kde}), and the kernel distance (\code{kernelDist}).
 Section \ref{sec:persistent} is devoted to the computation of persistence diagrams: the function \code{gridDiag} can be used to compute persistent homology of sublevel sets (or superlevel sets) of functions evaluated over a grid of points; the function \code{ripsDiag} returns the persistence diagram of the Rips filtration built on top of a point cloud. 
@@ -229,21 +235,23 @@ and is computed for each point of the \code{Grid} with the following code:
 distance <- distFct(X = X, Grid = Grid)
 @
 \item Given a probability measure $P$, the distance to measure (DTM) is defined for each $y \in \mathbb{R}^d$ as
-$$
-d_{m_0}(y) =\sqrt{ \frac{1}{m_0}\int_0^{m_0} ( G_y^{-1}(u))^2 du},
-$$
+\[
+d_{m0}(y) = \left(\frac{1}{m0}\int_0^{m0} ( G_y^{-1}(u))^{r} du\right)^{1/r},
+\]
 where
-$G_y(t) = P( \Vert X-y \Vert \leq t)$ and $0<m_0<1$ is a smoothing parameter. 
-The DTM can be seen as a smoothed version of the distance function.
-For more details
-see \cite{chazal2011geometric}.\\
+$G_y(t) = P( \Vert X-y \Vert \leq t)$, and $m0 \in (0,1)$ and $r \in [1,\infty)$ are tuning parameters. As \code{m0} increases, DTM function becomes smoother, so \code{m0} can be understood as a smoothing parameter. \code{r} affects less but also changes DTM function as well. The default value of \code{r} is \code{2}.
+The DTM can be seen as a smoothed version of the distance function. See \citep[Definition 3.2]{chazal2011geometric} and \citep[Equation (2)]{ChazalMM2015} for a formal definition of the "distance to measure" function.
+
 Given $X=\{x_1, \dots, x_n\}$, the empirical version of the DTM is
-$$
-\hat d_{m_0}(y) = \sqrt{ \frac{1}{k} \sum_{x_i \in N_k(y)} \Vert x_i-y \Vert^2 },
-$$
-where $k= \lceil m_0 n \rceil$ and $N_k(y)$ is the 
+\[
+\hat d_{m0}(y) = \left(\frac{1}{k} \sum_{x_i \in N_k(y)} \Vert x_i-y \Vert^{r}\right)^{1/r},
+\]
+where $k= \lceil m0 * n \rceil$ and $N_k(y)$ is the 
 set containing the $k$ nearest neighbors 
 of $y$ among $x_1, \ldots, x_n$.
+
+For more details, see \citep{chazal2011geometric} and \citep{ChazalMM2015}.
+
 The DTM is computed for each point of the \code{Grid} with the following code:
 
 <<eq3, echo=TRUE>>=
@@ -364,7 +372,7 @@ $
 \vspace{0.2cm}
 
 \cite{fasy2014statistical} and \cite{chazal2014robust} prove the validity of the bootstrap algorithm for kernel density estimators, distance to measure, and kernel distance, and use it in the framework of persistent homology.
-The bootstrap algorithm is implemented in the function \code{bootstrapBand}, which provides the option of parallelizing the algorithm (\code{parallel=TRUE}) using the package \pkg{parallel}.
+The bootstrap algorithm is implemented in the function \code{bootstrapBand}, which provides the option of parallelizing the algorithm (\code{parallel = TRUE}) using the package \pkg{parallel}.
 The following code computes a 90\% confidence band for $\mathbb{E}[\hat p_h]$, showed in Figure \ref{fig:eq10}.
 
 <<eq9, echo=TRUE, eval=TRUE>>=
@@ -386,7 +394,7 @@ par(mai = c(0.5, 0.25, 0.3, 0.1))
 persp(Xseq, Yseq, matrix(band[["band"]][, 1], ncol = length(Yseq),
       nrow = length(Xseq)),
       zlim = c(0, max(band[["band"]][posYgrid, 2])),
-      ylim = range(Yseq), xlab = "", ylab = "", zlab="",theta = 0,
+      ylim = range(Yseq), xlab = "", ylab = "", zlab = "", theta = 0,
       phi = 25, ltheta = 50, col = "pink", border = NA, d = 0.5,
       scale = FALSE, expand = 3, shade = 0.9, box = FALSE)
 
@@ -440,9 +448,9 @@ We provide an informal description of the implemented methods of persistent homo
 %%%%%%%%%%%%%%%%%%%%%%%
 In this section, we describe how to use the \code{gridDiag} function to compute the persistent homology of sublevel (and superlevel) sets of the functions described in Section \ref{sec:distances}. 
 The function \code{gridDiag} evaluates a given real valued function over a triangulated grid, constructs a filtration of simplices using the values of the function, and computes the persistent homology of the filtration. From version 1.2, \code{gridDiag} works in arbitrary dimension.
-The core of the function is written in \proglang{C++} and the user can choose to compute persistence diagrams using either the \pkg{Dionysus} library or the \pkg{PHAT} library.
+The core of the function is written in \proglang{C++} and the user can choose to compute persistence diagrams using either the \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}} library or the \href{ https://bitbucket.org/phat-code/phat }{\pkg{PHAT}} library.
 
-The following code computes the persistent homology of the superlevel sets \linebreak (\code{sublevel=FALSE}) of the kernel density estimator (\code{FUN=kde}, \code{h=0.3}) using the point cloud stored in the matrix~\code{X} from the previous example.
+The following code computes the persistent homology of the superlevel sets \linebreak (\code{sublevel = FALSE}) of the kernel density estimator (\code{FUN = kde}, \code{h = 0.3}) using the point cloud stored in the matrix~\code{X} from the previous example.
 The same code would work for the other functions defined in Section \ref{sec:distances} (it is sufficient to replace \code{kde} and its smoothing parameter \code{h} with another function and the corresponding parameter). 
 The function \code{gridDiag} returns an object of the class \code{"diagram"}.  
 The other inputs are the features of the grid over which the \code{kde} is evaluated (\code{lim} and \code{by}), the smoothing parameter \code{h}, and a logical variable that indicates whether a progress bar should be printed (\code{printProgress}).
@@ -485,21 +493,21 @@ The features are born at high levels of the density and die at lower levels. The
 \end{figure}
 % PLOT END
 
-The option \code{band=2*band$width} produces a pink confidence band for the persistence diagram, using the confidence band constructed for the corresponding kernel density estimator in the previous section. 
+The option (\code{band = 2 * band[["width"]]}) produces a pink confidence band for the persistence diagram, using the confidence band constructed for the corresponding kernel density estimator in the previous section. 
 The features above the band can be interpreted as representing significant homological features, while points in the band are not significantly different from noise.
-The validity of the bootstrap confidence band for  persistence diagrams of KDE, DTM, and Kernel Distance derive from the \textit{Stability Theorem} \citep{chazal2012structure} and is discussed in detail in \cite{fasy2014statistical} and \cite{chazal2014robust}.
+The validity of the bootstrap confidence band for persistence diagrams of KDE, DTM, and Kernel Distance derive from the \textit{Stability Theorem} \citep{chazal2012structure} and is discussed in detail in \cite{fasy2014statistical} and \cite{chazal2014robust}.
 
-The function \code{plot} for the class \code{"diagram"} provide the options of rotating the diagram (\code{rotated=TRUE}), drawing the barcode in place of the diagram (\code{barcode=TRUE}), as well as other standard graphical options. See Figure \ref{fig:eq11c}.
+The function \code{plot} for the class \code{"diagram"} provide the options of rotating the diagram (\code{rotated = TRUE}), drawing the barcode in place of the diagram (\code{barcode = TRUE}), as well as other standard graphical options. See Figure \ref{fig:eq11c}.
 
 % PLOT START
 \begin{figure}[h!tb]
 \setkeys{Gin}{width=4.5in, height=2.25in}
 \begin{center}
-<<eq11c, echo=TRUE, eval=TRUE,  fig=TRUE, width=6, height=3>>=
+<<eq11c, echo=TRUE, eval=TRUE, fig=TRUE, width=6, height=3>>=
 par(mfrow = c(1, 2), mai = c(0.8, 0.8, 0.3, 0.1))
 plot(Diag[["diagram"]], rotated = TRUE, band = band[["width"]],
      main = "Rotated Diagram")
-plot(Diag[["diagram"]], barcode = TRUE,  main = "Barcode")
+plot(Diag[["diagram"]], barcode = TRUE, main = "Barcode")
 @
 \end{center}
 \caption{Rotated Persistence Diagram and Barcode}
@@ -524,7 +532,7 @@ The sequence of Rips complexes obtained by gradually
 increasing the radius $\varepsilon$ creates a filtration.
 
 The \code{ripsDiag} function computes the persistence diagram of the Rips filtration built on top of a point cloud.
-The user can choose to compute the Rips persistence diagram using either the \proglang{C++}  library \pkg{GUDHI}, or \pkg{Dionysus}.
+The user can choose to compute the Rips persistence diagram using either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}, or \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}.
 \\The following code generates 60 points from two circles:
 
 <<eq12, echo=TRUE, eval=TRUE>>=
@@ -546,16 +554,16 @@ maxdimension <- 1    # components and loops
 Diag <- ripsDiag(X = Circles, maxdimension, maxscale,
                  library = "GUDHI", printProgress = FALSE)
 @
-Alternatively, using the option \code{dist="arbitrary"} in \code{ripsDiag()}, the input \code{X} can be an $n \times n$ matrix of distances.
-This option is useful when the user wants to consider a Rips filtration constructed using an arbitrary distance and is currently only available for the option \code{library="Dionysus"}.\\
+Alternatively, using the option (\code{dist = "arbitrary"}) in \code{ripsDiag()}, the input \code{X} can be an $n \times n$ matrix of distances.
+This option is useful when the user wants to consider a Rips filtration constructed using an arbitrary distance and is currently only available for the option (\code{library = "Dionysus"}).\\
 
-Finally we plot the data and the the diagram:\\
+Finally we plot the data and the diagram:\\
 \phantom{o}
 % PLOT START
 \begin{figure}[h!tb]
 \setkeys{Gin}{width=4.6in, height=2.3in}
 \begin{center}
-<<eq12d, echo=TRUE, eval=TRUE,  fig=TRUE, height=2.8, width=5.6>>=
+<<eq12d, echo=TRUE, eval=TRUE, fig=TRUE, height=2.8, width=5.6>>=
 par(mfrow = c(1, 2), mai=c(0.8, 0.8, 0.3, 0.3))
 plot(Circles, pch = 16, xlab = "",ylab = "")
 plot(Diag[["diagram"]])
@@ -568,11 +576,85 @@ plot(Diag[["diagram"]])
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Alpha Complex Persistence Diagram}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+For a finite set of points $X \subset \mathbb{R}^{d}$, the {\em Alpha complex} $Alpha(X,s)$ is a simplicial subcomplex of the Delaunay complex of $X$ consisting of simplices of circumradius less than or equal to $\sqrt{s}$. For each $u \in X$, let $V_{u}$ be its Voronoi cell, i.e. $V_{u}=\{x\in \mathbb{R}^{d}:\,d(x,u)\leq d(x,v)\text{ for all }v\in X\}$, and $B_{u}(r)$ be the closed ball with center $u$ and radius $r$. Let $R_{u}(r)$ consists of be the intersection of earh ball of radius $r$ with the voronoi cell of $u$, i.e. $R_{u}(r)=B_{u}(r)\cap V_{u}$. Then $Alpha(X,s)$ is defined as
+\[
+Alpha(X,r)=\left\{ \sigma\subset X:\,\underset{u\in\sigma}{\bigcap}R_{u}(\sqrt{s})\neq\emptyset\right\} .
+\]
+See \citep[Section 3.4]{edelsbrunner2010computational} and \citep{gudhi:AlphaComplex}. The sequence of Alpha complexes obtained by gradually increasing the parameter $s$ creates an Alpha complex filtration.
+
+The \code{alphaComplexDiag} function computes the persistence diagram of the alpha complex filtration built on top of a point cloud, using the C++ library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}. Currently the function \code{alphaComplexDiag} only works on 64-bit R.
+
+We first generate 30 points from a circle:
+
+<<eqAlphaComplex1, echo=TRUE, eval=TRUE>>=
+X <- circleUnif(n = 30)
+@
+
+and the following code compute the persistence diagram of the alpha complex filtration using the point cloud \code{X}, with printing its progress (\code{printProgress = FALSE}). The function \code{alphaComplexDiag} returns an object of the class \code{"diagram"}.
+
+<<eqAlphaComplex2, echo=TRUE, eval=TRUE>>=
+DiagAlphaComplex <- alphaComplexDiag(X = X, printProgress = TRUE)
+@
+
+And we plot the diagram:
+
+% PLOT START
+\begin{figure}[h!tb]
+\setkeys{Gin}{width=2.3in, height=2.3in}
+\begin{center}
+<<eqAlphaComplex3, echo=TRUE, eval=TRUE, fig=TRUE, height=2.8, width=2.8>>=
+plot(DiagAlphaComplex[["diagram"]])
+@
+\end{center}
+\vspace{-1cm}
+\caption{Persistence diagram of Alpha complex. Black points represent connected components and red triangles represent loops.}
+\label{fig:eqAlphaComplex3}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Persistence Diagram of Alpha Shape}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+The {\em Alpha shape complex} $S(X,\alpha)$ is the polytope with its boundary consisting of $\alpha$-exposed simplices, where a simplex $\sigma$ is $\alpha$-exposed if there is an open ball $b$ of radius $\alpha$ such that $b \cap X = \emptyset$ and $\partial b \cap X = \sigma$. Suppose $\mathbb{R}^{d}$ is filled with ice cream, then consider scooping out the ice cream with sphere-shaped spoon of radius $\alpha$ without touching the points $X$. $S(X,\alpha)$ is the remaining polytope with straightening round surfaces. See \citep{fischer2005} and \citep{edelsbrunner1994}. The sequence of Alpha shape complexes obtained by gradually increasing the parameter $\alpha$ creates an Alpha shape complex filtration.
+
+The \code{alphaShapeDiag} function computes the persistence diagram of the alpha shape filtration built on top of a point cloud in 3 dimension, using the C++ library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}. Currently the point data cloud should lie in 3 dimension.
+
+We first generate 500 points from a sphere:
+
+<<eqAlphaShape1, echo=TRUE, eval=TRUE>>=
+XX <- sphereUnif(n = 500, d = 2)
+@
+
+and the following code compute the persistence diagram of the alpha shape filtration using the point cloud \code{XX}, with printing its progress (\code{printProgress = FALSE}). The function \code{alphaShapeDiag} returns an object of the class \code{"diagram"}.
+
+<<eqAlphaShape2, echo=TRUE, eval=TRUE>>=
+DiagAlphaShape <- alphaShapeDiag(X = XX, printProgress = FALSE)
+@
+
+And we plot the diagram:
+
+% PLOT START
+\begin{figure}[h!tb]
+\setkeys{Gin}{width=2.3in, height=2.3in}
+\begin{center}
+<<eqAlphaShape3, echo=TRUE, eval=TRUE, fig=TRUE, height=2.8, width=2.8>>=
+plot(DiagAlphaShape[["diagram"]])
+@
+\end{center}
+\vspace{-1cm}
+\caption{Persistence diagram of Alpha shape. Black points represent connected components, red triangles represent loops, and blue diamonds represent voids.}
+\label{fig:eqAlphaShape3}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Bottleneck and Wasserstein Distances}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Standard metrics for measuring the distance between two persistence diagrams are the bottleneck distance and the $p$th Wasserstein distance \citep{edelsbrunner2010computational}. 
-The \pkg{TDA} package includes the functions \code{bottleneck} and \code{wasserstein}, which are R wrappers of the functions ``bottleneck\_distance" and ``wasserstein\_distance" of the \proglang{C++}  library \pkg{Dionysus}.
+The \pkg{TDA} package includes the functions \code{bottleneck} and \code{wasserstein}, which are R wrappers of the functions ``bottleneck\_distance" and ``wasserstein\_distance" of the \proglang{C++} library \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}.
 
 We generate two persistence diagrams of the Rips filtrations built on top of the two (separate) circles of the previous example,
 
@@ -581,7 +663,7 @@ Diag1 <- ripsDiag(Circle1, maxdimension = 1, maxscale = 5)
 Diag2 <- ripsDiag(Circle2, maxdimension = 1, maxscale = 5)
 @
 and we compute the bottleneck distance and the $2$nd Wasserstein distance between the two diagrams.
-In the following code, the option \code{dimension=1} specifies that the distances between diagrams are computed using only one dimensional features (loops).
+In the following code, the option \code{dimension = 1} specifies that the distances between diagrams are computed using only one dimensional features (loops).
 
 <<eq13b, echo=TRUE, eval=TRUE>>=
 print(bottleneck(Diag1[["diagram"]], Diag2[["diagram"]],
@@ -610,7 +692,7 @@ representing a birth-death pair $(b,d)$ in the persistence diagram $D$ as follow
  \Lambda_p(t) =
  \begin{cases}
   t-x+y & t \in [x-y, x] \\
-  x+y-t & t \in (x,  x+y] \\
+  x+y-t & t \in (x, x+y] \\
   0 & \text{otherwise}
  \end{cases}
  =
@@ -624,7 +706,7 @@ representing a birth-death pair $(b,d)$ in the persistence diagram $D$ as follow
 We obtain
 an arrangement of piecewise linear curves by overlaying the graphs of
 the functions~\mbox{$\{ \Lambda_p \}_{p}$}; see Figure \ref{fig:eq14a} (left).
-The persistence landscape of $D$ is a  summary of this arrangement.
+The persistence landscape of $D$ is a summary of this arrangement.
 Formally, the persistence landscape of $D$ is the collection of functions
 \begin{equation}\label{eq:landscape}
  \lambda(k,t) = \underset{p}{k\text{max}} ~ \Lambda_p(t), \quad
@@ -735,7 +817,7 @@ exists,
 \vspace{0.5cm}
 
 The landscape and silhouette functions can be evaluated over a one-dimensional grid of points \code{tseq} using the functions \code{landscape} and \code{silhouette}. In the following code, we use the persistence diagram from Figure \ref{fig:eq12d} to construct the corresponding landscape and silhouette for 
-one-dimensional features (\code{dimension=1}). The option \code{KK=1} specifies that we are interested in the 1st landscape function, and \code{p=1} is the power of the weights in the definition of the silhouette function.
+one-dimensional features (\code{dimension = 1}). The option (\code{KK = 1}) specifies that we are interested in the 1st landscape function, and (\code{p = 1}) is the power of the weights in the definition of the silhouette function.
 
 
 <<eq14, echo=TRUE, eval=TRUE>>=
@@ -744,13 +826,13 @@ Land <- landscape(Diag[["diagram"]], dimension = 1, KK = 1, tseq)
 Sil <- silhouette(Diag[["diagram"]], p = 1, dimension = 1, tseq)
 @
 
-The functions \code{landscape} and \code{silhouette} return real valued vectors, which can be simply plotted with \code{plot(tseq, Land, type="l"); plot(tseq, Sil, type="l")}. See Figure \ref{fig:eq14b}.
+The functions \code{landscape} and \code{silhouette} return real valued vectors, which can be simply plotted with \code{plot(tseq, Land, type = "l"); plot(tseq, Sil, type = "l")}. See Figure \ref{fig:eq14b}.
 
 % PLOT START
 \begin{figure}[h!tb]
 \setkeys{Gin}{width=5in, height=1.5in}
 \begin{center}
-<<eq14b, echo=FALSE, eval=TRUE,  fig=TRUE, height=2.4, width=8>>=
+<<eq14b, echo=FALSE, eval=TRUE, fig=TRUE, height=2.4, width=8>>=
 par(mfrow = c(1, 2), mai = c(0.5, 0.45, 0.3, 0.3))
 plot(tseq, Land, type = "l", lwd = 3, ylab = "",
      main = "1st Landscape, dim = 1", asp = 1, col = 2)
@@ -796,7 +878,7 @@ Lands <- matrix(0, nrow = n, ncol = length(tseq))
 @
 
 For $n$ times, we subsample from the large point cloud, compute $n$ Rips diagrams and the corresponding
-1st landscape functions (\code{KK=1}), using 1 dimensional features (\code{dimension=1}):
+1st landscape functions (\code{KK = 1}), using 1 dimensional features (\code{dimension = 1}):
 
 <<eq15c, echo=TRUE, eval=TRUE>>=
 for (i in seq_len(n)) {
@@ -827,7 +909,7 @@ lines(tseq, bootLand[["mean"]], lwd = 2, col = 2)
 \begin{figure}[h!tb]
 \setkeys{Gin}{width=5in, height=2.5in}
 \begin{center}
-<<eq15f, echo=FALSE, eval=TRUE,  fig=TRUE, height=4, width=8>>=
+<<eq15f, echo=FALSE, eval=TRUE, fig=TRUE, height=4, width=8>>=
 par(mfrow = c(1, 2))
 par(mai = c(0.5, 0.45, 0.3, 0.3))
 plot(X, pch = 16, cex = 0.5, main = "Large Sample from Circles")
@@ -852,8 +934,8 @@ lines(tseq, bootLand[["mean"]], lwd = 2, col = 2)
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 An unsolved problem in topological inference is how to
-choose the smoothing parameters, for example $h$ for KDE and 
-$m_0$ for DTM.
+choose the smoothing parameters, for example \code{h} for KDE and 
+\code{m0} for DTM.
 
 \cite{chazal2014robust} suggest the following method, that we describe here for the kernel density estimator,
 but works also for the kernel distance and the distance to measure.
@@ -900,7 +982,7 @@ B <- 50       # number of bootstrap iterations. Should be large.
 alpha <- 0.1  # level of the confidence bands
 @
 
-The function \code{maxPersistence} can be parallelized (\code{parallel=TRUE}) and a progress bar can be printed (\code{printProgress=TRUE}):
+The function \code{maxPersistence} can be parallelized (\code{parallel = TRUE}) and a progress bar can be printed (\code{printProgress = TRUE}):
 
 <<eq16c, echo=TRUE, eval=TRUE>>=
 maxKDE <- maxPersistence(kde, parametersKDE, X,
@@ -921,7 +1003,7 @@ and produce the summary plot of Figure \ref{fig:eq16e}.\\
 \begin{figure}[h!]
 \setkeys{Gin}{width=5in, height=2.5in}
 \begin{center}
-<<eq16e, echo=TRUE, eval=TRUE,  fig=TRUE, height=4, width=8>>=
+<<eq16e, echo=TRUE, eval=TRUE, fig=TRUE, height=4, width=8>>=
 par(mfrow = c(1, 2), mai = c(0.8, 0.8, 0.35, 0.3))
 plot(X, pch = 16, cex = 0.5, main = "Two Circles")
 plot(maxKDE, main = "Max Persistence - KDE")
@@ -955,7 +1037,7 @@ X3 <- cbind(rnorm(300, 6, 1), rnorm(300, 1, 1))
 XX <- rbind(X1, X2, X3)
 @
 
-Then we use the function \code{clusterTree} to compute cluster trees using the k Nearest Neighbors density estimator (\code{k=100} nearest neighbors) and the Gaussian kernel density estimator, with smoothing parameter \code{h}.
+Then we use the function \code{clusterTree} to compute cluster trees using the k Nearest Neighbors density estimator (\code{k = 100} nearest neighbors) and the Gaussian kernel density estimator, with smoothing parameter \code{h}.
 
 <<eq18b, echo=TRUE, eval=TRUE>>=
 Tree <- clusterTree(XX, k = 100, density = "knn",
@@ -964,7 +1046,7 @@ TreeKDE <- clusterTree(XX, k = 100, h = 0.3, density = "kde",
                        printProgress = FALSE)
 @
 
-Note that, even when \code{kde} is used to estimate the density, we have to provide the option \code{k=100}, so that the algorithm can compute the connected components at each level of the density using a k Nearest Neighbors graph.
+Note that, even when \code{kde} is used to estimate the density, we have to provide the option (\code{k = 100}), so that the algorithm can compute the connected components at each level of the density using a k Nearest Neighbors graph.
 
 The \code{"clusterTree"} objects \code{Tree} and \code{TreeKDE} contain information about the $\lambda$-tree, $\alpha$-tree and $\kappa$-tree. The function \code{plot} for objects of the class \code{"clusterTree"} produces the plots in Figure \ref{fig:eq18d}.
 
@@ -981,7 +1063,7 @@ plot(TreeKDE, type = "kappa", main = "kappa Tree (kde)")
 \begin{figure}[h!tb]
 \setkeys{Gin}{width=6in, height=4in}
 \begin{center}
-<<eq18d, echo=FALSE, eval=TRUE,  fig=TRUE, height=4, width=6>>=
+<<eq18d, echo=FALSE, eval=TRUE, fig=TRUE, height=4, width=6>>=
 
 par(mfrow = c(2,3))
 par(mai = c(0.25,0.35,0.3,0.3))

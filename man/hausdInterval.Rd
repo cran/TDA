@@ -7,7 +7,7 @@
 }
 
 \description{
-  \code{hausdInterval} computes a confidence interval for the Hausdorff distance between a point cloud \code{X} and the underlying manifold from which \code{X} was sampled. See Details. The validity of the method is proved in the 1st Reference.
+  \code{hausdInterval} computes a confidence interval for the Hausdorff distance between a point cloud \code{X} and the underlying manifold from which \code{X} was sampled. See Details and References.
 }
 
 \usage{
@@ -25,32 +25,32 @@ hausdInterval(X, m, B = 30, alpha = 0.05, parallel = FALSE,
   }
 
   \item{B}{
-    the number of subsampling iterations.
+    the number of subsampling iterations. The default value is \code{30}.
   }
 
   \item{alpha}{
-    \code{hausdInterval} returns a (1-\code{alpha}) confidence interval.
+    \code{hausdInterval} returns a (\code{1-alpha}) confidence interval. The default value is \code{0.05}.
   }
 
   \item{parallel}{
-    logical: if \code{TRUE} the iterations are parallelized, using the library \code{parallel}.
+    logical: if \code{TRUE}, the iterations are parallelized, using the library \code{parallel}. The default value is \code{FALSE}.
   }
 
   \item{printProgress}{
-    if TRUE a progress bar is printed. Default is \code{FALSE}.
+    if \code{TRUE}, a progress bar is printed. The default value is \code{FALSE}.
   }
 }
 
 \details{
-  For \code{B} times, the subsampling algorithm subsamples \code{m} points of \code{X} (without replacement) and computes the Hausdorff distance between the original sample \code{X} and the subsample. The result is a sequence of \code{B} values. Let \eqn{q} be the (1-\code{alpha}) quantile of these values and let \eqn{c=2*q}. The interval \eqn{[0, c]} is a valid  (1-\code{alpha}) confidence interval for the Hausdorff distance between \code{X} and the underlying manifold, as proven in Theorem 3 of the first reference.
+  For \code{B} times, the subsampling algorithm subsamples \code{m} points of \code{X} (without replacement) and computes the Hausdorff distance between the original sample \code{X} and the subsample. The result is a sequence of \code{B} values. Let \eqn{q} be the (\code{1-alpha}) quantile of these values and let \eqn{c = 2 * q}. The interval \eqn{[0, c]} is a valid  (\code{1-alpha}) confidence interval for the Hausdorff distance between \code{X} and the underlying manifold, as proven in (Fasy, Lecci, Rinaldo, Wasserman, Balakrishnan, and Singh, 2013, Theorem 3).
 }
 
 \value{ 
-  Returns a number \eqn{c}. The confidence interval is \eqn{[0, c]}. 
+  The function \code{hausdInterval} returns a number \eqn{c}. The confidence interval is \eqn{[0, c]}. 
 }
 
 \references{
-  Brittany T. Fasy, Fabrizio Lecci, Alessandro Rinaldo, Larry Wasserman, Sivaraman Balakrishnan, and Aarti Singh. (2013), "Statistical Inference For Persistent Homology: Confidence Sets for Persistence Diagrams", (arXiv:1303.7117). To appear, Annals of Statistics.
+  Fasy BT, Lecci F, Rinaldo A, Wasserman L, Balakrishnan S, Singh A (2013). "Statistical Inference For Persistent Homology: Confidence Sets for Persistence Diagrams." (arXiv:1303.7117). Annals of Statistics.
 }
 
 \author{

@@ -22,7 +22,7 @@
 #include <tdautils/gudhiUtils.h>
 
 //for CGAL
-//#include <tdautils/cgalUtils.h>
+#include <tdautils/cgalUtils.h>
 
 // for Dionysus
 #include <tdautils/dionysusUtils.h>
@@ -70,7 +70,7 @@ GridDiag(const Rcpp::NumericVector & FUNvalues
 
 	std::vector< std::vector< std::vector< double > > > persDgm;
 	std::vector< std::vector< std::vector< unsigned > > > persLoc;
-	std::vector< std::vector< std::set< unsigned > > > persCycle;
+	std::vector< std::vector< std::vector< std::vector< unsigned > > > > persCycle;
 
 	Fltr f;
 
@@ -103,7 +103,7 @@ GridDiag(const Rcpp::NumericVector & FUNvalues
 	return Rcpp::List::create(
 		concatStlToRcpp< Rcpp::NumericMatrix >(persDgm, true, 3),
 		concatStlToRcpp< Rcpp::NumericMatrix >(persLoc, false, 2),
-		StlToRcppList< Rcpp::List, Rcpp::NumericVector >(persCycle));
+		StlToRcppMatrixList< Rcpp::List, Rcpp::NumericMatrix >(persCycle));
 }
 
 
@@ -133,7 +133,7 @@ RipsDiagL2DionysusPhat(const RealMatrix  & X
 	) {
 	std::vector< std::vector< std::vector< double > > > persDgm;
 	std::vector< std::vector< std::vector< unsigned > > > persLoc;
-	std::vector< std::vector< std::set< unsigned > > > persCycle;
+	std::vector< std::vector< std::vector< std::vector< unsigned > > > > persCycle;
 	
 	PointContainer points = RcppToStl< PointContainer >(X);
 	//read_points(infilename, points);
@@ -169,7 +169,7 @@ RipsDiagL2DionysusPhat(const RealMatrix  & X
 	return Rcpp::List::create(
 			concatStlToRcpp< Rcpp::NumericMatrix >(persDgm, true, 3),
 			concatStlToRcpp< Rcpp::NumericMatrix >(persLoc, false, 2),
-			StlToRcppList< Rcpp::List, Rcpp::NumericVector >(persCycle));
+			StlToRcppMatrixList< Rcpp::List, Rcpp::NumericMatrix >(persCycle));
 }
 
 
@@ -199,7 +199,7 @@ RipsDiagArbitDionysusPhat(const RealMatrix  & X
 	) {
 	std::vector< std::vector< std::vector< double > > > persDgm;
 	std::vector< std::vector< std::vector< unsigned > > > persLoc;
-	std::vector< std::vector< std::set< unsigned > > > persCycle;
+	std::vector< std::vector< std::vector< std::vector< unsigned > > > > persCycle;
 
 	PointContainer points = RcppToStl< PointContainer >(X, true);
 	//read_points2(infilename, points);
@@ -235,7 +235,7 @@ RipsDiagArbitDionysusPhat(const RealMatrix  & X
 	return Rcpp::List::create(
 			concatStlToRcpp< Rcpp::NumericMatrix >(persDgm, true, 3),
 			concatStlToRcpp< Rcpp::NumericMatrix >(persLoc, false, 2),
-			StlToRcppList< Rcpp::List, Rcpp::NumericVector >(persCycle));
+			StlToRcppMatrixList< Rcpp::List, Rcpp::NumericMatrix >(persCycle));
 }
 
 
@@ -374,27 +374,119 @@ KdeDist(const Rcpp::NumericMatrix & X
 // distance to measure function on a Grid
 // [[Rcpp::export]]
 Rcpp::NumericVector
-Dtm(const Rcpp::NumericMatrix & knnIndex
-  , const Rcpp::NumericMatrix& knnDistance
-  , const Rcpp::NumericVector& weight
-  , const double weightBound
+Dtm(const Rcpp::NumericMatrix & knnDistance
+  , const double                weightBound
+  , const double                r
 	) {
-	const unsigned gridNum = knnIndex.nrow();
-	double distanceTemp, weightTemp, weightSumTemp;
+	const unsigned gridNum = knnDistance.nrow();
+  unsigned gridIdx, kIdx;
+  double distanceTemp = 0.0;
 	Rcpp::NumericVector dtmValue(gridNum, 0.0);
+  unsigned weightSumTemp;
 
-	for (unsigned gridIdx = 0; gridIdx < gridNum; ++gridIdx) {
-		weightSumTemp = 0.0;
-		for (unsigned kIdx = 0; weightSumTemp < weightBound; ++kIdx) {
-			distanceTemp = knnDistance[gridIdx + kIdx * gridNum];
-			weightTemp = std::min(weight[knnIndex[gridIdx + kIdx * gridNum] - 1],
-					weightBound - weightSumTemp);
-			weightSumTemp += weightTemp;
-			dtmValue[gridIdx] += distanceTemp * distanceTemp * weightTemp;
-		}
-		dtmValue[gridIdx] = std::sqrt(dtmValue[gridIdx] / weightBound);
-	}
-	return (dtmValue);
+  if (r == 2.0) {
+    for (gridIdx = 0; gridIdx < gridNum; ++gridIdx) {
+      for (kIdx = 0, weightSumTemp = 0; (double)weightSumTemp < weightBound;
+          ++kIdx) {
+        distanceTemp = knnDistance[gridIdx + kIdx * gridNum];
+        dtmValue[gridIdx] += distanceTemp * distanceTemp;
+        ++weightSumTemp;
+      }
+      dtmValue[gridIdx] += distanceTemp * distanceTemp *
+          (weightBound - (double)weightSumTemp);
+      dtmValue[gridIdx] = std::sqrt(dtmValue[gridIdx] / weightBound);
+    }
+  }
+  else if (r == 1.0) {
+    for (gridIdx = 0; gridIdx < gridNum; ++gridIdx) {
+      for (kIdx = 0, weightSumTemp = 0; (double)weightSumTemp < weightBound;
+          ++kIdx) {
+        distanceTemp = knnDistance[gridIdx + kIdx * gridNum];
+        dtmValue[gridIdx] += distanceTemp;
+        ++weightSumTemp;
+      }
+      dtmValue[gridIdx] += distanceTemp *
+          (weightBound - (double)weightSumTemp);
+      dtmValue[gridIdx] /= weightBound;
+    }
+  }
+  else {
+    for (gridIdx = 0; gridIdx < gridNum; ++gridIdx) {
+      for (kIdx = 0, weightSumTemp = 0; (double)weightSumTemp < weightBound;
+          ++kIdx) {
+        distanceTemp = knnDistance[gridIdx + kIdx * gridNum];
+        dtmValue[gridIdx] += std::pow(distanceTemp, r);
+        ++weightSumTemp;
+      }
+      dtmValue[gridIdx] += std::pow(distanceTemp, r) *
+          (weightBound - (double)weightSumTemp);
+      dtmValue[gridIdx] = std::pow(dtmValue[gridIdx] / weightBound, 1 / r);
+    }
+  }
+
+  return (dtmValue);
+}
+
+
+
+// distance to measure function on a Grid, with weight
+// [[Rcpp::export]]
+Rcpp::NumericVector
+DtmWeight(const Rcpp::NumericMatrix & knnDistance
+        , const double                weightBound
+        , const double                r
+        , const Rcpp::NumericMatrix & knnIndex
+        , const Rcpp::NumericVector & weight
+  ) {
+  const unsigned gridNum = knnDistance.nrow();
+  unsigned gridIdx, kIdx;
+  double distanceTemp = 0.0;
+  Rcpp::NumericVector dtmValue(gridNum, 0.0);
+  double weightTemp, weightSumTemp;
+
+  if (r == 2.0) {
+    for (gridIdx = 0; gridIdx < gridNum; ++gridIdx) {
+      for (kIdx = 0, weightSumTemp = 0.0; weightSumTemp < weightBound;
+          ++kIdx) {
+        distanceTemp = knnDistance[gridIdx + kIdx * gridNum];
+        weightTemp = weight[knnIndex[gridIdx + kIdx * gridNum] - 1];
+        dtmValue[gridIdx] += distanceTemp * distanceTemp * weightTemp;
+        weightSumTemp += weightTemp;
+      }
+      dtmValue[gridIdx] += distanceTemp * distanceTemp *
+          (weightBound - weightSumTemp);
+      dtmValue[gridIdx] = std::sqrt(dtmValue[gridIdx] / weightBound);
+    }
+  }
+  else if (r == 1.0) {
+    for (gridIdx = 0; gridIdx < gridNum; ++gridIdx) {
+      for (kIdx = 0, weightSumTemp = 0.0; weightSumTemp < weightBound;
+          ++kIdx) {
+        distanceTemp = knnDistance[gridIdx + kIdx * gridNum];
+        weightTemp = weight[knnIndex[gridIdx + kIdx * gridNum] - 1];
+        dtmValue[gridIdx] += distanceTemp * weightTemp;
+        weightSumTemp += weightTemp;
+      }
+      dtmValue[gridIdx] += distanceTemp * (weightBound - weightSumTemp);
+      dtmValue[gridIdx] /= weightBound;
+    }
+  }
+  else {
+    for (gridIdx = 0; gridIdx < gridNum; ++gridIdx) {
+      for (kIdx = 0, weightSumTemp = 0.0; weightSumTemp < weightBound;
+          ++kIdx) {
+        distanceTemp = knnDistance[gridIdx + kIdx * gridNum];
+        weightTemp = weight[knnIndex[gridIdx + kIdx * gridNum] - 1];
+        dtmValue[gridIdx] += std::pow(distanceTemp, r) * weightTemp;
+        weightSumTemp += weightTemp;
+      }
+      dtmValue[gridIdx] += std::pow(distanceTemp, r) *
+          (weightBound - weightSumTemp);
+      dtmValue[gridIdx] = std::pow(dtmValue[gridIdx] / weightBound, 1 / r);
+    }
+  }
+
+  return (dtmValue);
 }
 
 
@@ -423,7 +515,7 @@ RipsDiagGUDHI(const Rcpp::NumericMatrix & X          //points to some memory spa
 	) {
 	std::vector< std::vector< std::vector< double > > > persDgm;
 	std::vector< std::vector< std::vector< unsigned > > > persLoc;
-	std::vector< std::vector< std::set< unsigned > > > persCycle;
+	std::vector< std::vector< std::vector< std::vector< unsigned > > > > persCycle;
 
 	// Turn the input points into a range of points
 	typedef std::vector< double > Point_t;
@@ -450,13 +542,14 @@ RipsDiagGUDHI(const Rcpp::NumericMatrix & X          //points to some memory spa
 	// Compute the persistence diagram of the complex
 	int p = 2; //characteristic of the coefficient field for homology
 	double min_persistence = 0; //minimal length for persistent intervals
-	computePersistenceGUDHI(st, p, min_persistence, maxdimension, persDgm);
+	computePersistenceGUDHI(st, p, min_persistence, maxdimension, persDgm,
+			printProgress);
 
 	// Output persistent diagram
 	return Rcpp::List::create(
 			concatStlToRcpp< Rcpp::NumericMatrix >(persDgm, true, 3),
 			concatStlToRcpp< Rcpp::NumericMatrix >(persLoc, false, 2),
-			StlToRcppList< Rcpp::List, Rcpp::NumericVector >(persCycle));
+			StlToRcppMatrixList< Rcpp::List, Rcpp::NumericMatrix >(persCycle));
 }
 
 
@@ -506,7 +599,7 @@ RipsDiag(const Rcpp::NumericMatrix & X
 }
 
 
-/*
+
 //---------------------------------------------------------------------------------------------------------------------
 // gudhi type definition
 typedef Gudhi::Simplex_tree<>::Vertex_handle Simplex_tree_vertex;
@@ -553,10 +646,10 @@ Vertex_list fromVertex(const Alpha_shape_3::Vertex_handle& vh)
 	the_list.push_back(vh);
 	return the_list;
 }
-*/
 
 
-// AlphaDiag in GUDHI
+
+// AlphaShapeDiag in GUDHI
 /** \brief Interface for R code, construct the persistence diagram
   * of the Rips complex constructed on the input set of points.
   *
@@ -564,14 +657,14 @@ Vertex_list fromVertex(const Alpha_shape_3::Vertex_handle& vh)
   * @param[in]  X              An nx3 matrix of coordinates,
   * @param[in]  printProgress  Is progress printed?
   */
-/*// [[Rcpp::export]]
+// [[Rcpp::export]]
 Rcpp::List
-AlphaDiagGUDHI(const Rcpp::NumericMatrix & X          //points to some memory space
-             , const bool                  printProgress
+AlphaShapeDiagGUDHI(const Rcpp::NumericMatrix & X          //points to some memory space
+                  , const bool                  printProgress
 	) {
 	std::vector< std::vector< std::vector< double > > > persDgm;
 	std::vector< std::vector< std::vector< unsigned > > > persLoc;
-	std::vector< std::vector< std::set< unsigned > > > persCycle;
+	std::vector< std::vector< std::vector< std::vector< unsigned > > > > persCycle;
 
 	  int coeff_field_characteristic = 2;
 
@@ -580,7 +673,7 @@ AlphaDiagGUDHI(const Rcpp::NumericMatrix & X          //points to some memory sp
 
 
 	  // Turn the input points into a range of points
-	  std::list<Point_3> lp = RcppToStlPoint3< std::list<Point_3> >(X);
+	  std::list<Point_3> lp = RcppToCGALPoint3< std::list<Point_3> >(X);
 
 
 	  // alpha shape construction from points. CGAL has a strange behavior in REGULARIZED mode.
@@ -666,7 +759,7 @@ AlphaDiagGUDHI(const Rcpp::NumericMatrix & X          //points to some memory sp
 	    if (filtr > filtration_max) {
 	      filtration_max = filtr;
 	    }
-	    simplex_tree.insert(the_simplex_tree, filtr);
+	    simplex_tree.insert_simplex(the_simplex_tree, filtr);
 		if (the_alpha_value_iterator != the_alpha_values.end()) {
 		  ++the_alpha_value_iterator;
 		}
@@ -675,7 +768,6 @@ AlphaDiagGUDHI(const Rcpp::NumericMatrix & X          //points to some memory sp
 		}
 	  }
 	  simplex_tree.set_filtration(filtration_max);
-	  simplex_tree.set_num_simplices(count_vertices + count_edges + count_facets + count_cells);
 	  simplex_tree.set_dimension(dim_max);
 
 	  if (printProgress) {
@@ -703,12 +795,61 @@ AlphaDiagGUDHI(const Rcpp::NumericMatrix & X          //points to some memory sp
 
 	// Compute the persistence diagram of the complex
 	computePersistenceGUDHI(simplex_tree, coeff_field_characteristic,
-			min_persistence, 2, persDgm);
+			min_persistence, 2, persDgm, printProgress);
 
 	// Output persistent diagram
 	return Rcpp::List::create(
 			concatStlToRcpp< Rcpp::NumericMatrix >(persDgm, true, 3),
 			concatStlToRcpp< Rcpp::NumericMatrix >(persLoc, false, 2),
-			StlToRcppList< Rcpp::List, Rcpp::NumericVector >(persCycle));
+			StlToRcppMatrixList< Rcpp::List, Rcpp::NumericMatrix >(persCycle));
 }
-*/
+
+// AlphaComplexDiag in GUDHI
+/** \brief Interface for R code, construct the persistence diagram
+  * of the Rips complex constructed on the input set of points.
+  *
+  * @param[out] Rcpp::List     A list
+  * @param[in]  X              An nx3 matrix of coordinates,
+  * @param[in]  maxalphasquare Threshold for the Alpha complex,
+  * @param[in]  printProgress  Is progress printed?
+  */
+// [[Rcpp::export]]
+Rcpp::List
+AlphaComplexDiagGUDHI(const Rcpp::NumericMatrix & X             //points to some memory space
+                    , const bool                  printProgress
+	) {
+	std::vector< std::vector< std::vector< double > > > persDgm;
+	std::vector< std::vector< std::vector< unsigned > > > persLoc;
+	std::vector< std::vector< std::vector< std::vector< unsigned > > > > persCycle;
+
+	int coeff_field_characteristic = 2;
+
+	float min_persistence = 0.0;
+
+        using Kernel = CGAL::Epick_d< CGAL::Dynamic_dimension_tag>;
+        using Point = Kernel::Point_d;
+
+	// Turn the input points into a range of points
+	std::list<Point> lp = RcppToCGALPointD< std::list< Point > >(X);
+
+	//Gudhi::alphacomplex::Alpha_complex<Kernel> alpha_complex_from_points(lp, maxalphasquare);
+  Gudhi::alphacomplex::Alpha_complex<Kernel>
+      alpha_complex_from_points(lp, std::numeric_limits<double>::infinity());
+
+	if (printProgress) {
+		Rprintf("# Generated complex of size: %d \n", alpha_complex_from_points.num_simplices());
+	}
+
+	// Sort the simplices in the order of the filtration
+	alpha_complex_from_points.initialize_filtration();
+
+	// Compute the persistence diagram of the complex
+	computePersistenceGUDHI(alpha_complex_from_points, coeff_field_characteristic,
+			min_persistence, 2, persDgm, printProgress);
+
+	// Output persistent diagram
+	return Rcpp::List::create(
+			concatStlToRcpp< Rcpp::NumericMatrix >(persDgm, true, 3),
+			concatStlToRcpp< Rcpp::NumericMatrix >(persLoc, false, 2),
+			StlToRcppMatrixList< Rcpp::List, Rcpp::NumericMatrix >(persCycle));
+}

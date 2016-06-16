@@ -156,7 +156,7 @@ function(X, k, h = NULL, density = "knn", dist = "euclidean", d = NULL,
   silo <- list()        # x coordinates of each branch silo
   rank <- numeric()     # rank among brothers
   parent <- numeric()   # father of each branch
-  sons <- list()        # sons of each branch 
+  children <- list()    # children of each branch 
 
   # if there is more than 1 root create a fake single root
   if (sum(generation == 1) > 1) {
@@ -185,11 +185,11 @@ function(X, k, h = NULL, density = "knn", dist = "euclidean", d = NULL,
       compBranch[[bb]] <- components[[i]]   
       parent[bb] <- 1  # parent of roots is set to be 1
       bottom[bb] <- 0  # y-bottom of roots is set to be 0
-      ## add this branch to the list of sons of its parent
-      if (length(sons) < parent[bb]) {
-        sons[[parent[bb]]] <- bb
+      ## add this branch to the list of children of its parent
+      if (length(children) < parent[bb]) {
+        children[[parent[bb]]] <- bb
       } else {
-        sons[[parent[bb]]] <- c(sons[[parent[bb]]], bb)
+        children[[parent[bb]]] <- c(children[[parent[bb]]], bb)
       }   
     } else if (sum(generation == 1) == 1 & generation[i] == 1){ #is there is 1 root
       bb <- bb + 1
@@ -214,11 +214,11 @@ function(X, k, h = NULL, density = "knn", dist = "euclidean", d = NULL,
         top[bb] <- min(hat.f[components[[i]]]) 
         bottom[bb] <- top[parent[bb]]
         compBranch[[bb]] <- components[[i]]
-        ## add this branch to the list of sons of its parent
-        if (length(sons) < parent[bb]) {
-          sons[[parent[bb]]] <- bb
+        ## add this branch to the list of children of its parent
+        if (length(children) < parent[bb]) {
+          children[[parent[bb]]] <- bb
         } else {
-          sons[[parent[bb]]] <- c(sons[[parent[bb]]], bb)
+          children[[parent[bb]]] <- c(children[[parent[bb]]], bb)
         }     
       }
 
@@ -247,7 +247,7 @@ function(X, k, h = NULL, density = "knn", dist = "euclidean", d = NULL,
   }
 
   ## info for the kappa tree
-  kTree <- findKtree(bb, parent, sons, compBranch, n)
+  kTree <- findKtree(bb, parent, children, compBranch, n)
   kappaTop <- kTree[["kappaTop"]]
   kappaBottom <- kTree[["kappaBottom"]]
 
@@ -267,14 +267,14 @@ function(X, k, h = NULL, density = "knn", dist = "euclidean", d = NULL,
     }
 
     out <- list("density" = hat.f, "DataPoints" = compBranch, "n" = n,
-           "id" = seq_len(bb), "sons" = sons, "parent" = parent, "silo" = silo,
+           "id" = seq_len(bb), "children" = children, "parent" = parent, "silo" = silo,
            "Xbase" = base, "lambdaBottom" = bottom, "lambdaTop" = top,
            "rBottom" = rBottom, "rTop" = rTop,
            "alphaBottom" = alphaBottom, "alphaTop" = alphaTop,
            "kappaBottom" = kappaBottom, "kappaTop" = kappaTop)
   } else {
     out <- list("density" = hat.f, "DataPoints" = compBranch, "n" = n,
-           "id" = seq_len(bb), "sons" = sons, "parent" = parent, "silo" = silo,
+           "id" = seq_len(bb), "children" = children, "parent" = parent, "silo" = silo,
            "Xbase" = base, "lambdaBottom" = bottom, "lambdaTop" = top,
            "alphaBottom" = alphaBottom, "alphaTop" = alphaTop,
            "kappaBottom" = kappaBottom, "kappaTop" = kappaTop)

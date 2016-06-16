@@ -7,7 +7,7 @@
 }
 
 \description{
-  This function samples \code{n} points from the sphere \eqn{S^d} of radius \code{r} embedded in \eqn{R^{d+1}}, uniformly with respect to the volume measure of the sphere.
+  The function \code{sphereUnif} samples \code{n} points from the sphere \eqn{S^d} of radius \code{r} embedded in \eqn{R^{d+1}}, uniformly with respect to the volume measure of the sphere.
 }
 
 \usage{
@@ -24,12 +24,12 @@ sphereUnif(n, d, r = 1)
   }
 
   \item{r}{
-    a numeric variable specifying the radius of the sphere. Default is 1.
+    a numeric variable specifying the radius of the sphere. The default value is \code{1}.
   }
 }
 
 \value{
-  \code{sphereUnif} returns an \code{n} by 2 matrix of coordinates.
+  The function \code{sphereUnif} returns an \code{n} by 2 matrix of coordinates.
 }
 
 \author{

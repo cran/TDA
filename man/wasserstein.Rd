@@ -7,7 +7,7 @@
 }
 
 \description{
-  This function computes the Wasserstein distance between two persistence diagrams.
+  The function \code{wasserstein} computes the Wasserstein distance between two persistence diagrams.
 }
 
 \usage{
@@ -24,34 +24,35 @@
   }
 
   \item{p}{
-    integer specifying the power to be used in the computation of the Wasserstein distance. Default is 1.
+    integer specifying the power to be used in the computation of the Wasserstein distance. The default value is \code{1}.
   }
 
   \item{dimension}{
-    an integer or a vector specifying the dimension of the features used to compute the wasserstein distance. 0 for connected components, 1 for loops, 2 for voids and so on. Default is 1 (loops).
+    an integer or a vector specifying the dimension of the features used to compute the wasserstein distance. 0 for connected components, 1 for loops, 2 for voids and so on. The default value is \code{1} (loops).
   }
 }
 
 \details{
-  The Wasserstein distance between two diagrams is the cost of the optimal matching between points of the two diagrams. When a vector is given for \code{dimension}, then maximum among bottleneck distances using each element in \code{dimension} is returned. This function is an R wrapper of the function "wasserstein_distance" in the C++ library Dionysus. See references.
+  The Wasserstein distance between two diagrams is the cost of the optimal matching between points of the two diagrams. When a vector is given for \code{dimension}, then maximum among bottleneck distances using each element in \code{dimension} is returned. This function is an R wrapper of the function "wasserstein_distance" in the C++ library \href{ http://www.mrzv.org/software/dionysus }{Dionysus}. See references.
 }
 
 \value{
-  Returns the value of the Wasserstein distance between the two persistence diagrams.
+  The function \code{wasserstein} returns the value of the Wasserstein distance between the two persistence diagrams.
 }
 
 \references{
-  Dmitriy Morozov, "Dionysus, a C++ library for computing persistent homology". http://www.mrzv.org/software/dionysus/
+  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology". \url{ http://www.mrzv.org/software/dionysus/ }.
 
-  Herbert Edelsbrunner and John Harer (2010), Computational topology: an introduction. American Mathematical Society.
+  Edelsbrunner H, Harer J (2010). "Computational topology: an introduction." American Mathematical Society.
 }
 
 \author{
-Jisu Kim, Fabrizio Lecci
+  Jisu Kim and Fabrizio Lecci
 }
 
 \seealso{
-  \code{\link{bottleneck}}, \code{\link{ripsDiag}},  \code{\link{gridDiag}},
+  \code{\link{bottleneck}},
+  \code{\link{alphaComplexDiag}}, \code{\link{alphaComplexDiag}}, \code{\link{gridDiag}}, \code{\link{ripsDiag}},
   \code{\link{plot.diagram}}
 }
 

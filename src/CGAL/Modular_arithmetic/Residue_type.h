@@ -16,19 +16,18 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Sylvain Pion, Michael Hemmer
+// Author(s)     : Sylvain Pion, Michael Hemmer, Alexander Kobel
 
 #ifndef CGAL_RESIDUE_TYPE_H
 #define CGAL_RESIDUE_TYPE_H
 
 #include <CGAL/basic.h>
+#include <CGAL/tss.h>
 
 #include <cfloat>
+
 #include <boost/operators.hpp>
 
-#ifdef CGAL_HAS_THREADS
-#  include <boost/thread/tss.hpp>
-#endif
 
 namespace CGAL {
 
@@ -45,7 +44,7 @@ std::istream& operator >> (std::istream& is, Residue& p);
  *  
  * This class uses the type double for representation. 
  * Therefore the value of p is restricted to primes less than 2^26.
- * By default p is set to 67111067.
+ * By default p is set to 67108859.
  *
  * It provides the standard operators +,-,*,/ as well as in&output.
  * 
@@ -60,47 +59,51 @@ public:
   typedef Residue NT;
   
 private:
+#ifdef CGAL_HEADER_ONLY
+  static const double& get_static_CST_CUT()
+  {
+    static const double CST_CUT = std::ldexp( 3., 51 );
+    return CST_CUT;
+  }
+#else // CGAL_HEADER_ONLY
   CGAL_EXPORT static const double  CST_CUT; 
-  
-#ifdef CGAL_HAS_THREADS
-  CGAL_EXPORT static boost::thread_specific_ptr<int>    prime_int_;
-  CGAL_EXPORT static boost::thread_specific_ptr<double> prime_;
-  CGAL_EXPORT static boost::thread_specific_ptr<double> prime_inv_;
-  
-  static void init_class_for_thread(){
-    CGAL_precondition(prime_int_.get() == NULL); 
-    CGAL_precondition(prime_.get()     == NULL); 
-    CGAL_precondition(prime_inv_.get() == NULL); 
-    prime_int_.reset(new int(67111067));
-    prime_.reset(new double(67111067.0));
-    prime_inv_.reset(new double(1.0/67111067.0));
+  static const double& get_static_CST_CUT()
+  { return Residue::CST_CUT; }
+#endif // CGAL_HEADER_ONLY
+
+  static int& prime_int_internal()
+  {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, prime_int, 67111067);
+    return prime_int;
   }
   
   static inline int get_prime_int(){
-    if (prime_int_.get() == NULL)
-      init_class_for_thread();
-    return *prime_int_.get();
+    return prime_int_internal();
   }
   
+  
+  static double& prime_internal()
+  {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(double, prime, 67111067.0);
+    return prime;
+  }
+
   static inline double get_prime(){
-    if (prime_.get() == NULL)
-      init_class_for_thread();
-    return *prime_.get();
+    return prime_internal();
   }
   
-  static inline double get_prime_inv(){
-    if (prime_inv_.get() == NULL)
-      init_class_for_thread();
-    return *prime_inv_.get();
+  static double& prime_inv_internal()
+  {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(double, prime_inv, 0.000000014900672045640400859667452463541);
+    return prime_inv;
   }
-#else
-  CGAL_EXPORT  static int prime_int;
-  CGAL_EXPORT  static double prime;
-  CGAL_EXPORT  static double prime_inv;
-  static int get_prime_int(){ return prime_int;}
-  static double get_prime()    { return prime;}
-  static double get_prime_inv(){ return prime_inv;}  
-#endif
+
+  static inline double get_prime_inv(){
+    return prime_inv_internal();
+  }
+
+
+
 
     /* Quick integer rounding, valid if a<2^51. for double */ 
     static inline 
@@ -108,7 +111,7 @@ private:
       // call CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST)
       // before using modular arithmetic 
       CGAL_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-      return ( (a + CST_CUT)  - CST_CUT);      
+      return ( (a + get_static_CST_CUT())  - get_static_CST_CUT());
     }
 
     /* Big modular reduction (e.g. after multiplication) */
@@ -156,6 +159,8 @@ private:
     /* a^-1, using Bezout (extended Euclidian algorithm). */
     static inline 
     double RES_inv (double ri1){
+        CGAL_precondition (ri1 != 0.0);
+
         double bi = 0.0;
         double bi1 = 1.0;
         double ri = get_prime();
@@ -193,15 +198,10 @@ public:
     static int 
     set_current_prime(int p){   
       int old_prime = get_prime_int();  
-#ifdef CGAL_HAS_THREADS
-      *prime_int_.get() = p;
-      *prime_.get() = double(p);
-      *prime_inv_.get() = 1.0/double(p);
-#else
-      prime_int = p;
-      prime = double(p);
-      prime_inv = 1.0 / prime;
-#endif
+      prime_int_internal() = p;  
+      prime_internal() = double(p);  
+      prime_inv_internal() =  1.0 / double(p);
+
       return old_prime; 
     }
  
@@ -227,8 +227,14 @@ public:
     }
 
     //! constructor of Residue, from long 
-    Residue(long n){
-        x_= RES_reduce((double)n);
+
+    Residue (long n) {
+        x_= RES_soft_reduce (static_cast< double > (n % get_prime_int()));
+    }
+
+    //! constructor of Residue, from long long
+    Residue (long long n) {
+        x_= RES_soft_reduce (static_cast< double > (n % get_prime_int()));
     }
    
     //! Access operator for x, \c const 

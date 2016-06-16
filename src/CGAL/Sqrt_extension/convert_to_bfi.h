@@ -27,6 +27,7 @@
 #include <CGAL/convert_to_bfi.h>
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/Sqrt_extension/Sqrt_extension_type.h>
+#include <CGAL/assertions.h>
 
 
 // Disbale SQRT_EXTENSION_TO_BFI_CACHE by default

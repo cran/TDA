@@ -338,8 +338,9 @@ void addAllTetrahedra(Fltr& filtr, const RealVector& FUNvalues,
 
 
 
-template<typename RealVector, typename IntVector>
-int simplicesFromGrid(Fltr & filtr, const RealVector& FUNvalues, const IntVector& gridDim, const int embedDim) {
+template<typename RealVector, typename IntVector> void
+simplicesFromGrid(Fltr & filtr, const RealVector & FUNvalues
+                , const IntVector & gridDim, const int embedDim) {
 	const unsigned gridProd = std::accumulate(
 			gridDim.begin(), gridDim.end(), 1, std::multiplies< int >());
 	int ncols, nrows;
@@ -347,53 +348,49 @@ int simplicesFromGrid(Fltr & filtr, const RealVector& FUNvalues, const IntVector
 	int i = 0; // indexing the columns
 	int j = 0; // indexing the rows
 	int k = 0; // indexing the z dimension
-	unsigned int curidx = 0;
+	unsigned int curidx = 0; // curidx = i + ncols * j + nrows * ncols * k
 
-	if (gridDim.size() > 0)
+	if (gridDim.size() > 0) {
 		ncols = gridDim[0];
-	if (gridDim.size() > 1)
+	}
+	if (gridDim.size() > 1) {
 		nrows = gridDim[1];
+	}
 
-  while(curidx+1< gridProd)
-  {
-      curidx = i + gridDim[0]*j + gridDim[0]*gridDim[1]*k;
+  while(curidx < gridProd) {
 
-      // .. add the vertex 
-      std::vector<Vertex> vcont;
-      vcont.push_back((Vertex)(curidx));
-      filtr.push_back(Smplx(vcont, FUNvalues[curidx])); 
+    // .. add the vertex 
+    std::vector<Vertex> vcont;
+    vcont.push_back((Vertex)(curidx));
+    filtr.push_back(Smplx(vcont, FUNvalues[curidx])); 
 
-		if (embedDim >= 1)	// If dimension of embedded space >= 1, add the edges:
-		{
+    // If dimension of embedded space >= 1, add the edges:
+		if (embedDim >= 1) {
 			addAllEdges(filtr, FUNvalues, ncols, nrows, i, j, k);
 		}
-		if (embedDim >= 2) // If dimension of embedded space >= 2, add the triangles: 
-		{
+		// If dimension of embedded space >= 2, add the triangles:
+		if (embedDim >= 2) {
 			addAllTriangles(filtr, FUNvalues, ncols, nrows, i, j, k);
 		}
-		if (embedDim >= 3) // If dimension of embedded space >= 3, add the tetrahedra:
-		{
+    // If dimension of embedded space >= 3, add the tetrahedra:
+		if (embedDim >= 3) {
 			addAllTetrahedra(filtr, FUNvalues, ncols, nrows, i, j, k);
 		}
 
-      ++i; // advance column
-
-     // ... advance row / z value
-     if (i >= ncols)
-     {
-    	i = 0;
-    	++j;
-     }
-     if (j >= nrows)
-     {
-	j = 0;
-        ++k;
-     }
+    ++i; // advance column
+    // advance row
+    if (i >= ncols) {
+      i = 0;
+      ++j;
+    }
+    // advance z value
+    if (j >= nrows) {
+      j = 0;
+      ++k;
+    }
+    ++curidx; // advance curidx
 
   }
-
-  
-  return 0;
 } // end simplicesFromGrid function
 
 

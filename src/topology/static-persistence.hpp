@@ -91,7 +91,9 @@ pair_simplices(iterator bg, iterator end, bool store_negative, const Visitor& vi
         // --------------------------
         
         CountNum(cPersistencePairBoundaries, z.size());
+#ifdef COUNTERS
         Count(cPersistencePair);
+#endif // COUNTERS
 
         while(!z.empty())
         {

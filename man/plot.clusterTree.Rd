@@ -7,7 +7,7 @@
 }
 
 \description{
-  This function plots the Cluster Tree stored in an object of class \code{clusterTree}.
+  The function \code{plot.clusterTree} plots the Cluster Tree stored in an object of class \code{clusterTree}.
 }
 
 \usage{
@@ -28,7 +28,7 @@
   }
 
   \item{color}{
-    number: the color of the branches of the Cluster Tree. Default is \code{NULL} and a different color is assigned to each branch.
+    number: the color of the branches of the Cluster Tree. The default value is \code{NULL} and a different color is assigned to each branch.
   }
 
   \item{add}{
@@ -41,9 +41,9 @@
 }
 
 \references{
-  Brian P. Kent, Alessandro Rinaldo, and Timothy Verstynen, (2013), "DeBaCl: A Python Package for Interactive DEnsity-BAsed CLustering."arXiv:1307.8136 
+  Kent BP, Rinaldo A, Verstynen T (2013). "DeBaCl: A Python Package for Interactive DEnsity-BAsed CLustering." arXiv:1307.8136 
 
-  Fabrizio Lecci, Alessandro Rinaldo, and Larry Wasserman, (2014), "Metric Embeddings for Cluster Trees"
+  Lecci F, Rinaldo A, Wasserman L (2014). "Metric Embeddings for Cluster Trees"
 }
 
 \author{

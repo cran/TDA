@@ -21,11 +21,23 @@ KdeDist <- function(X, Grid, h, weight, printProgress) {
     .Call('TDA_KdeDist', PACKAGE = 'TDA', X, Grid, h, weight, printProgress)
 }
 
-Dtm <- function(knnIndex, knnDistance, weight, weightBound) {
-    .Call('TDA_Dtm', PACKAGE = 'TDA', knnIndex, knnDistance, weight, weightBound)
+Dtm <- function(knnDistance, weightBound, r) {
+    .Call('TDA_Dtm', PACKAGE = 'TDA', knnDistance, weightBound, r)
+}
+
+DtmWeight <- function(knnDistance, weightBound, r, knnIndex, weight) {
+    .Call('TDA_DtmWeight', PACKAGE = 'TDA', knnDistance, weightBound, r, knnIndex, weight)
 }
 
 RipsDiag <- function(X, maxdimension, maxscale, dist, library, location, printProgress) {
     .Call('TDA_RipsDiag', PACKAGE = 'TDA', X, maxdimension, maxscale, dist, library, location, printProgress)
+}
+
+AlphaShapeDiagGUDHI <- function(X, printProgress) {
+    .Call('TDA_AlphaShapeDiagGUDHI', PACKAGE = 'TDA', X, printProgress)
+}
+
+AlphaComplexDiagGUDHI <- function(X, printProgress) {
+    .Call('TDA_AlphaComplexDiagGUDHI', PACKAGE = 'TDA', X, printProgress)
 }
 

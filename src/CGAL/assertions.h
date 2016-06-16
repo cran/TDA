@@ -80,6 +80,7 @@ inline bool possibly(Uncertain<bool> c);
 
 #if defined(CGAL_NO_ASSERTIONS)
 #  define CGAL_assertion(EX) (static_cast<void>(0))
+#  define CGAL_destructor_assertion(EX) (static_cast<void>(0))
 #  define CGAL_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_assertion_code(CODE)
 #  ifdef CGAL_ASSUME
@@ -92,6 +93,8 @@ inline bool possibly(Uncertain<bool> c);
 #else // no CGAL_NO_ASSERTIONS
 #  define CGAL_assertion(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+#  define CGAL_destructor_assertion(EX) \
+   (CGAL::possibly(EX)||std::uncaught_exception()?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_assertion_msg(EX,MSG) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_assertion_code(CODE) CODE
@@ -342,5 +345,7 @@ inline bool possibly(Uncertain<bool> c);
 // This comes last as it is dependant on the macros to be defined.
 // But the macros need CGAL::possibly().
 #include <CGAL/Uncertain.h>
+
+#include "assertions.cpp"
 
 #endif // CGAL_ASSERTIONS_H

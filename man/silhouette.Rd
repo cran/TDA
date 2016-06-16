@@ -7,7 +7,7 @@
 }
 
 \description{
-  This function computes the silhouette function corresponding to a given persistence diagram.
+  The function {silhouette} computes the silhouette function corresponding to a given persistence diagram.
 }
 
 \usage{
@@ -25,7 +25,7 @@ silhouette(Diag, p = 1, dimension = 1,
   }
 
   \item{dimension}{
-    the dimension of the topological features under consideration. Default is 1 (loops).
+    the dimension of the topological features under consideration. The default value is \code{1} (loops).
   }
 
   \item{tseq}{
@@ -34,11 +34,11 @@ silhouette(Diag, p = 1, dimension = 1,
 }
 
 \value{
-  Returns a numeric matrix of with the number of row as the length of \code{tseq} and the number of column as the length of \code{p}. The value at ith row and jth column represents the value of the \code{p[j]}-th power silhouette function evaluated at \code{tseq[i]}.
+  The function {silhouette} returns a numeric matrix of with the number of row as the length of \code{tseq} and the number of column as the length of \code{p}. The value at ith row and jth column represents the value of the \code{p[j]}-th power silhouette function evaluated at \code{tseq[i]}.
 }
 
 \references{
-  Frederic Chazal, Brittany T. Fasy, Fabrizio Lecci, Alessandro Rinaldo, and Larry Wasserman, (2014), "Stochastic Convergence of Persistence Landscapes and Silhouettes", Proceedings of the 30th Symposium of Computational Geometry (SoCG). (arXiv:1312.0308)
+  Chazal F, Fasy BT, Lecci F, Rinaldo A, Wasserman L (2014). "Stochastic Convergence of Persistence Landscapes and Silhouettes." Proceedings of the 30th Symposium of Computational Geometry (SoCG). (arXiv:1312.0308)
 }
 
 \author{

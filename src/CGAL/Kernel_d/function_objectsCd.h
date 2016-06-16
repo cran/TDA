@@ -27,6 +27,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
+#include <CGAL/use.h>
 #include <CGAL/Referenced_argument.h>
 
 #undef CGAL_KD_TRACE
@@ -142,6 +143,7 @@ public:
     template <class Forward_iterator>
     result_type operator()(Forward_iterator start, Forward_iterator end) const
     {
+        CGAL_USE(end);
         CGAL_assertion(start!=end);
         int d = start->dimension();
         Matrix M(d);

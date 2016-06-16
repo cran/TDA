@@ -27,11 +27,9 @@
 
 #include <emmintrin.h>
 
-#if defined ( _MSC_VER )
+#if defined ( _WIN32 )
 #define CGAL_ALIGN_16  __declspec(align(16))
-#elif defined( __GNU__ )
-#define  CGAL_ALIGN_16 __attribute__((aligned(16))) 
-#elif defined( __MINGW64__ )
+#elif defined( __GNUC__ ) || defined(__MINGW64__)
 #define  CGAL_ALIGN_16 __attribute__((aligned(16))) 
 #endif
 

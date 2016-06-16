@@ -20,8 +20,8 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SRC_PERSISTENT_COHOMOLOGY_INCLUDE_GUDHI_PERSISTENT_COHOMOLOGY_FIELD_ZP_H_
-#define SRC_PERSISTENT_COHOMOLOGY_INCLUDE_GUDHI_PERSISTENT_COHOMOLOGY_FIELD_ZP_H_
+#ifndef PERSISTENT_COHOMOLOGY_FIELD_ZP_H_
+#define PERSISTENT_COHOMOLOGY_FIELD_ZP_H_
 
 #include <utility>
 #include <vector>
@@ -41,13 +41,11 @@ class Field_Zp {
 
   Field_Zp()
       : Prime(0),
-        inverse_(),
-        mult_id_all(1),
-        add_id_all(0) {
+        inverse_() {
   }
 
-  void init(uint16_t charac) {
-    assert(charac != 0);  // division by zero
+  void init(int charac) {
+    assert(charac > 0);  // division by zero + non negative values
     Prime = charac;
     inverse_.clear();
     inverse_.reserve(charac);
@@ -62,7 +60,7 @@ class Field_Zp {
 
   /** Set x <- x + w * y*/
   Element plus_times_equal(const Element& x, const Element& y, const Element& w) {
-    assert(Prime != 0);  // division by zero
+    assert(Prime > 0);  // division by zero + non negative values
     Element result = (x + w * y) % Prime;
     if (result < 0)
       result += Prime;
@@ -76,48 +74,43 @@ class Field_Zp {
     return plus_times_equal(0, y, (Element)w);
   }
 
-  void clear_coefficient(Element x) {
-  }
-
   Element plus_equal(const Element& x, const Element& y) {
     return plus_times_equal(x, y, (Element)1);
   }
 
   /** \brief Returns the additive idendity \f$0_{\Bbbk}\f$ of the field.*/
-  const Element& additive_identity() const {
-    return add_id_all;
+  Element additive_identity() const {
+    return 0;
   }
   /** \brief Returns the multiplicative identity \f$1_{\Bbbk}\f$ of the field.*/
-  const Element& multiplicative_identity(Element P = 0) const {
-    return mult_id_all;
+  Element multiplicative_identity(Element = 0) const {
+    return 1;
   }
-  /** Returns the inverse in the field. Modifies P.*/
+  /** Returns the inverse in the field. Modifies P. ??? */
   std::pair<Element, Element> inverse(Element x, Element P) {
     return std::pair<Element, Element>(inverse_[x], P);
   }  // <------ return the product of field characteristic for which x is invertible
 
   /** Returns -x * y.*/
   Element times_minus(Element x, Element y) {
-    assert(Prime != 0);  // division by zero
+    assert(Prime > 0);  // division by zero + non negative values
     Element out = (-x * y) % Prime;
     return (out < 0) ? out + Prime : out;
   }
 
   /** \brief Returns the characteristic \f$p\f$ of the field.*/
-  const uint16_t& characteristic() const {
+  int characteristic() const {
     return Prime;
   }
 
  private:
-  uint16_t Prime;
+  int Prime;
   /** Property map Element -> Element, which associate to an element its inverse in the field.*/
   std::vector<Element> inverse_;
-  const Element mult_id_all;
-  const Element add_id_all;
 };
 
 }  // namespace persistent_cohomology
 
 }  // namespace Gudhi
 
-#endif  // SRC_PERSISTENT_COHOMOLOGY_INCLUDE_GUDHI_PERSISTENT_COHOMOLOGY_FIELD_ZP_H_
+#endif  // PERSISTENT_COHOMOLOGY_FIELD_ZP_H_

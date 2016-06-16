@@ -37,7 +37,7 @@ function(x, type = "lambda", color = NULL, add = FALSE, ...) {
     labels <- round(AT,3)
   }
   
-  sons <- x[["sons"]]
+  children <- x[["children"]]
   
   Ylim <- c(min(bottom[which(!is.na(bottom))]), max(top[which(!is.na(top))]))
   
@@ -54,11 +54,11 @@ function(x, type = "lambda", color = NULL, add = FALSE, ...) {
   graphics::segments(base, bottom, base, top, col = color, lwd = 3)
 
   ## now the horizontal lines
-  if (length(sons) > 0) { 
-    for (i in seq(along = sons)) {
-      if (!is.null(sons[[i]]) && length(sons[[i]]>0) && !is.na(sons[[i]])) {
-        x <- c(min(base[sons[[i]]]) , max(base[sons[[i]]]))
-        y <- bottom[sons[[i]][1]]
+  if (length(children) > 0) { 
+    for (i in seq(along = children)) {
+      if (!is.null(children[[i]]) && length(children[[i]]>0) && !is.na(children[[i]])) {
+        x <- c(min(base[children[[i]]]) , max(base[children[[i]]]))
+        y <- bottom[children[[i]][1]]
         graphics::segments(x[1], y, x[2], y, lwd = 3,
             col = ifelse(is.null(color), 1, color))
       } 
