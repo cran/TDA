@@ -1,3 +1,9 @@
+### TDA: version 1.5.1
+- fixed CGAL library for compatibility with RcppEigen
+- registered native routines and disabled symbol search
+- resolve null pointer reference for alphaComplexDiag and alphaShapeDiag
+- alphaComplexDiag now works on 32-bit R
+
 ### TDA: version 1.5
 - fixed bugs
 - dtm now takes additional tuning parameter r

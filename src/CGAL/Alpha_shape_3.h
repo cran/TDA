@@ -1589,7 +1589,10 @@ typename Alpha_shape_3<Dt,EACT>::Classification_type
 Alpha_shape_3<Dt,EACT>::classify(Alpha_status_const_iterator as,
 			    const NT& alpha) const
 {
-  return classify(&(*as), alpha);
+  // modified by Jisu KIM, 2017-04-24
+  // '*as' can fetch NULL memory if 'as' corresponds to NULL pointer
+  // return classify(&(*as), alpha);
+  return classify(as.operator->(), alpha);
 }
 
 template <class Dt,class EACT>

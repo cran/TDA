@@ -1426,6 +1426,9 @@ namespace Eigen {
   {
     typedef CGAL::Lazy_exact_nt<ET> Real;
     // typedef CGAL::Lazy_exact_nt<ET> NonInteger;
+	// Modified by Jisu KIM, 2017-04-20
+	// Literal should be defined to define a new scalar type from Eigen 3.3
+	typedef CGAL::Lazy_exact_nt<ET> Literal;
     typedef CGAL::Lazy_exact_nt<typename NumTraits<ET>::NonInteger> NonInteger;
     typedef CGAL::Lazy_exact_nt<ET> Nested;
 

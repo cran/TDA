@@ -2,18 +2,6 @@ alphaComplexDiag <-
 # function(X, maxalphasquare, library = "GUDHI", printProgress = FALSE) {
 function(X, library = "GUDHI", printProgress = FALSE) {
 
-  # in 32bit architectures alphaShapeDiag doesn't work
-  if (.Machine[["sizeof.pointer"]] != 8) {
-    Diag <- matrix(0, nrow = 0, ncol = 3)
-    class(Diag) <- "diagram"
-    attributes(Diag)[["maxdimension"]] <- -Inf
-    attributes(Diag)[["scale"]] <- c(Inf, -Inf)
-    attributes(Diag)[["call"]] <- match.call()
-    out <- list("diagram" = Diag)
-    cat("alphaComplexDiag function currently only works on 64-bit R")
-    return (out)
-  }
-
   if (!is.numeric(X) && !is.data.frame(X)) {
     stop("X should be a matrix of coordinates")
   }

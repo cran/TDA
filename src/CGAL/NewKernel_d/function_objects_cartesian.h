@@ -1258,7 +1258,10 @@ template<class R_> struct Oriented_side : private Store_kernel<R_> {
 	typedef typename Get_functor<R, Hyperplane_translation_tag>::type HT;
 	typedef typename Get_functor<R, Squared_distance_tag>::type SD;
 	typedef typename Get_functor<R, Squared_radius_tag>::type SR;
-	typedef typename Get_functor<R, Center_of_sphere_tag>::type CS;
+  // modified by Jisu KIM, 2016-06-30
+  // CS is the name of Intel CPU registers defined on Solaris
+	//typedef typename Get_functor<R, Center_of_sphere_tag>::type CS;
+  typedef typename Get_functor<R, Center_of_sphere_tag>::type CoSt;
 
 	result_type operator()(Hyperplane const&h, Point const&p)const{
 		HT ht(this->kernel());
@@ -1268,7 +1271,10 @@ template<class R_> struct Oriented_side : private Store_kernel<R_> {
 	result_type operator()(Sphere const&s, Point const&p)const{
 		SD sd(this->kernel());
 		SR sr(this->kernel());
-		CS cs(this->kernel());
+    // modified by Jisu KIM, 2016-06-30
+    // CS is the name of Intel CPU registers defined on Solaris
+    //CS cs(this->kernel());
+    CoSt cs(this->kernel());
 		return CGAL::compare(sd(cs(s),p),sr(s));
 	}
 };

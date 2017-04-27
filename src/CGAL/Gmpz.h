@@ -213,6 +213,9 @@ namespace Eigen {
   template<> struct NumTraits<CGAL::Gmpz>
   {     
     typedef CGAL::Gmpz Real;
+	// Modified by Jisu KIM, 2017-04-20
+	// Literal should be defined to define a new scalar type from Eigen 3.3
+	typedef CGAL::Gmpz Literal;
     typedef CGAL::Gmpq NonInteger;
     typedef CGAL::Gmpz Nested;
 

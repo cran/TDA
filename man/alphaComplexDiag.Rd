@@ -30,7 +30,6 @@ alphaComplexDiag(X, library = "GUDHI", printProgress = FALSE)
 
 \details{
   The function \code{alphaComplexDiag} constructs the alpha complex filtration, using the C++ library \href{ https://project.inria.fr/gudhi/software }{GUDHI}.
-  Currently the function \code{alphaComplexDiag} only works on 64-bit R.
   See refereneces.
 }
 

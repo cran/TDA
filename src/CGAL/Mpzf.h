@@ -1133,6 +1133,9 @@ namespace Eigen {
   {
     typedef CGAL::Mpzf Real;
     /* Should this be Quotient<Mpzf>? Gmpq?  */
+	// Modified by Jisu KIM, 2017-04-20
+	// Literal should be defined to define a new scalar type from Eigen 3.3
+	typedef CGAL::Mpzf Literal;
     typedef CGAL::Mpzf NonInteger;
     typedef CGAL::Mpzf Nested;
 

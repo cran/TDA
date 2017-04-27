@@ -45,5 +45,4 @@ S3method(summary, maxPersistence)
 S3method(print, summary.diagram)
 S3method(print, summary.maxPersistence)
 
-useDynLib(TDA)
-exportPattern("^[[:alpha:]]+")
+useDynLib(TDA, .registration = TRUE)

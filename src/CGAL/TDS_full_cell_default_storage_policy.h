@@ -61,7 +61,10 @@ struct TFC_data< Vertex_handle, Full_cell_handle, Dimen, TDS_full_cell_default_s
     {
         Xor_type result(0);
         for( int i = 0; i <= cur_dim; ++i )
-            result ^= reinterpret_cast<Xor_type>(&(*vertices_[i]));
+			// modified by Jisu KIM, 2017-04-24
+			// '*vertices_[i]' can fetch NULL memory if 'vertices_[i]' corresponds to NULL pointer
+            // result ^= reinterpret_cast<Xor_type>(&(*vertices_[i]));
+			result ^= reinterpret_cast<Xor_type>((vertices_[i]).operator->());
         return result;
     }
     // ASSUMES |*this| is indeed a neighbor of neighbor(i):
@@ -79,7 +82,10 @@ struct TFC_data< Vertex_handle, Full_cell_handle, Dimen, TDS_full_cell_default_s
     {
         Xor_type opp_vertex = xor_of_vertices(cur_dim)
             ^ neighbors_[i]->xor_of_vertices(cur_dim)
-            ^ reinterpret_cast<Xor_type>(&(*vertices_[i]));
+			// modified by Jisu KIM, 2017-04-24
+			// '*vertices_[i]' can fetch NULL memory if 'vertices_[i]' corresponds to NULL pointer
+            //^ reinterpret_cast<Xor_type>(&(*vertices_[i]));
+			^ reinterpret_cast<Xor_type>((vertices_[i]).operator->());
         Vertex_handle mirror;
         typedef typename Vertex_handle::pointer pointer;
         // mirror.set_pointer(reinterpret_cast<pointer>(opp_vertex));

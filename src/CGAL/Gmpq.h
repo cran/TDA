@@ -139,6 +139,9 @@ namespace Eigen {
   template<> struct NumTraits<CGAL::Gmpq>
   {
     typedef CGAL::Gmpq Real;
+	// Modified by Jisu KIM, 2017-04-20
+	// Literal should be defined to define a new scalar type from Eigen 3.3
+	typedef CGAL::Gmpq Literal;
     typedef CGAL::Gmpq NonInteger;
     typedef CGAL::Gmpq Nested;
 

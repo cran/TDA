@@ -857,6 +857,9 @@ namespace Eigen {
   template<class NT> struct NumTraits<CGAL::Quotient<NT> >
   {
     typedef CGAL::Quotient<NT> Real;
+	// Modified by Jisu KIM, 2017-04-20
+	// Literal should be defined to define a new scalar type from Eigen 3.3
+	typedef CGAL::Quotient<NT> Literal;
     typedef CGAL::Quotient<NT> NonInteger;
     typedef CGAL::Quotient<NT> Nested;
 

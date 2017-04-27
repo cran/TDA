@@ -886,6 +886,9 @@ namespace Eigen {
   template<> struct NumTraits<CGAL::MP_Float>
   {
     typedef CGAL::MP_Float Real;
+	// Modified by Jisu KIM, 2017-04-20
+	// Literal should be defined to define a new scalar type from Eigen 3.3
+	typedef CGAL::MP_Float Literal;
     typedef CGAL::Quotient<CGAL::MP_Float> NonInteger;
     typedef CGAL::MP_Float Nested;
 

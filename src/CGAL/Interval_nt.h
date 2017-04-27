@@ -1266,6 +1266,9 @@ namespace Eigen {
   template<bool b> struct NumTraits<CGAL::Interval_nt<b> >
   {
     typedef CGAL::Interval_nt<b> Real;
+	// Modified by Jisu KIM, 2017-04-20
+	// Literal should be defined to define a new scalar type from Eigen 3.3
+	typedef CGAL::Interval_nt<b> Literal;
     typedef CGAL::Interval_nt<b> NonInteger;
     typedef CGAL::Interval_nt<b> Nested;
 

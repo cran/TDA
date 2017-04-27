@@ -482,7 +482,10 @@ public:
 
     bool is_infinite(const Vertex & v) const /* internal use, not documented */
     {
-        return (&(*infinite_vertex()) == &v);
+		// modified by Jisu KIM, 2017-04-24
+		// '*infinite_vertex()' can fetch NULL memory if 'infinite_vertex()' corresponds to NULL pointer
+        // return (&(*infinite_vertex()) == &v);
+		return ((infinite_vertex()).operator->() == &v);
     }
 
     bool is_infinite(Full_cell_const_handle s) const
