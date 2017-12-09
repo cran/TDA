@@ -11,10 +11,11 @@
 }
 
 \usage{
-gridDiag(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
-         maxdimension = max(NCOL(X), length(dim(FUNvalues))) - 1,
-         sublevel = TRUE, library = "Dionysus", location = FALSE,
-         printProgress = FALSE, diagLimit = NULL, ...)
+gridDiag(
+    X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
+    maxdimension = max(NCOL(X), length(dim(FUNvalues))) - 1,
+    sublevel = TRUE, library = "GUDHI", location = FALSE,
+    printProgress = FALSE, diagLimit = NULL, ...)
 }
 
 \arguments{
@@ -47,11 +48,11 @@ gridDiag(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
   }
 
   \item{library}{
-    The user can compute the persistence diagram using either the library \code{"Dionysus"}, or \code{"PHAT"}. The default value is \code{"Dionysus"}.
+    a string specifying which library to compute the persistence diagram. The user can choose either the library \code{"GUDHI"}, \code{"Dionysus"}, or \code{"PHAT"}. The default value is \code{"GUDHI"}.
   }
 
   \item{location}{
-    if \code{TRUE}, location of birth point and death point of each homological feature is returned. Additionaly if \code{library="Dionysus"}, location of representative cycles of each homological feature is also returned. The default value is \code{FALSE}.
+    if \code{TRUE} and if \code{"Dionysus"} or \code{"PHAT"} is used for computing the persistence diagram, location of birth point and death point of each homological feature is returned. Additionaly if \code{library="Dionysus"}, location of representative cycles of each homological feature is also returned. The default value is \code{FALSE}.
   }
 
   \item{printProgress}{
@@ -80,13 +81,13 @@ gridDiag(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
     an object of class \code{diagram}, a \eqn{P} by 3 matrix, where \eqn{P} is the number of points in the resulting persistence diagram. The first column stores the dimension of each feature (0 for components, 1 for loops, 2 for voids, etc). Second and third columns are Birth and Death of the features, in case of a filtration constructed using sublevel sets (from -Inf to Inf), or Death and Birth of features, in case of a filtration constructed using superlevel sets (from Inf to -Inf).
   }
   \item{birthLocation}{
-    only if \code{location=TRUE}: a \eqn{P} by \eqn{d} matrix, where \eqn{P} is the number of points in the resulting persistence diagram. Each row represents the location of the grid point completing the simplex that gives birth to an homological feature.
+    only if \code{location=TRUE} and if \code{"Dionysus"} or \code{"PHAT"} is used for computing the persistence diagram: a \eqn{P} by \eqn{d} matrix, where \eqn{P} is the number of points in the resulting persistence diagram. Each row represents the location of the grid point completing the simplex that gives birth to an homological feature.
   }
   \item{deathLocation}{
-    only if \code{location=TRUE}: a \eqn{P} by \eqn{d} matrix, where \eqn{P} is the number of points in the resulting persistence diagram. Each row represents the location of the grid point completing the simplex that kills an homological feature.
+    only if \code{location=TRUE} and if \code{"Dionysus"} or \code{"PHAT"} is used for computing the persistence diagram: a \eqn{P} by \eqn{d} matrix, where \eqn{P} is the number of points in the resulting persistence diagram. Each row represents the location of the grid point completing the simplex that kills an homological feature.
   }
   \item{cycleLocation}{
-    only if \code{location=TRUE} and \code{library="Dionysus"}: a list of length \eqn{P}, where \eqn{P} is the number of points in the resulting persistence diagram. Each element is a \eqn{P_i} by \eqn{h_i +1} by \eqn{d} array for \eqn{h_i} dimensional homological feature. It represents location of \eqn{h_i +1} vertices of \eqn{P_i} simplices, where \eqn{P_i} simplices constitutes the \eqn{h_i} dimensional homological feature.
+    only if \code{location=TRUE} and if \code{"Dionysus"} is used for computing the persistence diagram: a list of length \eqn{P}, where \eqn{P} is the number of points in the resulting persistence diagram. Each element is a \eqn{P_i} by \eqn{h_i +1} by \eqn{d} array for \eqn{h_i} dimensional homological feature. It represents location of \eqn{h_i +1} vertices of \eqn{P_i} simplices, where \eqn{P_i} simplices constitutes the \eqn{h_i} dimensional homological feature.
   }
 }
 
@@ -103,7 +104,7 @@ gridDiag(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
 }
 
 \note{
-  The user can decide to use either the C++ library \href{ http://www.mrzv.org/software/dionysus/ }{Dionysus} or \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}. See references.
+  The user can decide to use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI}, \href{ http://www.mrzv.org/software/dionysus/ }{Dionysus}, or \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}. See references.
 
   Since dimension of simplicial complex from grid points in \eqn{R^d} is up to \eqn{d}, homology of dimension \eqn{\ge d} is trivial. Hence setting \code{maxdimension} with values \eqn{\ge d} is equivalent to \code{maxdimension=d-1}.
 }
@@ -135,7 +136,7 @@ Diag1 <- gridDiag(XX, distFct, lim = lim, by = by, sublevel = TRUE,
 
 #Kernel Density Diagram of the superlevel sets
 Diag2 <- gridDiag(XX, kde, lim = lim, by = by, sublevel = FALSE,
-                  location = TRUE, printProgress = TRUE, h = h) 
+    library = "Dionysus", location = TRUE, printProgress = TRUE, h = h)
 #plot
 par(mfrow = c(2, 2))
 plot(XX, cex = 0.5, pch = 19)

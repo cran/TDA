@@ -12,8 +12,9 @@
 }
 
 \usage{
-clusterTree(X, k, h = NULL, density = "knn", dist = "euclidean", d = NULL,
-            Nlambda = 100, printProgress = FALSE)
+clusterTree(
+    X, k, h = NULL, density = "knn", dist = "euclidean", d = NULL,
+    Nlambda = 100, printProgress = FALSE)
 }
 
 \arguments{

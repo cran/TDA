@@ -1,6 +1,3 @@
-#include <R.h>
-#include <R_ext/Print.h>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>

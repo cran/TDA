@@ -11,7 +11,9 @@
 }
 
 \usage{
-multipBootstrap(Y, B = 30, alpha = 0.05, parallel = FALSE, printProgress = FALSE)
+multipBootstrap(
+    Y, B = 30, alpha = 0.05, parallel = FALSE,
+    printProgress = FALSE)
 }
 
 \arguments{

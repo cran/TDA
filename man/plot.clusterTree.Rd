@@ -11,7 +11,8 @@
 }
 
 \usage{
-\method{plot}{clusterTree}(x, type = "lambda", color = NULL, add = FALSE, ...)
+\method{plot}{clusterTree}(
+    x, type = "lambda", color = NULL, add = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 

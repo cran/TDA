@@ -9,12 +9,11 @@
 
 \usepackage{amsfonts,amsmath,amssymb,amsthm}
 \usepackage{verbatim,float}
-\usepackage{graphicx,subfigure,url}
-\usepackage{dsfont,bm,color,multirow}
+\usepackage{graphicx,subcaption,url}
+\usepackage{bm,color}
 
 
 %spacing for captions
-\usepackage{sidecap}
 \usepackage[font=small,skip=0pt]{caption}
 \setlength{\captionmargin}{20pt}
 
@@ -448,48 +447,59 @@ We provide an informal description of the implemented methods of persistent homo
 %%%%%%%%%%%%%%%%%%%%%%%
 In this section, we describe how to use the \code{gridDiag} function to compute the persistent homology of sublevel (and superlevel) sets of the functions described in Section \ref{sec:distances}. 
 The function \code{gridDiag} evaluates a given real valued function over a triangulated grid, constructs a filtration of simplices using the values of the function, and computes the persistent homology of the filtration. From version 1.2, \code{gridDiag} works in arbitrary dimension.
-The core of the function is written in \proglang{C++} and the user can choose to compute persistence diagrams using either the \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}} library or the \href{ https://bitbucket.org/phat-code/phat }{\pkg{PHAT}} library.
+The core of the function is written in \proglang{C++} and the user can choose to compute persistence diagrams using either  the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}, \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat }{\pkg{PHAT}}.
 
 The following code computes the persistent homology of the superlevel sets \linebreak (\code{sublevel = FALSE}) of the kernel density estimator (\code{FUN = kde}, \code{h = 0.3}) using the point cloud stored in the matrix~\code{X} from the previous example.
 The same code would work for the other functions defined in Section \ref{sec:distances} (it is sufficient to replace \code{kde} and its smoothing parameter \code{h} with another function and the corresponding parameter). 
 The function \code{gridDiag} returns an object of the class \code{"diagram"}.  
 The other inputs are the features of the grid over which the \code{kde} is evaluated (\code{lim} and \code{by}), the smoothing parameter \code{h}, and a logical variable that indicates whether a progress bar should be printed (\code{printProgress}).
 
-<<eq11, echo=TRUE, eval=TRUE>>=
-Diag <- gridDiag(X = X, FUN = kde, h = 0.3, lim = cbind(Xlim, Ylim),
-                 by = by, sublevel = FALSE, library = "Dionysus",
-                 printProgress = FALSE)
+<<eqGrid1, echo=TRUE, eval=TRUE>>=
+DiagGrid <- gridDiag(
+    X = X, FUN = kde, h = 0.3, lim = cbind(Xlim, Ylim), by = by,
+    sublevel = FALSE, library = "Dionysus", location = TRUE,
+    printProgress = FALSE)
 @
 
 
-We plot the data and the diagram, using the function \code{plot}, implemented as a standard \code{S3} method for objects of the class \code{"diagram"}. The following command produces the third plot in Figure \ref{fig:eq11b}.
+We plot the data and the diagram, using the function \code{plot}, implemented as a standard \code{S3} method for objects of the class \code{"diagram"}. The following command produces the third plot in Figure \ref{fig:eqGrid3}.
 
-<<eq11b, echo=TRUE, eval=FALSE>>=
-plot(Diag[["diagram"]], band = 2 * band[["width"]],
+<<eqGrid2, echo=TRUE, eval=FALSE>>=
+plot(DiagGrid[["diagram"]], band = 2 * band[["width"]],
      main = "KDE Diagram")
 @
 
 % PLOT STARTS
 \begin{figure}[h!tb]
-\setkeys{Gin}{width=5.5in, height=2in}
+\setkeys{Gin}{width=5.5in, height=5.5in}
 \begin{center}
-<<eq11b, echo=FALSE, eval=TRUE, fig=TRUE, height=2, width=5.5>>=
-par(mfrow = c(1, 3))
-par(mai = c(0.3, 0.25, 0.3, 0.1))
+<<eqGrid3, echo=FALSE, eval=TRUE, fig=TRUE, height=7, width=6>>=
+par(mfrow = c(2, 2))
 plot(X, pch = 16, cex = 0.6, xlab = "", ylab = "", main = "Sample X")
 persp(Xseq, Yseq,
       matrix(KDE, ncol = length(Yseq), nrow = length(Xseq)),
       xlab = "", ylab = "", zlab = "", theta = -20, phi = 35,
       ltheta = 50, col = 2, border = NA, main = "KDE", d = 0.5,
       scale = FALSE, expand = 3, shade = 0.9)
-par(mai = c(0.55, 0.6, 0.3, 0.1))
-plot(Diag[["diagram"]], band = 2 * band[["width"]],
+plot(DiagGrid[["diagram"]], band = 2 * band[["width"]],
      main = "KDE Diagram")
+one <- which(DiagGrid[["diagram"]][, 1] == 1)
+plot(X, pch = 16, cex = 0.6, xlab = "", ylab = "", main = "Representative loop")
+for (i in seq(along = one)) {
+  points(DiagGrid[["birthLocation"]][one[i], , drop = FALSE], pch = 15, cex = 3,
+      col = i)
+  points(DiagGrid[["deathLocation"]][one[i], , drop = FALSE], pch = 17, cex = 3,
+      col = i)
+  for (j in seq_len(dim(DiagGrid[["cycleLocation"]][[one[i]]])[1])) {
+    lines(DiagGrid[["cycleLocation"]][[one[i]]][j, , ], pch = 19, cex = 1, col = i)
+  }
+}
+
 @
 \end{center}
 \caption{The plot on the right shows the persistence diagram of the superlevel sets of the KDE. Black points represent connected components and red triangles represent loops. 
 The features are born at high levels of the density and die at lower levels. The pink 90\% confidence band separates significant features from noise.}
-\label{fig:eq11b}
+\label{fig:eqGrid3}
 \end{figure}
 % PLOT END
 
@@ -505,9 +515,9 @@ The function \code{plot} for the class \code{"diagram"} provide the options of r
 \begin{center}
 <<eq11c, echo=TRUE, eval=TRUE, fig=TRUE, width=6, height=3>>=
 par(mfrow = c(1, 2), mai = c(0.8, 0.8, 0.3, 0.1))
-plot(Diag[["diagram"]], rotated = TRUE, band = band[["width"]],
+plot(DiagGrid[["diagram"]], rotated = TRUE, band = band[["width"]],
      main = "Rotated Diagram")
-plot(Diag[["diagram"]], barcode = TRUE, main = "Barcode")
+plot(DiagGrid[["diagram"]], barcode = TRUE, main = "Barcode")
 @
 \end{center}
 \caption{Rotated Persistence Diagram and Barcode}
@@ -532,10 +542,10 @@ The sequence of Rips complexes obtained by gradually
 increasing the radius $\varepsilon$ creates a filtration.
 
 The \code{ripsDiag} function computes the persistence diagram of the Rips filtration built on top of a point cloud.
-The user can choose to compute the Rips persistence diagram using either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}, or \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}.
+The user can choose to compute the Rips filtration using either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}} or \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}. Then for computing the persistence diagram from the Rips filtration, the user can use either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}, \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}.
 \\The following code generates 60 points from two circles:
 
-<<eq12, echo=TRUE, eval=TRUE>>=
+<<eqRips1, echo=TRUE, eval=TRUE>>=
 Circle1 <- circleUnif(60)
 Circle2 <- circleUnif(60, r = 2) + 3
 Circles <- rbind(Circle1, Circle2)
@@ -543,34 +553,41 @@ Circles <- rbind(Circle1, Circle2)
 
 \noindent We specify the limit of the Rips filtration and the max dimension of the homological features we are interested in (0 for components, 1 for loops, 2 for voids, etc.):
 
-<<eq12b, echo=TRUE, eval=TRUE>>=
+<<eqRips2, echo=TRUE, eval=TRUE>>=
 maxscale <- 5        # limit of the filtration
 maxdimension <- 1    # components and loops
 @
 
 \noindent and we generate the persistence diagram:
 
-<<eq12c, echo=TRUE, eval=TRUE>>=
-Diag <- ripsDiag(X = Circles, maxdimension, maxscale,
-                 library = "GUDHI", printProgress = FALSE)
+<<eqRips3, echo=TRUE, eval=TRUE>>=
+DiagRips <- ripsDiag(X = Circles, maxdimension, maxscale,
+    library = c("GUDHI", "Dionysus"), location = TRUE, printProgress = FALSE)
 @
 Alternatively, using the option (\code{dist = "arbitrary"}) in \code{ripsDiag()}, the input \code{X} can be an $n \times n$ matrix of distances.
 This option is useful when the user wants to consider a Rips filtration constructed using an arbitrary distance and is currently only available for the option (\code{library = "Dionysus"}).\\
 
-Finally we plot the data and the diagram:\\
+Finally we plot the data and the diagram, as in Figure \ref{fig:eqRips4}.:\\
 \phantom{o}
 % PLOT START
 \begin{figure}[h!tb]
-\setkeys{Gin}{width=4.6in, height=2.3in}
+\setkeys{Gin}{width=6in, height=2in}
 \begin{center}
-<<eq12d, echo=TRUE, eval=TRUE, fig=TRUE, height=2.8, width=5.6>>=
-par(mfrow = c(1, 2), mai=c(0.8, 0.8, 0.3, 0.3))
-plot(Circles, pch = 16, xlab = "",ylab = "")
-plot(Diag[["diagram"]])
+<<eqRips4, echo=FALSE, eval=TRUE, fig=TRUE, height=3, width=9>>=
+par(mfrow = c(1, 3), mai=c(0.8, 0.8, 0.3, 0.3))
+plot(Circles, pch = 16, xlab = "",ylab = "", main = "Two Circles")
+plot(DiagRips[["diagram"]], main = "Rips persistence diagram")
+one <- which(DiagRips[["diagram"]][, 1] == 1)
+plot(Circles, col = 2, main = "Representative loop")
+for (i in seq(along = one)) {
+  for (j in seq_len(dim(DiagRips[["cycleLocation"]][[one[i]]])[1])) {
+    lines(DiagRips[["cycleLocation"]][[one[i]]][j, , ], pch = 19, cex = 1, col = i)
+  }
+}
 @
 \end{center}
 \caption{Rips persistence diagram. Black points represent connected components and red triangles represent loops.}
-\label{fig:eq12d}
+\label{fig:eqRips4}
 \end{figure}
 % PLOT END
 
@@ -584,7 +601,7 @@ Alpha(X,r)=\left\{ \sigma\subset X:\,\underset{u\in\sigma}{\bigcap}R_{u}(\sqrt{s
 \]
 See \citep[Section 3.4]{edelsbrunner2010computational} and \citep{gudhi:AlphaComplex}. The sequence of Alpha complexes obtained by gradually increasing the parameter $s$ creates an Alpha complex filtration.
 
-The \code{alphaComplexDiag} function computes the persistence diagram of the alpha complex filtration built on top of a point cloud, using the C++ library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}. Currently the function \code{alphaComplexDiag} only works on 64-bit R.
+The \code{alphaComplexDiag} function computes the Alpha complex filtration built on top of a point cloud, using the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}. Then for computing the persistence diagram from the Alpha complex filtration, the user can use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}, \href{ http://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}.
 
 We first generate 30 points from a circle:
 
@@ -595,20 +612,35 @@ X <- circleUnif(n = 30)
 and the following code compute the persistence diagram of the alpha complex filtration using the point cloud \code{X}, with printing its progress (\code{printProgress = FALSE}). The function \code{alphaComplexDiag} returns an object of the class \code{"diagram"}.
 
 <<eqAlphaComplex2, echo=TRUE, eval=TRUE>>=
-DiagAlphaComplex <- alphaComplexDiag(X = X, printProgress = TRUE)
+# persistence diagram of alpha complex
+DiagAlphaCmplx <- alphaComplexDiag(
+    X = X, library = c("GUDHI", "Dionysus"), location = TRUE,
+    printProgress = TRUE)
 @
 
 And we plot the diagram:
 
 % PLOT START
 \begin{figure}[h!tb]
-\setkeys{Gin}{width=2.3in, height=2.3in}
+\setkeys{Gin}{width=4in, height=2.3in}
 \begin{center}
-<<eqAlphaComplex3, echo=TRUE, eval=TRUE, fig=TRUE, height=2.8, width=2.8>>=
-plot(DiagAlphaComplex[["diagram"]])
+<<eqAlphaComplex3, echo=TRUE, eval=TRUE, fig=TRUE, height=3, width=8>>=
+# plot
+par(mfrow = c(1, 2))
+plot(DiagAlphaCmplx[["diagram"]], main = "Alpha complex persistence diagram")
+one <- which(DiagAlphaCmplx[["diagram"]][, 1] == 1)
+one <- one[which.max(
+    DiagAlphaCmplx[["diagram"]][one, 3] - DiagAlphaCmplx[["diagram"]][one, 2])]
+plot(X, col = 1, main = "Representative loop")
+for (i in seq(along = one)) {
+  for (j in seq_len(dim(DiagAlphaCmplx[["cycleLocation"]][[one[i]]])[1])) {
+    lines(DiagAlphaCmplx[["cycleLocation"]][[one[i]]][j, , ], pch = 19,
+	    cex = 1, col = i + 1)
+  }
+}
+par(mfrow = c(1, 1))
 @
 \end{center}
-\vspace{-1cm}
 \caption{Persistence diagram of Alpha complex. Black points represent connected components and red triangles represent loops.}
 \label{fig:eqAlphaComplex3}
 \end{figure}
@@ -619,7 +651,7 @@ plot(DiagAlphaComplex[["diagram"]])
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 The {\em Alpha shape complex} $S(X,\alpha)$ is the polytope with its boundary consisting of $\alpha$-exposed simplices, where a simplex $\sigma$ is $\alpha$-exposed if there is an open ball $b$ of radius $\alpha$ such that $b \cap X = \emptyset$ and $\partial b \cap X = \sigma$. Suppose $\mathbb{R}^{d}$ is filled with ice cream, then consider scooping out the ice cream with sphere-shaped spoon of radius $\alpha$ without touching the points $X$. $S(X,\alpha)$ is the remaining polytope with straightening round surfaces. See \citep{fischer2005} and \citep{edelsbrunner1994}. The sequence of Alpha shape complexes obtained by gradually increasing the parameter $\alpha$ creates an Alpha shape complex filtration.
 
-The \code{alphaShapeDiag} function computes the persistence diagram of the alpha shape filtration built on top of a point cloud in 3 dimension, using the C++ library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}. Currently the point data cloud should lie in 3 dimension.
+The \code{alphaShapeDiag} function computes the persistence diagram of the Alpha shape filtration built on top of a point cloud in 3 dimension, using the C++ library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}. Then for computing the persistence diagram from the Alpha shape filtration, the user can use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}, \href{ http://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}. Currently the point data cloud should lie in 3 dimension.
 
 We first generate 500 points from a sphere:
 
@@ -639,14 +671,71 @@ And we plot the diagram:
 \begin{figure}[h!tb]
 \setkeys{Gin}{width=2.3in, height=2.3in}
 \begin{center}
-<<eqAlphaShape3, echo=TRUE, eval=TRUE, fig=TRUE, height=2.8, width=2.8>>=
-plot(DiagAlphaShape[["diagram"]])
+<<eqAlphaShape3, echo=TRUE, eval=TRUE, fig=TRUE, height=3, width=3>>=
+plot(DiagAlphaShape[["diagram"]], diagLim = c(0, 1))
 @
 \end{center}
-\vspace{-1cm}
 \caption{Persistence diagram of Alpha shape. Black points represent connected components, red triangles represent loops, and blue diamonds represent voids.}
 \label{fig:eqAlphaShape3}
 \end{figure}
+
+
+
+%%%%%%%%%%%%%%%%%%
+\subsection{Persistence Diagrams from Filtration}
+%%%%%%%%%%%%%%%%%%
+Rather than computing persistence diagrams from built-in function, it is also possible to compute persistence diagrams from a user-defined filtration. A filtration consists of simplicial complex and the filtration values on each simplex. The functions \code{ripsDiag}, \code{alphaComplexDiag}, \code{alphaShapeDiag} have their counterparts for computing corresponding filtrations instead of persistence diagrams: namely, \code{ripsFiltration} corresponds to the Rips filtration built on top of a point cloud, \code{alphaComplexFiltration} to the alpha complex filtration, and \code{alphaShapeFiltration} to the alpha shape filtration.
+
+We first generate 30 points from a circle:
+
+<<eqFiltration1, echo=TRUE, eval=TRUE>>=
+X <- circleUnif(n = 100)
+@
+
+\noindent Then, after specifying the limit of the Rips filtration and the max dimension of the homological features, the following code compute the Rips filtration using the point cloud \code{X}.
+
+<<eqFiltration2, echo=TRUE, eval=TRUE>>=
+maxscale <- 0.4      # limit of the filtration
+maxdimension <- 1    # components and loops
+FltRips <- ripsFiltration(X = X, maxdimension = maxdimension,
+    maxscale = maxscale, dist = "euclidean", library = "GUDHI",
+	printProgress = TRUE)
+@
+
+\noindent One way of defining a user-defined filtration is to build a filtration from a simplicial complex and function values on the vertices. The function \code{funFiltration} takes function values (\code{FUNvalues}) and simplicial complex (\code{cmplx}) as input, and build a filtration, where a filtration value on a simplex is defined as the maximum of function values on the vertices of the simplex.
+
+\noindent In the following example, the function \code{funFiltration} construct a filtration from a Rips complex and the DTM function values on data points.
+
+<<eqFiltration3, echo=TRUE, eval=TRUE>>=
+m0 <- 0.1
+dtmValues <- dtm(X = X, Grid = X, m0 = m0)
+FltFun <- funFiltration(FUNvalues = dtmValues, cmplx = FltRips[["cmplx"]])
+@
+
+\noindent Once the filtration is computed, the function \code{filtrationDiag} computes the persistence diagram from the filtration. The user can choose to compute the persistence diagram using either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}} or \href{ https://bitbucket.org/phat-code/phat }{\pkg{PHAT}}.
+
+<<eqFiltration4, echo=TRUE, eval=TRUE>>=
+DiagFltFun <- filtrationDiag(filtration = FltFun, maxdimension = maxdimension,
+    library = "Dionysus", location = TRUE, printProgress = TRUE)
+@
+
+Then we plot the data and the diagram:
+% PLOT START
+\begin{figure}[h!tb]
+\setkeys{Gin}{width=4.6in, height=2.3in}
+\begin{center}
+<<eqFiltration5, echo=TRUE, eval=TRUE, fig=TRUE, height=3, width=6>>=
+par(mfrow = c(1, 2), mai=c(0.8, 0.8, 0.3, 0.3))
+plot(X, pch = 16, xlab = "",ylab = "")
+plot(DiagFltFun[["diagram"]], diagLim = c(0, 1))
+@
+\end{center}
+\caption{Persistence diagram from Rips filtration and DTM function values. Black points represent connected components and red triangles represent loops.}
+\label{fig:eqFiltration5}
+\end{figure}
+% PLOT END
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -816,14 +905,15 @@ exists,
 
 \vspace{0.5cm}
 
-The landscape and silhouette functions can be evaluated over a one-dimensional grid of points \code{tseq} using the functions \code{landscape} and \code{silhouette}. In the following code, we use the persistence diagram from Figure \ref{fig:eq12d} to construct the corresponding landscape and silhouette for 
+The landscape and silhouette functions can be evaluated over a one-dimensional grid of points \code{tseq} using the functions \code{landscape} and \code{silhouette}. In the following code, we use the persistence diagram from Figure \ref{fig:eqRips4} to construct the corresponding landscape and silhouette for 
 one-dimensional features (\code{dimension = 1}). The option (\code{KK = 1}) specifies that we are interested in the 1st landscape function, and (\code{p = 1}) is the power of the weights in the definition of the silhouette function.
 
 
 <<eq14, echo=TRUE, eval=TRUE>>=
+maxscale <- 5
 tseq <- seq(0, maxscale, length = 1000)   #domain
-Land <- landscape(Diag[["diagram"]], dimension = 1, KK = 1, tseq)
-Sil <- silhouette(Diag[["diagram"]], p = 1, dimension = 1, tseq)
+Land <- landscape(DiagRips[["diagram"]], dimension = 1, KK = 1, tseq)
+Sil <- silhouette(DiagRips[["diagram"]], p = 1, dimension = 1, tseq)
 @
 
 The functions \code{landscape} and \code{silhouette} return real valued vectors, which can be simply plotted with \code{plot(tseq, Land, type = "l"); plot(tseq, Sil, type = "l")}. See Figure \ref{fig:eq14b}.
@@ -833,14 +923,15 @@ The functions \code{landscape} and \code{silhouette} return real valued vectors,
 \setkeys{Gin}{width=5in, height=1.5in}
 \begin{center}
 <<eq14b, echo=FALSE, eval=TRUE, fig=TRUE, height=2.4, width=8>>=
+ylimit <- c(0, max(c(Land, Sil)) * 1.2)
 par(mfrow = c(1, 2), mai = c(0.5, 0.45, 0.3, 0.3))
-plot(tseq, Land, type = "l", lwd = 3, ylab = "",
+plot(tseq, Land, type = "l", lwd = 3, ylim = ylimit, ylab = "",
      main = "1st Landscape, dim = 1", asp = 1, col = 2)
-plot(tseq, Sil, type = "l", lwd = 3, ylab = "",
+plot(tseq, Sil, type = "l", lwd = 3, ylim = ylimit, ylab = "",
      main = "Silhouette(p = 1), dim = 1", asp = 1, col = 2)
 @
 \end{center}
-\caption{Landscape and Silhouette of the one-dimensional features of the diagram of Figure \ref{fig:eq12d}.}
+\caption{Landscape and Silhouette of the one-dimensional features of the diagram of Figure \ref{fig:eqRips4}.}
 \label{fig:eq14b}
 \end{figure}
 % PLOT END

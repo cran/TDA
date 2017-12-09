@@ -3,43 +3,61 @@
 
 #include <topology/simplex.h>
 #include <string>
-#include <sstream>
-#include <cstdlib>
 
 #include <utilities/timer.h>
 
 
+
+typedef std::vector< double > Point;
+typedef std::vector< Point > PointContainer;
+
+
+
 template< typename Simplex >
-std::vector< unsigned > getVertices(const Simplex& smp) {
-	std::stringstream sstr;
-	std::vector<unsigned int> vertices(smp.dimension() + 1);
-	sstr << smp;
-	std::string vtxStr;
-	std::getline(sstr,vtxStr,'<');
-	unsigned int vtxIdx;
-	for (vtxIdx = 0; vtxIdx < (unsigned)smp.dimension(); ++vtxIdx)
-	{
-		std::getline(sstr, vtxStr, ',');
-		vertices[vtxIdx] = (unsigned)std::atoi(vtxStr.c_str());
-	}
-	std::getline(sstr,vtxStr,'>');
-	vertices[vtxIdx] = (unsigned)std::atoi(vtxStr.c_str());
-	return vertices;
-}
+class ComparisonDataDimension :
+  public std::binary_function<const Simplex &, const Simplex &, bool> {
+
+public:
+  bool operator()(const Simplex & a, const Simplex & b) const {
+    if (a.data() == b.data())
+      return a.dimension() < b.dimension();
+    else
+      return a.data() < b.data();
+  }
+};
 
 
 
-template< typename Simplex, typename Evaluator >
-unsigned getLocation(const Simplex& smp, const Evaluator& evaluator) {
-	std::vector< unsigned > vertices;
-	std::vector< unsigned >::const_iterator vertexItr;
-	unsigned vertex;
-	vertices = getVertices(smp);
-	vertex = *(vertices.begin());
-	for (vertexItr = vertices.begin(); vertexItr != vertices.end(); ++vertexItr)
-	{
-		if (evaluator[*vertexItr] > evaluator[vertex])
-		{
+/**
+ * Class: EvaluatePushBack<Container>
+ *
+ * Push back the simplex and the evaluated value
+ */
+template< typename Container, typename Evaluator >
+class EvaluatePushBack {
+
+public:
+  EvaluatePushBack(Container & argContainer, const Evaluator & argEvaluator) :
+    container(argContainer), evaluator(argEvaluator) {}
+
+  void operator()(const typename Container::value_type & argSmp) const {
+    typename Container::value_type smp(argSmp.vertices(), evaluator(argSmp));
+    container.push_back(smp);
+  }
+
+private:
+  Container & container;
+  const Evaluator & evaluator;
+};
+
+
+
+template< typename VertexList, typename Evaluator >
+unsigned getLocation(const VertexList & vertices, const Evaluator & evaluator) {
+  typename VertexList::const_iterator vertexItr;
+  unsigned vertex = *(vertices.begin());
+	for (vertexItr = vertices.begin(); vertexItr != vertices.end(); ++vertexItr) {
+		if (evaluator[*vertexItr] > evaluator[vertex]) {
 			vertex = *vertexItr;
 		}
 	}
@@ -49,9 +67,10 @@ unsigned getLocation(const Simplex& smp, const Evaluator& evaluator) {
 
 
 template< typename Diagrams, typename Iterator, typename Evaluator,
-		typename SimplexMap >
-inline void initDiagrams(Diagrams& diagrams, const Iterator& bg,
-		const Iterator& end, const Evaluator& evaluator, const SimplexMap& m,
+          typename SimplexMap >
+inline void initDiagrams(
+    Diagrams & diagrams, const Iterator & bg, const Iterator & end,
+    const Evaluator & evaluator, const SimplexMap & m,
 		const unsigned maxdimension) {
 
 	diagrams.resize(maxdimension + 1);
@@ -64,10 +83,10 @@ inline void initDiagrams(Diagrams& diagrams, const Iterator& bg,
 			if (!cur->unpaired()) {
 				// the cycle that was born at cur is killed 
 				// when we added death (another simplex)
-				const typename SimplexMap::key_type& death = cur->pair;
+				const typename SimplexMap::key_type & death = cur->pair;
 
-				const typename SimplexMap::value_type& b = m[cur];
-				const typename SimplexMap::value_type& d = m[death];
+				const typename SimplexMap::value_type & b = m[cur];
+				const typename SimplexMap::value_type & d = m[death];
 				if ((unsigned)b.dimension() > maxdimension) {
 					continue;
 				}
@@ -93,11 +112,33 @@ inline void initDiagrams(Diagrams& diagrams, const Iterator& bg,
 
 
 template< typename Simplex, typename Locations, typename Cycles,
-		typename Persistence, typename Evaluator, typename SimplexMap,
-		typename RealVector >
-inline void initLocations(Locations& locations, Cycles& cycles,
-		const Persistence& p, const Evaluator& evaluator, const SimplexMap& m,
-		const unsigned maxdimension, const RealVector& FUNvalues) {
+          typename Persistence, typename Evaluator, typename SimplexMap,
+          typename Filtration >
+inline void initLocations(
+    Locations & locations, Cycles & cycles, const Persistence & p,
+    const Evaluator & evaluator, const SimplexMap & m,
+    const unsigned maxdimension, const Filtration & filtration) {
+
+	unsigned verticesMax = 0;
+	for (typename Filtration::Index iFltr = filtration.begin();
+       iFltr != filtration.end(); ++iFltr) {
+		const typename Filtration::Simplex & c = filtration.simplex(iFltr);
+		if (c.dimension() == 0) {
+			verticesMax = std::max(verticesMax, *(c.vertices().begin()));
+		}
+	}
+
+  // vertices range from 0 to verticesMax
+  std::vector< double > verticesValues(
+      verticesMax + 1, -std::numeric_limits< double >::infinity());
+
+  for (typename Filtration::Index iFltr = filtration.begin();
+       iFltr != filtration.end(); ++iFltr) {
+		const typename Filtration::Simplex & c = filtration.simplex(iFltr);
+		if(c.dimension() == 0) {
+			verticesValues[*(c.vertices().begin())] = c.data();
+		}
+	}
 
 	locations.resize(maxdimension + 1);
 	cycles.resize(maxdimension + 1);
@@ -114,14 +155,16 @@ inline void initLocations(Locations& locations, Cycles& cycles,
 				// when we added death (another simplex)
 				const typename SimplexMap::key_type& death = cur->pair;
 
-				const typename SimplexMap::value_type& b = m[cur];
-				const typename SimplexMap::value_type& d = m[death];
+				//const typename SimplexMap::value_type& b = m[cur];
+				//const typename SimplexMap::value_type& d = m[death];
+        const typename Filtration::Simplex & b = m[cur];
+        const typename Filtration::Simplex & d = m[death];
 				if ((unsigned)b.dimension() > maxdimension) {
 					continue;
 				}
 				if (evaluator(b) < evaluator(d)) {
-					persLocPoint[0] = getLocation(b, FUNvalues);
-					persLocPoint[1] = getLocation(d, FUNvalues);
+					persLocPoint[0] = getLocation(b.vertices(), verticesValues);
+					persLocPoint[1] = getLocation(d.vertices(), verticesValues);
 					locations[b.dimension()].push_back(persLocPoint);
 
 					// Iterate over the cycle
@@ -131,10 +174,10 @@ inline void initLocations(Locations& locations, Cycles& cycles,
 						si = cycle.begin(); si != cycle.end(); ++si) {
 						persSimplex.clear();
 						const typename Simplex::VertexContainer&
-								vertices = m[*si].vertices();    // std::vector<Vertex> where Vertex = Distances::IndexType
+							vertices = m[*si].vertices();    // std::vector<Vertex> where Vertex = Distances::IndexType
 						typename Simplex::VertexContainer::const_iterator vtxItr;
 						for (vtxItr = vertices.begin(); vtxItr != vertices.end();
-						++vtxItr) {
+							++vtxItr) {
 							persSimplex.push_back(*vtxItr + 1);
 						}
 						persBdy.push_back(persSimplex);
@@ -147,9 +190,10 @@ inline void initLocations(Locations& locations, Cycles& cycles,
 				if ((unsigned)b.dimension() > maxdimension) {
 					continue;
 				}
-				persLocPoint[0] = getLocation(b, FUNvalues);
-				persLocPoint[1] = (unsigned)(std::max_element(
-					FUNvalues.begin(), FUNvalues.end()) - FUNvalues.begin() + 1);
+				persLocPoint[0] = getLocation(b.vertices(), verticesValues);
+				persLocPoint[1] = (unsigned)(
+            std::max_element(verticesValues.begin(), verticesValues.end())
+            - verticesValues.begin() + 1);
 				locations[b.dimension()].push_back(persLocPoint);
 
 				// Iterate over the cycle
@@ -162,40 +206,65 @@ inline void initLocations(Locations& locations, Cycles& cycles,
 
 
 
-template< typename Persistence, typename Fltr, typename Evaluator,
-		typename RealVector >
-void computePersistenceDionysus(Fltr f, const Evaluator& evaluator,
-		const unsigned maxdimension, const RealVector& FUNvalues,
-		const bool location, const bool printProgress,
-		std::vector< std::vector< std::vector< double > > > &persDgm,
-		std::vector< std::vector< std::vector< unsigned int > > > &persLoc,
-		std::vector< std::vector< std::vector< std::vector< unsigned > > > >& persCycle) {
+// FiltrationDiag in Dionysus
+/** \brief Construct the persistence diagram from the filtration using library
+ *         Dionysus.
+ *
+ * @param[out] void           Void
+ * @param[in]  filtration     The input filtration
+ * @param[in]  maxdimension   Max dimension of the homological features to be
+ *                            computed
+ * @param[in]  location       Are location of birth point, death point, and
+ *                            representative cycles returned?
+ * @param[in]  printProgress  Is progress printed?
+ * @param[in]  persDgm        Memory space for the resulting persistence
+ *                            diagram
+ * @param[in]  persLoc        Memory space for the resulting birth points and
+ *                            death points
+ * @param[in]  persCycle      Memory space for the resulting representative
+ *                            cycles
+ * @param[in]  max_num_bars   Write the max_num_pairs most persistent pairs of the
+ *                            diagram. Diagram must point to enough memory space for
+ *                            3*max_num_pairs double. If there is not enough pairs in the diagram,
+ *                            write nothing after.
+ */
+template< typename Persistence, typename Filtration >
+void FiltrationDiagDionysus(
+    const Filtration                                      & filtration,
+    const int                                               maxdimension,
+    const bool                                              location,
+    const bool                                              printProgress,
+    std::vector< std::vector< std::vector< double > > >   & persDgm,
+    std::vector< std::vector< std::vector< unsigned > > > & persLoc,
+    std::vector< std::vector< std::vector< std::vector< unsigned > > > > & persCycle
+) {
 
 	Timer persistence_timer;
 	persistence_timer.start();
 
 	// Compute persistent homology from sorted simplicial complex
-	Persistence p(f); // initialize persistence
+	Persistence p(filtration); // initialize persistence
 	if (!location) {
 		p.pair_simplices(printProgress); // pair simplices
 	}
 	else {
 		if (printProgress) {
 			p.pair_simplices(p.begin(), p.end(), true,
-					typename Persistence::PairVisitor(p.size()));
+				typename Persistence::PairVisitor(p.size()));
 		}
 		else {
 			p.pair_simplices(p.begin(), p.end(), true,
-					typename Persistence::PairVisitorNoProgress());
+				typename Persistence::PairVisitorNoProgress());
 		}
 	}
 
 	persistence_timer.stop();
 
 	// Save persistent diagram
-	typename Persistence::template SimplexMap< Fltr >
-			m = p.make_simplex_map(f);
-	initDiagrams(persDgm, p.begin(), p.end(), evaluator, m, maxdimension);
+  typename Persistence::template SimplexMap< Filtration >
+      m = p.make_simplex_map(filtration);
+  initDiagrams(persDgm, p.begin(), p.end(),
+      typename Filtration::Simplex::DataEvaluator(), m, maxdimension);
 
 	// TODO: why doesn't this work? rLog(rlmain, "testing");  
 	//Persistence::SimplexMap< Fltr > m = p.make_simplex_map(f);
@@ -249,13 +318,72 @@ void computePersistenceDionysus(Fltr f, const Evaluator& evaluator,
 
 	// trace back birth & death simplex
 	if (location) {
-		initLocations< typename Fltr::Simplex >
-				(persLoc, persCycle, p, evaluator, m, maxdimension, FUNvalues);
+    initLocations< typename Filtration::Simplex >(
+        persLoc, persCycle, p, typename Filtration::Simplex::DataEvaluator(),
+        m, maxdimension, filtration);
 	}
 
 	if (printProgress) {
 		persistence_timer.check("# Persistence timer");
 	}
+}
+
+
+
+// RipsFiltration in Dionysus
+/** \brief Construct the Rips filtration constructed on the input set of points
+ *         using library GUDHI.
+ *
+ * @param[out] Filtration     A filtration
+ * @param[in]  X              Either an nxd matrix of coordinates,
+ *                            or an nxn matrix of distances of points
+ * @param[in]  is_row_names   Wehther row names are included in the input X
+ * @param[in]  maxdimension   Max dimension of the homological features to be
+ *                            computed.
+ * @param[in]  maxscale       Threshold for the Rips complex
+ * @param[in]  printProgress  Is progress printed?
+ * @param[in]  max_num_bars   Write the max_num_pairs most persistent pairs of the
+ *                            diagram. Diagram must point to enough memory space for
+ *                            3*max_num_pairs double. If there is not enough pairs in the diagram,
+ *                            write nothing after.
+ */
+template< typename Distances, typename Generator, typename Filtration,
+          typename RealMatrix, typename Print >
+inline Filtration RipsFiltrationDionysus(
+    const RealMatrix & X,
+    const unsigned     nSample, 
+    const unsigned     nDim,
+    const bool         is_row_names,
+    const int          maxdimension,
+    const double       maxscale,
+    const bool         printProgress,
+    const Print      & print
+) {
+
+  PointContainer points = TdaToStl< PointContainer >(X, nSample, nDim,
+      is_row_names);
+  //read_points(infilename, points);
+  //read_points2(infilename, points);
+
+  Distances distances(points);
+  Generator rips(distances);
+  typename Generator::Evaluator size(distances);
+  Filtration filtration;
+  EvaluatePushBack< Filtration, typename Generator::Evaluator > functor(
+      filtration, size);
+
+  // Generate maxdimension skeleton of the Rips complex
+  rips.generate(maxdimension + 1, maxscale, functor);
+
+  if (printProgress) {
+    print("# Generated complex of size: %d \n", filtration.size());
+  }
+
+  // Sort the simplices with respect to comparison criteria
+  // e.g. distance or function values
+  filtration.sort(ComparisonDataDimension< typename Filtration::Simplex >());
+
+  return filtration;
 }
 
 

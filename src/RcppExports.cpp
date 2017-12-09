@@ -6,6 +6,21 @@
 
 using namespace Rcpp;
 
+// GridFiltration
+Rcpp::List GridFiltration(const Rcpp::NumericVector& FUNvalues, const Rcpp::IntegerVector& gridDim, const int maxdimension, const std::string& decomposition, const bool printProgress);
+RcppExport SEXP TDA_GridFiltration(SEXP FUNvaluesSEXP, SEXP gridDimSEXP, SEXP maxdimensionSEXP, SEXP decompositionSEXP, SEXP printProgressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type FUNvalues(FUNvaluesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type gridDim(gridDimSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxdimension(maxdimensionSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type decomposition(decompositionSEXP);
+    Rcpp::traits::input_parameter< const bool >::type printProgress(printProgressSEXP);
+    rcpp_result_gen = Rcpp::wrap(GridFiltration(FUNvalues, gridDim, maxdimension, decomposition, printProgress));
+    return rcpp_result_gen;
+END_RCPP
+}
 // GridDiag
 Rcpp::List GridDiag(const Rcpp::NumericVector& FUNvalues, const Rcpp::IntegerVector& gridDim, const int maxdimension, const std::string& decomposition, const std::string& library, const bool location, const bool printProgress);
 RcppExport SEXP TDA_GridDiag(SEXP FUNvaluesSEXP, SEXP gridDimSEXP, SEXP maxdimensionSEXP, SEXP decompositionSEXP, SEXP librarySEXP, SEXP locationSEXP, SEXP printProgressSEXP) {
@@ -49,17 +64,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // Kde
-Rcpp::NumericVector Kde(const Rcpp::NumericMatrix& X, const Rcpp::NumericMatrix& Grid, const double h, const Rcpp::NumericVector& weight, const bool printProgress);
-RcppExport SEXP TDA_Kde(SEXP XSEXP, SEXP GridSEXP, SEXP hSEXP, SEXP weightSEXP, SEXP printProgressSEXP) {
+Rcpp::NumericVector Kde(const Rcpp::NumericMatrix& X, const Rcpp::NumericMatrix& Grid, const double h, const std::string& kertype, const Rcpp::NumericVector& weight, const bool printProgress);
+RcppExport SEXP TDA_Kde(SEXP XSEXP, SEXP GridSEXP, SEXP hSEXP, SEXP kertypeSEXP, SEXP weightSEXP, SEXP printProgressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type X(XSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type Grid(GridSEXP);
     Rcpp::traits::input_parameter< const double >::type h(hSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type kertype(kertypeSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type weight(weightSEXP);
     Rcpp::traits::input_parameter< const bool >::type printProgress(printProgressSEXP);
-    rcpp_result_gen = Rcpp::wrap(Kde(X, Grid, h, weight, printProgress));
+    rcpp_result_gen = Rcpp::wrap(Kde(X, Grid, h, kertype, weight, printProgress));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -106,9 +122,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RipsDiag
-Rcpp::List RipsDiag(const Rcpp::NumericMatrix& X, const int maxdimension, const double maxscale, const std::string& dist, const std::string& library, const bool location, const bool printProgress);
-RcppExport SEXP TDA_RipsDiag(SEXP XSEXP, SEXP maxdimensionSEXP, SEXP maxscaleSEXP, SEXP distSEXP, SEXP librarySEXP, SEXP locationSEXP, SEXP printProgressSEXP) {
+// FiltrationDiag
+Rcpp::List FiltrationDiag(const Rcpp::List& filtration, const int maxdimension, const std::string& library, const bool location, const bool printProgress);
+RcppExport SEXP TDA_FiltrationDiag(SEXP filtrationSEXP, SEXP maxdimensionSEXP, SEXP librarySEXP, SEXP locationSEXP, SEXP printProgressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type filtration(filtrationSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxdimension(maxdimensionSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type library(librarySEXP);
+    Rcpp::traits::input_parameter< const bool >::type location(locationSEXP);
+    Rcpp::traits::input_parameter< const bool >::type printProgress(printProgressSEXP);
+    rcpp_result_gen = Rcpp::wrap(FiltrationDiag(filtration, maxdimension, library, location, printProgress));
+    return rcpp_result_gen;
+END_RCPP
+}
+// FunFiltration
+Rcpp::List FunFiltration(const Rcpp::NumericVector& FUNvalues, const Rcpp::List& cmplx);
+RcppExport SEXP TDA_FunFiltration(SEXP FUNvaluesSEXP, SEXP cmplxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type FUNvalues(FUNvaluesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type cmplx(cmplxSEXP);
+    rcpp_result_gen = Rcpp::wrap(FunFiltration(FUNvalues, cmplx));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RipsFiltration
+Rcpp::List RipsFiltration(const Rcpp::NumericMatrix& X, const int maxdimension, const double maxscale, const std::string& dist, const std::string& library, const bool printProgress);
+RcppExport SEXP TDA_RipsFiltration(SEXP XSEXP, SEXP maxdimensionSEXP, SEXP maxscaleSEXP, SEXP distSEXP, SEXP librarySEXP, SEXP printProgressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -117,33 +160,80 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type maxscale(maxscaleSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type dist(distSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type library(librarySEXP);
+    Rcpp::traits::input_parameter< const bool >::type printProgress(printProgressSEXP);
+    rcpp_result_gen = Rcpp::wrap(RipsFiltration(X, maxdimension, maxscale, dist, library, printProgress));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RipsDiag
+Rcpp::List RipsDiag(const Rcpp::NumericMatrix& X, const int maxdimension, const double maxscale, const std::string& dist, const std::string& libraryFiltration, const std::string& libraryDiag, const bool location, const bool printProgress);
+RcppExport SEXP TDA_RipsDiag(SEXP XSEXP, SEXP maxdimensionSEXP, SEXP maxscaleSEXP, SEXP distSEXP, SEXP libraryFiltrationSEXP, SEXP libraryDiagSEXP, SEXP locationSEXP, SEXP printProgressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxdimension(maxdimensionSEXP);
+    Rcpp::traits::input_parameter< const double >::type maxscale(maxscaleSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type dist(distSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type libraryFiltration(libraryFiltrationSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type libraryDiag(libraryDiagSEXP);
     Rcpp::traits::input_parameter< const bool >::type location(locationSEXP);
     Rcpp::traits::input_parameter< const bool >::type printProgress(printProgressSEXP);
-    rcpp_result_gen = Rcpp::wrap(RipsDiag(X, maxdimension, maxscale, dist, library, location, printProgress));
+    rcpp_result_gen = Rcpp::wrap(RipsDiag(X, maxdimension, maxscale, dist, libraryFiltration, libraryDiag, location, printProgress));
     return rcpp_result_gen;
 END_RCPP
 }
-// AlphaShapeDiagGUDHI
-Rcpp::List AlphaShapeDiagGUDHI(const Rcpp::NumericMatrix& X, const bool printProgress);
-RcppExport SEXP TDA_AlphaShapeDiagGUDHI(SEXP XSEXP, SEXP printProgressSEXP) {
+// AlphaShapeFiltration
+Rcpp::List AlphaShapeFiltration(const Rcpp::NumericMatrix& X, const bool printProgress);
+RcppExport SEXP TDA_AlphaShapeFiltration(SEXP XSEXP, SEXP printProgressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type X(XSEXP);
     Rcpp::traits::input_parameter< const bool >::type printProgress(printProgressSEXP);
-    rcpp_result_gen = Rcpp::wrap(AlphaShapeDiagGUDHI(X, printProgress));
+    rcpp_result_gen = Rcpp::wrap(AlphaShapeFiltration(X, printProgress));
     return rcpp_result_gen;
 END_RCPP
 }
-// AlphaComplexDiagGUDHI
-Rcpp::List AlphaComplexDiagGUDHI(const Rcpp::NumericMatrix& X, const bool printProgress);
-RcppExport SEXP TDA_AlphaComplexDiagGUDHI(SEXP XSEXP, SEXP printProgressSEXP) {
+// AlphaShapeDiag
+Rcpp::List AlphaShapeDiag(const Rcpp::NumericMatrix& X, const int maxdimension, const std::string& libraryDiag, const bool location, const bool printProgress);
+RcppExport SEXP TDA_AlphaShapeDiag(SEXP XSEXP, SEXP maxdimensionSEXP, SEXP libraryDiagSEXP, SEXP locationSEXP, SEXP printProgressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxdimension(maxdimensionSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type libraryDiag(libraryDiagSEXP);
+    Rcpp::traits::input_parameter< const bool >::type location(locationSEXP);
+    Rcpp::traits::input_parameter< const bool >::type printProgress(printProgressSEXP);
+    rcpp_result_gen = Rcpp::wrap(AlphaShapeDiag(X, maxdimension, libraryDiag, location, printProgress));
+    return rcpp_result_gen;
+END_RCPP
+}
+// AlphaComplexFiltration
+Rcpp::List AlphaComplexFiltration(const Rcpp::NumericMatrix& X, const bool printProgress);
+RcppExport SEXP TDA_AlphaComplexFiltration(SEXP XSEXP, SEXP printProgressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type X(XSEXP);
     Rcpp::traits::input_parameter< const bool >::type printProgress(printProgressSEXP);
-    rcpp_result_gen = Rcpp::wrap(AlphaComplexDiagGUDHI(X, printProgress));
+    rcpp_result_gen = Rcpp::wrap(AlphaComplexFiltration(X, printProgress));
+    return rcpp_result_gen;
+END_RCPP
+}
+// AlphaComplexDiag
+Rcpp::List AlphaComplexDiag(const Rcpp::NumericMatrix& X, const int maxdimension, const std::string& libraryDiag, const bool location, const bool printProgress);
+RcppExport SEXP TDA_AlphaComplexDiag(SEXP XSEXP, SEXP maxdimensionSEXP, SEXP libraryDiagSEXP, SEXP locationSEXP, SEXP printProgressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxdimension(maxdimensionSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type libraryDiag(libraryDiagSEXP);
+    Rcpp::traits::input_parameter< const bool >::type location(locationSEXP);
+    Rcpp::traits::input_parameter< const bool >::type printProgress(printProgressSEXP);
+    rcpp_result_gen = Rcpp::wrap(AlphaComplexDiag(X, maxdimension, libraryDiag, location, printProgress));
     return rcpp_result_gen;
 END_RCPP
 }

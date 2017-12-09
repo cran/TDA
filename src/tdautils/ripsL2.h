@@ -14,7 +14,7 @@
 typedef         PairwiseDistances<PointContainer, L2Distance>           PairDistances;
 typedef         PairDistances::DistanceType                             DistanceType;
 typedef         PairDistances::IndexType                                VertexR;
-typedef         Rips<PairDistances>                                     Generator;
+typedef         Rips< PairDistances, Simplex< VertexR, double > >       Generator;
 typedef         Generator::Simplex                                      SmplxR;
 typedef         Filtration<SmplxR>                                       FltrR;
 typedef         StaticPersistence<>                                     PersistenceR;

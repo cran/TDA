@@ -16,7 +16,7 @@
 typedef         PairwiseDistances<PointContainer, ArbitDistance>        PairDistancesA;
 typedef         PairDistancesA::DistanceType                             DistanceTypeA;
 typedef         PairDistancesA::IndexType                                VertexRA;
-typedef         Rips<PairDistancesA>                                     GeneratorA;
+typedef         Rips< PairDistancesA, Simplex< VertexRA, double > >      GeneratorA;
 typedef         GeneratorA::Simplex                                      SmplxRA;
 typedef         Filtration<SmplxRA>                                       FltrRA;
 typedef         StaticPersistence<>                                     PersistenceR;

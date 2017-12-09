@@ -14,11 +14,13 @@
 }
 
 \usage{
-maxPersistence(FUN, parameters, X, lim, by, maxdimension = length(lim) / 2 - 1,
-               sublevel = TRUE, library = "Dionysus", B = 30, alpha = 0.05,
-               bandFUN = "bootstrapBand", distance = "bottleneck",
-               dimension = min(1, maxdimension), p = 1, parallel = FALSE,
-               printProgress = FALSE, weight = NULL)
+maxPersistence(
+    FUN, parameters, X, lim, by,
+    maxdimension = length(lim) / 2 - 1, sublevel = TRUE,
+    library = "GUDHI", B = 30, alpha = 0.05,
+    bandFUN = "bootstrapBand", distance = "bottleneck",
+    dimension = min(1, maxdimension), p = 1, parallel = FALSE,
+    printProgress = FALSE, weight = NULL)
 }
 
 \arguments{
@@ -51,7 +53,7 @@ maxPersistence(FUN, parameters, X, lim, by, maxdimension = length(lim) / 2 - 1,
   }
 
   \item{library}{
-    User can compute the persistence diagram using either the library \code{"Dionysus"}, or \code{"phat"}. The default value is \code{"Dionysus"}.
+    a string specifying which library to compute the persistence diagram. The user can choose either the library \code{"GUDHI"}, \code{"Dionysus"}, or \code{"PHAT"}. The default value is \code{"GUDHI"}.
   }
 
   \item{bandFUN}{

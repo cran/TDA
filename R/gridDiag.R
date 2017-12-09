@@ -1,7 +1,7 @@
 gridDiag <-
 function(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
          maxdimension = max(NCOL(X), length(dim(FUNvalues))) - 1,
-         sublevel = TRUE, library = "Dionysus", location = FALSE,
+         sublevel = TRUE, library = "GUDHI", location = FALSE,
          printProgress = FALSE, diagLimit = NULL, ...) {
 
   if (!xor(is.null(X) || is.null(FUN), is.null(FUNvalues))) {
@@ -46,14 +46,17 @@ function(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
   if (!is.logical(sublevel)) {
     stop("sublevel should be logical")
   }
+  if (library == "gudhi" || library == "Gudhi") {
+    library <- "GUDHI"
+  }
   if (library == "dionysus" || library == "DIONYSUS") {
     library <- "Dionysus"
   }
   if (library == "phat" || library == "Phat") {
     library <- "PHAT"
   }
-  if (library != "Dionysus" && library != "PHAT") {
-    stop("library should be a string: either 'Dionysus' or 'PHAT'")
+  if (library != "GUDHI" && library != "Dionysus" && library != "PHAT") {
+    stop("library for computing persistence diagram should be a string: either 'GUDHI', 'Dionysus', or 'PHAT'")
   }
   if (!is.logical(location)) {
     stop("location should be logical")
@@ -99,13 +102,15 @@ function(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
 
   # compute persistence diagram of function values over a grid
   if (length(gridDim) <= 3) {
-    gridOut <- GridDiag(FUNvalues = FUNvalues, gridDim = as.integer(gridDim),
+    gridOut <- GridDiag(
+	    FUNvalues = FUNvalues, gridDim = as.integer(gridDim),
         maxdimension = as.integer(maxdimension), decomposition = "5tetrahedra",
-        library = library, location = location, printProgress = printProgress)
+		library = library, location = location, printProgress = printProgress)
   } else {
-    gridOut <- GridDiag(FUNvalues = FUNvalues, gridDim = as.integer(gridDim),
+    gridOut <- GridDiag(
+	    FUNvalues = FUNvalues, gridDim = as.integer(gridDim),
         maxdimension = as.integer(maxdimension), decomposition = "barycenter",
-        library = library, location = location, printProgress = printProgress)
+		library = library, location = location, printProgress = printProgress)
   }
 
   if (location == TRUE) {
@@ -134,7 +139,7 @@ function(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
   attributes(Diag)[["scale"]] <-
     c(min(Diag[nonInf, 2:3]), max(Diag[nonInf, 2:3]))
   attributes(Diag)[["call"]] <- match.call()
-  if (location == FALSE)
+  if (location == FALSE || library == "GUDHI")
   {
     out <- list("diagram" = Diag)
   } else if (library == "PHAT")

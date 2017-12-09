@@ -1,3 +1,6 @@
+#ifndef __GRIDUTILS_H__
+#define __GRIDUTILS_H__
+
 #include <utilities/log.h>
 
 #include <topology/simplex.h>
@@ -23,7 +26,7 @@
 typedef         unsigned                                            Vertex;
 typedef         Simplex<Vertex, double>                             Smplx;
 typedef         Smplx::VertexContainer				    VertexCont;
-typedef         std::vector<Vertex>                                 VertexVector;
+// typedef         std::vector<Vertex>                                 VertexVector;
 typedef         Filtration<Smplx>                                   Fltr;
 typedef         StaticPersistence<>                                 Persistence;
 typedef         PersistenceDiagram<>                                PDgm;
@@ -37,79 +40,63 @@ typedef         OffsetBeginMap<Fltr, Persistence,
 
 
 // add a single edge to the filtration
-template <typename RealVector>
-void addEdge(Fltr& filtr, const RealVector& FUNvalues, 
-            int vert01, int vert02) {
-     VertexVector vertices(3);
+template< typename VectorList >
+void addEdge(int vert01, int vert02, VectorList & cmplx) {
+     typename VectorList::value_type vertices(2);
      vertices[0] = vert01;
      vertices[1] = vert02;
-     VertexVector::const_iterator bg = vertices.begin();
-
-     double value = std::max(FUNvalues[vert01], FUNvalues[vert02]);
-     filtr.push_back(Smplx(bg, bg + 2, value)); 
-         // std::max(FUNvalues.at(vert03),FUNvalues.at(vert04))),
+     cmplx.push_back(vertices);
 } // end function to add a single edge
 
 
 
 // add a single triangle to the filtration
-template <typename RealVector>
-void addTri(Fltr& filtr, const RealVector& FUNvalues, 
-            int vert01, int vert02, int vert03) {
-     VertexVector vertices(3);
+template< typename VectorList >
+void addTri(int vert01, int vert02, int vert03, VectorList & cmplx) {
+     typename VectorList::value_type vertices(3);
      vertices[0] = vert01;
      vertices[1] = vert02;
      vertices[2] = vert03;
-     VertexVector::const_iterator bg = vertices.begin();
-
-     double value = std::max(std::max(FUNvalues[vert01], FUNvalues[vert02]),
-                    FUNvalues[vert03]);
-     filtr.push_back(Smplx(bg, bg + 3, value)); 
-         // std::max(FUNvalues.at(vert03),FUNvalues.at(vert04))),
+     cmplx.push_back(vertices);
 } // end function to add a single triangle
 
 
 
 // add a single tet to the filtration
-template <typename RealVector>
-void addTet(Fltr& filtr, const RealVector& FUNvalues, 
-            int vert01, int vert02, int vert03, int vert04) {
-     VertexVector vertices(3);
+template< typename VectorList >
+void addTet(int vert01, int vert02, int vert03, int vert04, VectorList & cmplx) {
+     typename VectorList::value_type vertices(4);
      vertices[0] = vert01;
      vertices[1] = vert02;
      vertices[2] = vert03;
      vertices[3] = vert04;
-     VertexVector::const_iterator bg = vertices.begin();
-
-     double value = std::max(std::max(FUNvalues[vert01], FUNvalues[vert02]),
-                    std::max(FUNvalues[vert03], FUNvalues[vert04]));
-     filtr.push_back(Smplx(bg, bg + 4, value)); 
-         // std::max(FUNvalues.at(vert03),FUNvalues.at(vert04))),
+     cmplx.push_back(vertices);
 } // end function to add a single tet
 
 
 
-template <typename RealVector>
-void addAllEdges(Fltr& filtr, const RealVector& FUNvalues, 
-              const int ncols, const int nrows, int i, int j, int k) {     
+template< typename VectorList >
+void addAllEdges(
+    const int ncols, const int nrows, int i, int j, int k,
+    VectorList & cmplx) {     
      int curidx = i + ncols*j + ncols*nrows*k;
 
      // ... add edge (i-1,j,k) <--> (i,j,k)
      if (i > 0)
      {
-        addEdge(filtr, FUNvalues, curidx, curidx -1);
+        addEdge(curidx, curidx -1, cmplx);
      }
      
      // ... add edge (i,j-1,k) <--> (i,j,k)
      if (j > 0)
      {
-        addEdge(filtr, FUNvalues, curidx, curidx - ncols);
+        addEdge(curidx, curidx - ncols, cmplx);
      }
    
      // ... add edge (i,j,k-1) <--> (i,j,k)
      if (k > 0)
      {
-        addEdge(filtr, FUNvalues, curidx, curidx - nrows*ncols);
+        addEdge(curidx, curidx - nrows*ncols, cmplx);
      }
 
 
@@ -122,15 +109,15 @@ void addAllEdges(Fltr& filtr, const RealVector& FUNvalues,
 	// ... EVEN BOX 
         if (i > 0 && j > 0) // top
         { 
-           addEdge(filtr, FUNvalues, curidx, curidx - ncols -1);
+           addEdge(curidx, curidx - ncols -1, cmplx);
         }
         if (i > 0 && k > 0) // back
         {
-           addEdge(filtr, FUNvalues, curidx, curidx - nrows*ncols -1);
+           addEdge(curidx, curidx - nrows*ncols -1, cmplx);
         }
         if (j > 0 && k > 0) // right
         {
-           addEdge(filtr, FUNvalues, curidx, curidx - nrows*ncols - ncols);
+           addEdge(curidx, curidx - nrows*ncols - ncols, cmplx);
         }
      }
      else
@@ -138,15 +125,15 @@ void addAllEdges(Fltr& filtr, const RealVector& FUNvalues,
      	// ... ODD BOX
         if (i > 0 && j > 0) // top
         {
-           addEdge(filtr, FUNvalues, curidx - 1, curidx - ncols);
+           addEdge(curidx - 1, curidx - ncols, cmplx);
         }
         if (i > 0 && k > 0) // back
         {
-           addEdge(filtr, FUNvalues, curidx - 1, curidx - nrows*ncols);
+           addEdge(curidx - 1, curidx - nrows*ncols, cmplx);
         }
         if (j > 0 && k > 0) // right
         {
-           addEdge(filtr, FUNvalues, curidx - ncols, curidx - nrows*ncols);
+           addEdge(curidx - ncols, curidx - nrows*ncols, cmplx);
         }
      }
 
@@ -156,40 +143,41 @@ void addAllEdges(Fltr& filtr, const RealVector& FUNvalues,
 
 
 
-template <typename RealVector>
-void addEvenTets(Fltr& filtr, const RealVector& FUNvalues, 
-                  const int ncols, const int nrows, int i, int j, int k) {
+template< typename VectorList >
+void addEvenTets(
+    const int ncols, const int nrows, int i, int j, int k,
+    VectorList & cmplx) {
+
      assert(i > 0 && j > 0 && k > 0);
      int curidx = i + ncols*j + ncols*nrows*k;
      
      // top vertex (i, j-1, k)
-     addTet(filtr, FUNvalues, curidx, curidx - 1 - ncols, curidx - ncols - nrows*ncols, curidx - ncols);
+     addTet(curidx, curidx - 1 - ncols, curidx - ncols - nrows*ncols, curidx - ncols, cmplx);
      
      // top vertex (i-1, j, k)
-     addTet(filtr, FUNvalues, curidx, curidx - 1, curidx - nrows*ncols - 1, curidx -1 - ncols);
+     addTet(curidx, curidx - 1, curidx - nrows*ncols - 1, curidx -1 - ncols, cmplx);
 
      // top vertex (i, j, k-1)
-     addTet(filtr, FUNvalues, curidx, curidx - 1 - nrows*ncols, curidx - ncols - nrows*ncols, curidx - nrows*ncols);
+     addTet(curidx, curidx - 1 - nrows*ncols, curidx - ncols - nrows*ncols, curidx - nrows*ncols, cmplx);
 
      // top vertex (i-1, j-1, k-1)
-     addTet(filtr, FUNvalues, curidx - 1 - nrows*ncols, curidx - ncols - nrows*ncols, curidx - 1 - ncols, curidx - 1 - ncols - nrows*ncols);
+     addTet(curidx - 1 - nrows*ncols, curidx - ncols - nrows*ncols, curidx - 1 - ncols, curidx - 1 - ncols - nrows*ncols, cmplx);
      
      return;
 } // end fcn to add four EVEN tets
 
 
 
-template <typename RealVector>
-void addOddTets(Fltr& filtr, const RealVector& FUNvalues, 
-                  const int ncols, const int nrows, int i, int j, int k) {
+template< typename VectorList >
+void addOddTets(
+    const int ncols, const int nrows, int i, int j, int k,
+    VectorList & cmplx) {
      assert(i > 0 && j > 0 && k > 0);
      int curidx = i + ncols*j + ncols*nrows*k;
       
-     VertexVector vertices(4);
+     typename VectorList::value_type vertices(4);
      vertices[0] = curidx;  vertices[3] = curidx;
      vertices[1] = -1; vertices[2] = -1; 
-     VertexVector::const_iterator bg = vertices.begin();
-//   VertexVector::const_iterator end = vertices.end();
     
      int v1, v2, v3, v4;
      double value, value2;  // max of value and value 2 is the fcn value. 
@@ -197,48 +185,42 @@ void addOddTets(Fltr& filtr, const RealVector& FUNvalues,
      // top vertex (i, j, k)
      v1 = curidx -1;   vertices[0] = v1;
      v2 = curidx - ncols;  vertices[1] = v2;  
-     value = std::max(FUNvalues[v1],FUNvalues[v2]);
      
      v3 = curidx - nrows*ncols;  vertices[2] = v3;
      v4 = curidx; vertices[3] = v4;
-     value2 = std::max(FUNvalues[v3],FUNvalues[v4]);
      
-     filtr.push_back(Smplx(bg, bg + 4, std::max(value,value2)));
+     cmplx.push_back(vertices);
      
      // top vertex (i-1, j-1, k)
      v3 = curidx - 1 - ncols - nrows*ncols;  vertices[2] = v3;
      v4 = curidx - 1 -ncols; vertices[3] = v4;
-     value2 = std::max(FUNvalues[v3],FUNvalues[v4]);
      
-     filtr.push_back(Smplx(bg, bg + 4, std::max(value,value2)));
+     cmplx.push_back(vertices);
 
      // top vertex (i, j-1, k-1)
      v1 = curidx - nrows*ncols;   vertices[0] = v1;
      v2 = curidx - 1 - ncols - nrows*ncols;  vertices[1] = v2;  
-     value = std::max(FUNvalues[v1],FUNvalues[v2]);
      
      v3 = curidx - ncols;  vertices[2] = v3;
      v4 = curidx -ncols - nrows*ncols; vertices[3] = v4;
-     value2 = std::max(FUNvalues[v3],FUNvalues[v4]);
      
-     filtr.push_back(Smplx(bg, bg + 4, std::max(value,value2)));
+     cmplx.push_back(vertices);
 
      // top vertex (i-1, j, k-1)
      v3 = curidx - 1;  vertices[2] = v3;
      v4 = curidx -1 - nrows * ncols; vertices[3] = v4;
-     value2 = std::max(FUNvalues[v3],FUNvalues[v4]);
     
-     filtr.push_back(Smplx(bg, bg + 4, std::max(value,value2)));
-      
+     cmplx.push_back(vertices);
 
-     return;
 } // end fcn addEvenTets
 
 
 
-template <typename RealVector>
-void addAllTriangles(Fltr& filtr, const RealVector& FUNvalues, 
-                  const int ncols, const int nrows, int i, int j, int k) {
+template< typename VectorList >
+void addAllTriangles(
+    const int ncols, const int nrows, int i, int j, int k,
+    VectorList & cmplx) {
+
      int curidx = i + ncols*j + ncols*nrows*k;
      
      // ... consider two cases for the cubical decomposition:
@@ -248,26 +230,26 @@ void addAllTriangles(Fltr& filtr, const RealVector& FUNvalues,
         if (i > 0 && j > 0) // top
         {
      
-           addTri(filtr, FUNvalues, curidx, curidx - ncols - 1, curidx - ncols);
-           addTri(filtr, FUNvalues, curidx, curidx -1, curidx - ncols -1); 
+           addTri(curidx, curidx - ncols - 1, curidx - ncols, cmplx);
+           addTri(curidx, curidx -1, curidx - ncols -1, cmplx); 
         }
         if (i > 0 && k > 0) // back
         {
-           addTri(filtr, FUNvalues, curidx, curidx - nrows*ncols -1, curidx - 1);
-           addTri(filtr, FUNvalues, curidx, curidx - nrows*ncols, curidx - nrows*ncols -1);
+           addTri(curidx, curidx - nrows*ncols -1, curidx - 1, cmplx);
+           addTri(curidx, curidx - nrows*ncols, curidx - nrows*ncols -1, cmplx);
         }
         
         if (j > 0 && k > 0) // right
         {
-           addTri(filtr, FUNvalues, curidx, curidx - nrows*ncols - ncols, curidx - nrows*ncols);
-           addTri(filtr, FUNvalues, curidx, curidx - ncols, curidx - nrows*ncols - ncols);
+           addTri(curidx, curidx - nrows*ncols - ncols, curidx - nrows*ncols, cmplx);
+           addTri(curidx, curidx - ncols, curidx - nrows*ncols - ncols, cmplx);
            
            if (i > 0) // middle
            {
-              addTri(filtr, FUNvalues, curidx, curidx - ncols -1, curidx - ncols - nrows*ncols);
-              addTri(filtr, FUNvalues, curidx, curidx -1 -nrows*ncols, curidx - ncols -1);
-              addTri(filtr, FUNvalues, curidx -1 - nrows*ncols, curidx - ncols - nrows*ncols, curidx);
-              addTri(filtr, FUNvalues, curidx -1 - nrows*ncols, curidx - 1 - ncols, curidx - ncols - nrows*ncols);
+              addTri(curidx, curidx - ncols -1, curidx - ncols - nrows*ncols, cmplx);
+              addTri(curidx, curidx -1 -nrows*ncols, curidx - ncols -1, cmplx);
+              addTri(curidx -1 - nrows*ncols, curidx - ncols - nrows*ncols, curidx, cmplx);
+              addTri(curidx -1 - nrows*ncols, curidx - 1 - ncols, curidx - ncols - nrows*ncols, cmplx);
            }
         }
      } // end if for even case 
@@ -275,27 +257,27 @@ void addAllTriangles(Fltr& filtr, const RealVector& FUNvalues,
         // ... ODD CASE
         if (i > 0 && j > 0) // top
         {
-           addTri(filtr, FUNvalues, curidx -1, curidx - ncols, curidx);
-           addTri(filtr, FUNvalues, curidx -1, curidx - ncols -1, curidx - ncols);
+           addTri(curidx -1, curidx - ncols, curidx, cmplx);
+           addTri(curidx -1, curidx - ncols -1, curidx - ncols, cmplx);
         }
 
         if (i > 0 && k > 0) // back
         {
-           addTri(filtr, FUNvalues, curidx -1, curidx - nrows*ncols, curidx - nrows*ncols - 1);
-           addTri(filtr, FUNvalues, curidx -1, curidx, curidx - nrows*ncols);
+           addTri(curidx -1, curidx - nrows*ncols, curidx - nrows*ncols - 1, cmplx);
+           addTri(curidx -1, curidx, curidx - nrows*ncols, cmplx);
         }  
         
         if (j > 0 && k > 0) // right
         {
-           addTri(filtr, FUNvalues, curidx - ncols, curidx - nrows*ncols, curidx - ncols - nrows*ncols);
-           addTri(filtr, FUNvalues, curidx - ncols, curidx, curidx - nrows*ncols);
+           addTri(curidx - ncols, curidx - nrows*ncols, curidx - ncols - nrows*ncols, cmplx);
+           addTri(curidx - ncols, curidx, curidx - nrows*ncols, cmplx);
            
            if (i > 0) // middle
            { 
-              addTri(filtr, FUNvalues, curidx -1, curidx - ncols, curidx - nrows*ncols);
-              addTri(filtr, FUNvalues, curidx -1, curidx - nrows*ncols - ncols - 1, curidx - ncols);
-              addTri(filtr, FUNvalues, curidx - nrows*ncols, curidx - nrows*ncols - ncols -1, curidx - ncols);
-              addTri(filtr, FUNvalues, curidx - nrows*ncols, curidx - 1, curidx - nrows*ncols - ncols -1);
+              addTri(curidx -1, curidx - ncols, curidx - nrows*ncols, cmplx);
+              addTri(curidx -1, curidx - nrows*ncols - ncols - 1, curidx - ncols, cmplx);
+              addTri(curidx - nrows*ncols, curidx - nrows*ncols - ncols -1, curidx - ncols, cmplx);
+              addTri(curidx - nrows*ncols, curidx - 1, curidx - nrows*ncols - ncols -1, cmplx);
            }
         } // end for through j k positive
      } // end else through odd case.
@@ -305,9 +287,10 @@ void addAllTriangles(Fltr& filtr, const RealVector& FUNvalues,
 
 
 
-template <typename RealVector>
-void addAllTetrahedra(Fltr& filtr, const RealVector& FUNvalues, 
-                  const int ncols, const int nrows, int i, int j, int k) {
+template< typename VectorList >
+void addAllTetrahedra(
+    const int ncols, const int nrows, int i, int j, int k,
+    VectorList & cmplx) {
      int curidx = i + ncols*j + ncols*nrows*k;
      
      // ... consider two cases for the cubical decomposition:
@@ -317,9 +300,9 @@ void addAllTetrahedra(Fltr& filtr, const RealVector& FUNvalues,
         if (i > 0 && j > 0 && k > 0) // middle
         {
             // ... add center tets 
-			addTet(filtr, FUNvalues, curidx -1 - nrows*ncols, curidx - 1 - ncols, curidx - ncols - nrows*ncols, curidx);
+			addTet(curidx -1 - nrows*ncols, curidx - 1 - ncols, curidx - ncols - nrows*ncols, curidx, cmplx);
             // ... add remaining tets 
-			addEvenTets(filtr, FUNvalues, ncols, nrows, i, j, k);
+			addEvenTets(ncols, nrows, i, j, k, cmplx);
         }
      } // end if for even case 
      else {
@@ -327,9 +310,9 @@ void addAllTetrahedra(Fltr& filtr, const RealVector& FUNvalues,
         if (i > 0 && j > 0 && k > 0) // middle
         {
 			// ... add central tet
-			addTet(filtr, FUNvalues, curidx -1, curidx - ncols, curidx - nrows*ncols, curidx - nrows*ncols -ncols -1);
+			addTet(curidx -1, curidx - ncols, curidx - nrows*ncols, curidx - nrows*ncols -ncols -1, cmplx);
 			// ... add remaining tets
-			addOddTets(filtr, FUNvalues, ncols, nrows, i, j, k);
+			addOddTets(ncols, nrows, i, j, k, cmplx);
         } // end for through j k positive
      } // end else through odd case.
 
@@ -338,9 +321,10 @@ void addAllTetrahedra(Fltr& filtr, const RealVector& FUNvalues,
 
 
 
-template<typename RealVector, typename IntVector> void
-simplicesFromGrid(Fltr & filtr, const RealVector & FUNvalues
-                , const IntVector & gridDim, const int embedDim) {
+template< typename DimensionVector, typename VectorList >
+void simplicesFromGrid(
+    const DimensionVector & gridDim, const int embedDim, VectorList & cmplx) {
+
 	const unsigned gridProd = std::accumulate(
 			gridDim.begin(), gridDim.end(), 1, std::multiplies< int >());
 	int ncols, nrows;
@@ -360,21 +344,24 @@ simplicesFromGrid(Fltr & filtr, const RealVector & FUNvalues
   while(curidx < gridProd) {
 
     // .. add the vertex 
-    std::vector<Vertex> vcont;
+    typename VectorList::value_type vcont;
     vcont.push_back((Vertex)(curidx));
-    filtr.push_back(Smplx(vcont, FUNvalues[curidx])); 
+    cmplx.push_back(vcont);
 
     // If dimension of embedded space >= 1, add the edges:
 		if (embedDim >= 1) {
-			addAllEdges(filtr, FUNvalues, ncols, nrows, i, j, k);
+      addAllEdges(ncols, nrows, i, j, k, cmplx);
 		}
+
 		// If dimension of embedded space >= 2, add the triangles:
 		if (embedDim >= 2) {
-			addAllTriangles(filtr, FUNvalues, ncols, nrows, i, j, k);
+			addAllTriangles(ncols, nrows, i, j, k, cmplx);
 		}
+
     // If dimension of embedded space >= 3, add the tetrahedra:
 		if (embedDim >= 3) {
-			addAllTetrahedra(filtr, FUNvalues, ncols, nrows, i, j, k);
+			addAllTetrahedra(ncols, nrows, i, j, k, cmplx);
+      addAllTetrahedra(ncols, nrows, i, j, k, cmplx);
 		}
 
     ++i; // advance column
@@ -493,22 +480,11 @@ std::vector< std::map< std::vector< unsigned char >, std::vector< std::vector< s
 
 
 
-// add a single simplex to the filtration
-template<typename RealVector>
-inline void addSimplex(Fltr & argFltr, const RealVector& FUNvalues, VertexVector & argVtx) {
-    VertexVector::const_iterator itrVtx = argVtx.begin();
-    double maxFcnVal = FUNvalues[ *itrVtx ];
-     for (; itrVtx != argVtx.end(); ++itrVtx)
-     {
-        maxFcnVal = std::max(maxFcnVal, FUNvalues[ *itrVtx ]);
-     }
-     argFltr.push_back(Smplx(argVtx.begin(), argVtx.end(), maxFcnVal)); 
-}
-
-
-
-template<typename RealVector, typename IntVector>
-void addSimplices(Fltr& argFltr, const RealVector& FUNvalues, const int argIdxCur, const IntVector& gridDim, const unsigned char argIdxDim, std::vector< std::map< std::vector< unsigned char >, std::vector< std::vector< std::vector< unsigned char > > > > >& argTriedCube) {
+template< typename DimensionVector, typename VectorList >
+void addSimplices(
+    const int argIdxCur, const DimensionVector & gridDim, const unsigned char argIdxDim,
+    std::vector< std::map< std::vector< unsigned char >, std::vector< std::vector< std::vector< unsigned char > > > > > & argTriedCube,
+    VectorList & cmplx) {
     std::vector< unsigned char > isInt = isInternal(argIdxCur, gridDim);
     std::vector< std::vector< std::vector< unsigned char > > > dirSmpxVec = (argTriedCube.at(argIdxDim)).at(isInt);
     std::vector< std::vector< std::vector< unsigned char > > >::const_iterator itrDirSmpxVec;
@@ -517,9 +493,8 @@ void addSimplices(Fltr& argFltr, const RealVector& FUNvalues, const int argIdxCu
 	std::vector< unsigned int > gridAccNum(gridDim.size(),1);
 	std::partial_sum(gridDim.begin(), gridDim.end()-1, gridAccNum.begin()+1, std::multiplies< unsigned int >());
 
-    VertexVector vtxVec;
-    VertexVector::iterator itrVtxVec;
-    vtxVec.resize(argIdxDim+1);
+    typename VectorList::value_type vtxVec(argIdxDim + 1);
+    typename VectorList::value_type::iterator itrVtxVec;
     for (itrDirSmpxVec = dirSmpxVec.begin(); itrDirSmpxVec != dirSmpxVec.end(); ++itrDirSmpxVec)
     {
         for (itrDirVtxVec = itrDirSmpxVec->begin(), itrVtxVec = vtxVec.begin();
@@ -530,14 +505,17 @@ void addSimplices(Fltr& argFltr, const RealVector& FUNvalues, const int argIdxCu
 
             (*itrVtxVec) = (argIdxCur - std::inner_product(gridAccNum.begin(), gridAccNum.end(), diffVtx.begin(), 0));
         }
-        addSimplex(argFltr, FUNvalues, vtxVec);
+        cmplx.push_back(vtxVec);
     }
 }
 
 
 
-template<typename RealVector, typename IntVector>
-void simplicesFromGridBarycenter(Fltr& argFltr, const RealVector& FUNvalues, const IntVector& gridDim, const unsigned char embedDim) {
+template< typename DimensionVector, typename VectorList >
+void simplicesFromGridBarycenter(
+    const DimensionVector & gridDim, const unsigned char embedDim,
+    VectorList & cmplx) {
+
 	const unsigned gridProd = std::accumulate(
 			gridDim.begin(), gridDim.end(), 1, std::multiplies< int >());
 	unsigned int idxCur; unsigned char idxDim;
@@ -546,7 +524,11 @@ void simplicesFromGridBarycenter(Fltr& argFltr, const RealVector& FUNvalues, con
   
     for (idxCur = 0; idxCur < gridProd ; ++idxCur) {
         for (idxDim = 0; idxDim <= embedDim; ++idxDim) {
-		    addSimplices(argFltr, FUNvalues, idxCur, gridDim, idxDim, triedCube);
+		    addSimplices(idxCur, gridDim, idxDim, triedCube, cmplx);
         }
     }
 }
+
+
+
+# endif // __GRIDUTILS_H__

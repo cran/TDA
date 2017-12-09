@@ -1,8 +1,8 @@
 Package: TDA
 Type: Package
 Title: Statistical Tools for Topological Data Analysis
-Version: 1.5.1
-Date: 2017-04-27
+Version: 1.6
+Date: 2017-12-09
 Author: Brittany T. Fasy, Jisu Kim, Fabrizio Lecci, Clement Maria, Vincent Rouvreau. The included GUDHI is authored by Clement Maria, Dionysus by Dmitriy Morozov, and PHAT by Ulrich Bauer, Michael Kerber, and Jan Reininghaus.
 Maintainer: Jisu Kim <jisuk1@andrew.cmu.edu>
 Description: Tools for the statistical analysis of persistent homology and for density clustering. For that, this package provides an R interface for the efficient algorithms of the C++ libraries GUDHI, Dionysus, and PHAT.
@@ -13,5 +13,5 @@ Imports: FNN, igraph, parallel, scales, Rcpp (>= 0.11.0)
 LinkingTo: Rcpp, RcppEigen, BH (>= 1.60.0-2)
 SystemRequirements: C++11, gmp
 NeedsCompilation: yes
-Packaged: 2017-04-27 05:24:07 UTC; Owner
-Date/Publication: 2017-04-27 15:44:36 UTC
+Packaged: 2017-12-09 09:07:33 UTC; jisuk
+Date/Publication: 2017-12-09 09:25:42 UTC

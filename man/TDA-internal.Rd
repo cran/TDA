@@ -5,8 +5,8 @@
 \alias{plotRule}
 \alias{rMultinom}
 \alias{siloF}
-\alias{AlphaComplexDiagGUDHI}
-\alias{AlphaShapeDiagGUDHI}
+\alias{AlphaComplexDiag}
+\alias{AlphaShapeDiag}
 \alias{Bottleneck}
 \alias{Dtm}
 \alias{DtmWeight}

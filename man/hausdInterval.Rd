@@ -11,8 +11,9 @@
 }
 
 \usage{
-hausdInterval(X, m, B = 30, alpha = 0.05, parallel = FALSE,
-              printProgress = FALSE)
+hausdInterval(
+    X, m, B = 30, alpha = 0.05, parallel = FALSE,
+    printProgress = FALSE)
 }
 
 \arguments{

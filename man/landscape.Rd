@@ -11,8 +11,9 @@
 }
 
 \usage{
-landscape(Diag, dimension = 1, KK = 1,
-          tseq = seq(min(Diag[,2:3]), max(Diag[,2:3]), length=500))
+landscape(
+    Diag, dimension = 1, KK = 1,
+    tseq = seq(min(Diag[,2:3]), max(Diag[,2:3]), length=500))
 }
 
 \arguments{

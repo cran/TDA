@@ -27,24 +27,30 @@ function(x, diagLim = NULL, dimension = NULL, col = NULL, rotated = FALSE,
     stop("add should be logical")
   }
 
-  if (is.numeric(x)) {
+  if (class(x) != "diagram" && is.numeric(x)) {
     x <- matrix(x, ncol = 3, dimnames = list(NULL, colnames(x)))
   }
 
-  ################################################
-  if (is.null(diagLim)) {
+  # diagLim should be finite
+  if (is.null(diagLim) || any(diagLim == -Inf) || any(diagLim == Inf)) {
     if (class(x) == "diagram") {
       diagLim <- attributes(x)[["scale"]]
-    } else if (NROW(x) > 0) {
-      diagLim <- c(min(x[, 2:3]), max(x[, 2:3]))
-    } else { # when diagram is empty
-      diagLim <- c(0,0)
-    }
+    } else {
+      nonInf <- which(
+	      x[, 2] != Inf & x[, 2] != -Inf & x[, 3] != Inf & x[, 3] != -Inf)
+	  if (length(nonInf) > 0) {
+	    diagLim <- c(min(x[nonInf, 2:3]), max(x[nonInf, 2:3]))
+	  } else { # when diagram is empty or all the points are Inf
+	    diagLim <- c(0,0)
+	  }
+	}
   }
-  # diagLim should be finite
-  if (any(diagLim == -Inf) || any(diagLim == Inf)) {
-    diagLim <- c(0,0)
-  }
+
+  # all the points outside diagLim are trimmed to diagLim
+  x[x[, 2] < diagLim[1], 2] <- diagLim[1]
+  x[x[, 3] < diagLim[1], 3] <- diagLim[1]
+  x[x[, 2] > diagLim[2], 2] <- diagLim[2]
+  x[x[, 3] > diagLim[2], 3] <- diagLim[2]
 
   sublevel <- TRUE
   # use any() function to deal with when colnames(x) is NULL

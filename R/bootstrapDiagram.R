@@ -1,6 +1,6 @@
 bootstrapDiagram <- 
 function(X, FUN, lim, by, maxdimension = length(lim) / 2 - 1,
-         sublevel = TRUE, library = "Dionysus", B = 30, alpha = 0.05,
+         sublevel = TRUE, library = "GUDHI", B = 30, alpha = 0.05,
          distance = "bottleneck", dimension = min(1, maxdimension),
          p = 1, parallel = FALSE, printProgress = FALSE, weight = NULL, ...) {
 
@@ -29,14 +29,17 @@ function(X, FUN, lim, by, maxdimension = length(lim) / 2 - 1,
   if (!is.logical(sublevel)) {
     stop("sublevel should be logical")
   }
+  if (library == "gudhi" || library == "Gudhi") {
+    library <- "GUDHI"
+  }
   if (library == "dionysus" || library == "DIONYSUS") {
-    library = "Dionysus"
+    library <- "Dionysus"
   }
   if (library == "phat" || library == "Phat") {
-    library = "PHAT"
+    library <- "PHAT"
   }
-  if (library != "Dionysus" && library != "PHAT") {
-    stop("library should be a string: either 'Dionysus' or 'PHAT'")
+  if (library != "GUDHI" && library != "Dionysus" && library != "PHAT") {
+    stop("library for computing persistence diagram should be a string: either 'GUDHI', 'Dionysus', or 'PHAT'")
   }
   if (!is.numeric(B) || length(B) != 1 || B < 1) {
     stop("B should be a positive integer")

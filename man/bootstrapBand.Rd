@@ -11,8 +11,9 @@
 }
 
 \usage{
-bootstrapBand(X, FUN, Grid, B = 30, alpha = 0.05, parallel = FALSE,
-              printProgress = FALSE, weight = NULL, ...)
+bootstrapBand(
+    X, FUN, Grid, B = 30, alpha = 0.05, parallel = FALSE,
+    printProgress = FALSE, weight = NULL, ...)
 }
 
 \arguments{

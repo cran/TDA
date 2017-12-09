@@ -1,3 +1,13 @@
+### TDA: version 1.6
+- fixed bugs
+- alphaCompelxDiag and alphaShapeDiag also returns location of representative cycles
+- for computing persistence diagrams, users can choose library GUDHI, Dionysus, and PHAT
+- several functions are added for computing filtrations from the data
+- funFiltration() function can compute the filtration from the complex and the function values
+- filtrationDiag() function can compute the persistent homology from the filtration
+- kde can use either Gaussian kernel or Epanechnikov kernel
+- when plotting diagrams, points outside diagLim are trimmed to diagLim
+
 ### TDA: version 1.5.1
 - fixed CGAL library for compatibility with RcppEigen
 - registered native routines and disabled symbol search

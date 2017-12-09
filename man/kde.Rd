@@ -16,7 +16,8 @@
 }
 
 \usage{
-  kde(X, Grid, h, weight = 1, printProgress = FALSE)
+kde(X, Grid, h, kertype = "Gaussian", weight = 1,
+    printProgress = FALSE)
 }
 
 \arguments{
@@ -32,6 +33,10 @@
     number: the smoothing paramter of the Gaussian Kernel.
   }
 
+  \item{kertype}{
+    string: if \code{kertype = "Gaussian"}, Gaussian kernel is used, and if \code{kertype = "Epanechnikov"}, Epanechnikov kernel is used. Defaults to \code{"Gaussian"}.
+  }
+  
   \item{weight}{
     either a number, or a vector of length \eqn{n}. If it is a number, then same weight is applied to each points of \code{X}. If it is a vector, \code{weight} represents weights of each points of \code{X}. The default value is \code{1}.
   }

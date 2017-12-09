@@ -11,9 +11,10 @@
 }
 
 \usage{
-\method{plot}{diagram}(x, diagLim = NULL, dimension = NULL, col = NULL, rotated = FALSE,
-     barcode = FALSE, band = NULL, lab.line = 2.2, colorBand = "pink",
-     colorBorder = NA, add = FALSE, ...)
+\method{plot}{diagram}(
+    x, diagLim = NULL, dimension = NULL, col = NULL,
+    rotated = FALSE, barcode = FALSE, band = NULL, lab.line = 2.2,
+    colorBand = "pink", colorBorder = NA, add = FALSE, ...)
 }
 
 \arguments{

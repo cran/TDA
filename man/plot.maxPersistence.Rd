@@ -12,7 +12,9 @@
 }
 
 \usage{
-\method{plot}{maxPersistence}(x, features = "dimension", colorBand = "pink", colorBorder = NA, ...)
+\method{plot}{maxPersistence}(
+    x, features = "dimension", colorBand = "pink",
+    colorBorder = NA, ...)
 }
 
 \arguments{
