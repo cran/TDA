@@ -37,7 +37,8 @@ void alphaShapeDiag(
   const Print       & print,
   std::vector< std::vector< std::vector< double > > > & persDgm,
   std::vector< std::vector< std::vector< unsigned > > > & persLoc,
-  std::vector< std::vector< std::vector< std::vector< unsigned > > > > & persCycle
+  std::vector< std::vector< std::vector< std::vector< unsigned > > > > & persCycle,
+  RealMatrix        & coordinates
 ) {
 
   int coeff_field_characteristic = 2;
@@ -46,7 +47,7 @@ void alphaShapeDiag(
 
   Gudhi::Simplex_tree<> smplxTree =
     AlphaShapeFiltrationGudhi< Gudhi::Simplex_tree<> >(
-      X, printProgress, print);
+      X, printProgress, print, coordinates);
 
   // Compute the persistence diagram of the complex
   if (libraryDiag[0] == 'G') {

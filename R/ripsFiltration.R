@@ -51,9 +51,15 @@ ripsFiltration <- function(
 	    X = X, maxdimension = maxdimension, maxscale = maxscale, dist = dist,
         library = library, printProgress = printProgress)
   }
-  
-  out <- list(
-      "cmplx" = ripsOut[[1]], "values" = ripsOut[[2]], "increasing" = TRUE)
+
+  if (dist == "euclidean") {  
+    out <- list(
+        "cmplx" = ripsOut[[1]], "values" = ripsOut[[2]], "increasing" = TRUE,
+        "coordinates" = X)
+  } else {
+    out <- list(
+        "cmplx" = ripsOut[[1]], "values" = ripsOut[[2]], "increasing" = TRUE)
+  }
 
   return (out)
 }

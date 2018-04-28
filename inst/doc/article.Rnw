@@ -577,7 +577,8 @@ Finally we plot the data and the diagram, as in Figure \ref{fig:eqRips4}.:\\
 par(mfrow = c(1, 3), mai=c(0.8, 0.8, 0.3, 0.3))
 plot(Circles, pch = 16, xlab = "",ylab = "", main = "Two Circles")
 plot(DiagRips[["diagram"]], main = "Rips persistence diagram")
-one <- which(DiagRips[["diagram"]][, 1] == 1)
+one <- which(DiagRips[["diagram"]][, 1] == 1 &
+    DiagRips[["diagram"]][, 3] - DiagRips[["diagram"]][, 2] > 0.5)
 plot(Circles, col = 2, main = "Representative loop")
 for (i in seq(along = one)) {
   for (j in seq_len(dim(DiagRips[["cycleLocation"]][[one[i]]])[1])) {
@@ -618,7 +619,7 @@ DiagAlphaCmplx <- alphaComplexDiag(
     printProgress = TRUE)
 @
 
-And we plot the diagram:
+And we plot the diagram in Figure \ref{fig:eqAlphaComplex3}.
 
 % PLOT START
 \begin{figure}[h!tb]
@@ -653,29 +654,45 @@ The {\em Alpha shape complex} $S(X,\alpha)$ is the polytope with its boundary co
 
 The \code{alphaShapeDiag} function computes the persistence diagram of the Alpha shape filtration built on top of a point cloud in 3 dimension, using the C++ library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}. Then for computing the persistence diagram from the Alpha shape filtration, the user can use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}, \href{ http://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}. Currently the point data cloud should lie in 3 dimension.
 
-We first generate 500 points from a sphere:
+We first generate 30 points from a cylinder:
 
 <<eqAlphaShape1, echo=TRUE, eval=TRUE>>=
-XX <- sphereUnif(n = 500, d = 2)
+n <- 30
+X <- cbind(circleUnif(n = n), runif(n = n, min = -0.1, max = 0.1))
 @
 
-and the following code compute the persistence diagram of the alpha shape filtration using the point cloud \code{XX}, with printing its progress (\code{printProgress = FALSE}). The function \code{alphaShapeDiag} returns an object of the class \code{"diagram"}.
+and the following code compute the persistence diagram of the alpha shape filtration using the point cloud \code{X}, with printing its progress (\code{printProgress = TRUE}). The function \code{alphaShapeDiag} returns an object of the class \code{"diagram"}.
 
 <<eqAlphaShape2, echo=TRUE, eval=TRUE>>=
-DiagAlphaShape <- alphaShapeDiag(X = XX, printProgress = FALSE)
+DiagAlphaShape <- alphaShapeDiag(
+    X = X, maxdimension = 1, library = c("GUDHI", "Dionysus"), location = TRUE,
+    printProgress = TRUE)
 @
 
-And we plot the diagram:
+And we plot the diagram and first two dimension of data in Figure \ref{fig:eqAlphaShape3}.
 
 % PLOT START
 \begin{figure}[h!tb]
-\setkeys{Gin}{width=2.3in, height=2.3in}
+\setkeys{Gin}{width=4in, height=2.3in}
 \begin{center}
-<<eqAlphaShape3, echo=TRUE, eval=TRUE, fig=TRUE, height=3, width=3>>=
-plot(DiagAlphaShape[["diagram"]], diagLim = c(0, 1))
+<<eqAlphaShape3, echo=TRUE, eval=TRUE, fig=TRUE, height=3, width=8>>=
+par(mfrow = c(1, 2))
+plot(DiagAlphaShape[["diagram"]])
+plot(X[, 1:2], col = 2, main = "Representative loop of alpha shape filtration")
+one <- which(DiagAlphaShape[["diagram"]][, 1] == 1)
+one <- one[which.max(
+    DiagAlphaShape[["diagram"]][one, 3] - DiagAlphaShape[["diagram"]][one, 2])]
+for (i in seq(along = one)) {
+  for (j in seq_len(dim(DiagAlphaShape[["cycleLocation"]][[one[i]]])[1])) {
+    lines(
+        DiagAlphaShape[["cycleLocation"]][[one[i]]][j, , 1:2], pch = 19,
+        cex = 1, col = i)
+  }
+}
+par(mfrow = c(1, 1))
 @
 \end{center}
-\caption{Persistence diagram of Alpha shape. Black points represent connected components, red triangles represent loops, and blue diamonds represent voids.}
+\caption{Persistence diagram of Alpha shape. Black points represent connected components and red triangles represent loops.}
 \label{fig:eqAlphaShape3}
 \end{figure}
 
@@ -686,7 +703,7 @@ plot(DiagAlphaShape[["diagram"]], diagLim = c(0, 1))
 %%%%%%%%%%%%%%%%%%
 Rather than computing persistence diagrams from built-in function, it is also possible to compute persistence diagrams from a user-defined filtration. A filtration consists of simplicial complex and the filtration values on each simplex. The functions \code{ripsDiag}, \code{alphaComplexDiag}, \code{alphaShapeDiag} have their counterparts for computing corresponding filtrations instead of persistence diagrams: namely, \code{ripsFiltration} corresponds to the Rips filtration built on top of a point cloud, \code{alphaComplexFiltration} to the alpha complex filtration, and \code{alphaShapeFiltration} to the alpha shape filtration.
 
-We first generate 30 points from a circle:
+We first generate 100 points from a circle:
 
 <<eqFiltration1, echo=TRUE, eval=TRUE>>=
 X <- circleUnif(n = 100)
@@ -712,14 +729,14 @@ dtmValues <- dtm(X = X, Grid = X, m0 = m0)
 FltFun <- funFiltration(FUNvalues = dtmValues, cmplx = FltRips[["cmplx"]])
 @
 
-\noindent Once the filtration is computed, the function \code{filtrationDiag} computes the persistence diagram from the filtration. The user can choose to compute the persistence diagram using either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}} or \href{ https://bitbucket.org/phat-code/phat }{\pkg{PHAT}}.
+\noindent Once the filtration is computed, the function \code{filtrationDiag} computes the persistence diagram from the filtration. The user can choose to compute the persistence diagram using either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}} or \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}.
 
 <<eqFiltration4, echo=TRUE, eval=TRUE>>=
 DiagFltFun <- filtrationDiag(filtration = FltFun, maxdimension = maxdimension,
     library = "Dionysus", location = TRUE, printProgress = TRUE)
 @
 
-Then we plot the data and the diagram:
+Then we plot the data and the diagram in Figure \ref{fig:eqFiltration5}.
 % PLOT START
 \begin{figure}[h!tb]
 \setkeys{Gin}{width=4.6in, height=2.3in}

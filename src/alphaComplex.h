@@ -52,24 +52,51 @@ void alphaComplexDiag(
       AlphaComplexFiltrationGudhi< Gudhi::Simplex_tree<> >(
           X, printProgress, print);
 
+  // 2018-04-24
+  // temporary fix for bug in alphaComplex
+  std::vector< std::vector< unsigned > > tdaCmplx;
+  std::vector< double > tdaValues;
+  std::vector< std::vector< unsigned > > tdaBdy;
+  filtrationGudhiToTda< std::vector< unsigned > >(
+      alphaCmplx, tdaCmplx, tdaValues, tdaBdy, false);
+
   // Compute the persistence diagram of the complex
   if (libraryDiag[0] == 'G') {
+    // 2018-04-24
+    // temporary fix for bug in alphaComplex
+    Gudhi::Simplex_tree<> alphaCmplxTemp =
+        filtrationTdaToGudhi< std::vector< unsigned >, Gudhi::Simplex_tree<> >(
+            tdaCmplx, tdaValues, 1);
+    // FiltrationDiagGudhi(
+    //    alphaCmplx, coeff_field_characteristic, min_persistence, 2,
+    //    printProgress, persDgm);
     FiltrationDiagGudhi(
-        alphaCmplx, coeff_field_characteristic, min_persistence, 2,
+        alphaCmplxTemp, coeff_field_characteristic, min_persistence, 2,
         printProgress, persDgm);
   }
   else if (libraryDiag[0] == 'D') {
-    Fltr filtration = filtrationGudhiToDionysus< Fltr >(alphaCmplx);
+    // 2018-04-24
+    // temporary fix for bug in alphaComplex
+    // Fltr filtration = filtrationGudhiToDionysus< Fltr >(alphaCmplx);
+    Fltr filtration = filtrationTdaToDionysus< std::vector< unsigned >, Fltr >(
+        tdaCmplx, tdaValues, 1);
     FiltrationDiagDionysus< Persistence >(
         filtration, maxdimension, location, printProgress, persDgm, persLoc,
         persCycle);
   }
   else {
+    // 2018-04-24
+    // temporary fix for bug in alphaComplex
+    Gudhi::Simplex_tree<> alphaCmplxTemp =
+      filtrationTdaToGudhi< std::vector< unsigned >, Gudhi::Simplex_tree<> >(
+        tdaCmplx, tdaValues, 1);
     std::vector< phat::column > cmplx;
     std::vector< double > values;
     phat::boundary_matrix< phat::vector_vector > boundary_matrix;
+    // filtrationGudhiToPhat< phat::column, phat::dimension >(
+    //     alphaCmplx, cmplx, values, boundary_matrix);
     filtrationGudhiToPhat< phat::column, phat::dimension >(
-        alphaCmplx, cmplx, values, boundary_matrix);
+        alphaCmplxTemp, cmplx, values, boundary_matrix);
     FiltrationDiagPhat(
         cmplx, values, boundary_matrix, maxdimension, location,
         printProgress, persDgm, persLoc, persCycle);

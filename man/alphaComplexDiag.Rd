@@ -91,7 +91,7 @@ DiagAlphaCmplx <- alphaComplexDiag(
     printProgress = TRUE)
 
 # plot
-par(mfrow = c(2, 1))
+par(mfrow = c(1, 2))
 plot(DiagAlphaCmplx[["diagram"]])
 one <- which(DiagAlphaCmplx[["diagram"]][, 1] == 1)
 one <- one[which.max(
@@ -99,8 +99,9 @@ one <- one[which.max(
 plot(X, col = 2, main = "Representative loop of data points")
 for (i in seq(along = one)) {
   for (j in seq_len(dim(DiagAlphaCmplx[["cycleLocation"]][[one[i]]])[1])) {
-    lines(DiagAlphaCmplx[["cycleLocation"]][[one[i]]][j, , ], pch = 19,
-	    cex = 1, col = i)
+    lines(
+        DiagAlphaCmplx[["cycleLocation"]][[one[i]]][j, , ], pch = 19, cex = 1,
+        col = i)
   }
 }
 par(mfrow = c(1, 1))

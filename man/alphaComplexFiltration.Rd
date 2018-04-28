@@ -38,15 +38,19 @@ alphaComplexFiltration(
   The function \code{alphaComplexFiltration} returns a list with the following elements:
 
   \item{cmplx}{
-    a list representing the complex.
+    a list representing the complex. Its i-th element represents the vertices of i-th simplex.
   }
 
   \item{values}{
-    a vector representing the filtration values.
+    a vector representing the filtration values. Its i-th element represents the filtration value of i-th simplex.
   }
 
   \item{increasing}{
     a logical variable indicating if the filtration values are in increasing order (\code{TRUE}) or in decreasing order (\code{FALSE}).
+  }
+
+  \item{coordinates}{
+    a matrix representing the coordinates of vertices. Its i-th row represents the coordinate of i-th vertex.
   }
 }
 

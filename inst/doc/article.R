@@ -229,7 +229,8 @@ DiagRips <- ripsDiag(X = Circles, maxdimension, maxscale,
 par(mfrow = c(1, 3), mai=c(0.8, 0.8, 0.3, 0.3))
 plot(Circles, pch = 16, xlab = "",ylab = "", main = "Two Circles")
 plot(DiagRips[["diagram"]], main = "Rips persistence diagram")
-one <- which(DiagRips[["diagram"]][, 1] == 1)
+one <- which(DiagRips[["diagram"]][, 1] == 1 &
+    DiagRips[["diagram"]][, 3] - DiagRips[["diagram"]][, 2] > 0.5)
 plot(Circles, col = 2, main = "Representative loop")
 for (i in seq(along = one)) {
   for (j in seq_len(dim(DiagRips[["cycleLocation"]][[one[i]]])[1])) {
@@ -275,19 +276,35 @@ par(mfrow = c(1, 1))
 ###################################################
 ### code chunk number 23: eqAlphaShape1
 ###################################################
-XX <- sphereUnif(n = 500, d = 2)
+n <- 30
+X <- cbind(circleUnif(n = n), runif(n = n, min = -0.1, max = 0.1))
 
 
 ###################################################
 ### code chunk number 24: eqAlphaShape2
 ###################################################
-DiagAlphaShape <- alphaShapeDiag(X = XX, printProgress = FALSE)
+DiagAlphaShape <- alphaShapeDiag(
+    X = X, maxdimension = 1, library = c("GUDHI", "Dionysus"), location = TRUE,
+    printProgress = TRUE)
 
 
 ###################################################
 ### code chunk number 25: eqAlphaShape3
 ###################################################
-plot(DiagAlphaShape[["diagram"]], diagLim = c(0, 1))
+par(mfrow = c(1, 2))
+plot(DiagAlphaShape[["diagram"]])
+plot(X[, 1:2], col = 2, main = "Representative loop of alpha shape filtration")
+one <- which(DiagAlphaShape[["diagram"]][, 1] == 1)
+one <- one[which.max(
+    DiagAlphaShape[["diagram"]][one, 3] - DiagAlphaShape[["diagram"]][one, 2])]
+for (i in seq(along = one)) {
+  for (j in seq_len(dim(DiagAlphaShape[["cycleLocation"]][[one[i]]])[1])) {
+    lines(
+        DiagAlphaShape[["cycleLocation"]][[one[i]]][j, , 1:2], pch = 19,
+        cex = 1, col = i)
+  }
+}
+par(mfrow = c(1, 1))
 
 
 ###################################################

@@ -27,7 +27,8 @@ alphaComplexFiltration <- function(
   }
 
   out <- list(
-      "cmplx" = alphaOut[[1]], "values" = alphaOut[[2]], "increasing" = TRUE)
+      "cmplx" = alphaOut[[1]], "values" = alphaOut[[2]], "increasing" = TRUE,
+      "coordinates" = X)
 
   return (out)
 }

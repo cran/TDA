@@ -36,11 +36,11 @@ funFiltration(FUNvalues, cmplx, sublevel = TRUE)
   The function \code{funFiltration} returns a list with the following elements:
 
   \item{cmplx}{
-    a list representing the complex, same as \code{cmplx} in the input but sorted by the filtration values.
+    a list representing the complex. Its i-th element represents the vertices of i-th simplex.
   }
 
   \item{values}{
-    a vector representing the filtration values.
+    a vector representing the filtration values. Its i-th element represents the filtration value of i-th simplex.
   }
 
   \item{increasing}{

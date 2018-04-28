@@ -89,13 +89,19 @@ function(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
         maxdimension = as.integer(maxdimension), decomposition = "barycenter",
 		printProgress = printProgress)
   }
+
+  if (sublevel == FALSE) {
+    gridOut[[2]] <- -gridOut[[2]]
+  }
   
-  if (sublevel == TRUE) {
+  if (!is.null(lim) && !is.null(by)) {
     out <- list(
-      "cmplx" = gridOut[[1]], "values" = gridOut[[2]], "increasing" = sublevel)
+	    "cmplx" = gridOut[[1]], "values" = gridOut[[2]],
+        "increasing" = sublevel, "coordinates" = Grid[["grid"]])
   } else {
     out <- list(
-      "cmplx" = gridOut[[1]], "values" = -gridOut[[2]], "increasing" = sublevel)
+        "cmplx" = gridOut[[1]], "values" = -gridOut[[2]],
+        "increasing" = sublevel)
   }
 
   return (out)

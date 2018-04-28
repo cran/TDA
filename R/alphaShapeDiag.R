@@ -45,11 +45,11 @@ function(X, maxdimension = NCOL(X) - 1, library = "GUDHI", location = FALSE,
       location = location, printProgress = printProgress)
 
   if (location == TRUE) {
-    BirthLocation <- X[alphaOut[[2]][, 1], ]
-    DeathLocation <- X[alphaOut[[2]][, 2], ]
+    BirthLocation <- alphaOut[[4]][alphaOut[[2]][, 1], ]
+    DeathLocation <- alphaOut[[4]][alphaOut[[2]][, 2], ]
     if (library[2] == "Dionysus") {
       CycleLocation <- lapply(alphaOut[[3]], function(bdy) {
-          array(X[bdy, ], dim = c(dim(bdy), NCOL(X)))})
+          array(alphaOut[[4]][bdy, ], dim = c(dim(bdy), NCOL(alphaOut[[4]])))})
     }
   }  
 

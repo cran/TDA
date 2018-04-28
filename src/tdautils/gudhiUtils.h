@@ -199,8 +199,12 @@ template< typename SimplexTree, typename RealMatrix, typename Print >
 inline SimplexTree AlphaShapeFiltrationGudhi(
     const RealMatrix & X,
     const bool         printProgress,
-    Print            & print
+    Print            & print,
+    RealMatrix       & coordinates
 ) {
+
+  coordinates = RealMatrix(X.nrow(), X.ncol());
+  const unsigned nRow = coordinates.nrow();
 
   // Turn the input points into a range of points
   std::list<Point_3> lp = RcppToCGALPoint3< std::list<Point_3> >(X);
@@ -275,6 +279,12 @@ inline SimplexTree AlphaShapeFiltrationGudhi(
         //std::cout << "vertex [" << the_alpha_shape_vertex->point() << "] not found - insert " << vertex << std::endl;
         the_simplex_tree.push_back(vertex);
         map_cgal_simplex_tree.insert(Alpha_shape_simplex_tree_pair(the_alpha_shape_vertex, vertex));
+
+        // added by Jisu KIM, 2018-04-23
+        // extract coordinates of the corresponding vertex
+        coordinates[vertex] = the_alpha_shape_vertex->point()[0];
+        coordinates[vertex + nRow] = the_alpha_shape_vertex->point()[1];
+        coordinates[vertex + 2 * nRow] = the_alpha_shape_vertex->point()[2];
       }
       else
       {

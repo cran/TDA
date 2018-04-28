@@ -400,10 +400,15 @@ Rcpp::List AlphaShapeFiltration(
   const bool                  printProgress
 ) {
 
+  Rcpp::NumericMatrix coordinates;
+
   Gudhi::Simplex_tree<> smplxTree =
       AlphaShapeFiltrationGudhi< Gudhi::Simplex_tree<> >(
-          X, printProgress, Rprintf);
-  return filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(smplxTree);
+          X, printProgress, Rprintf, coordinates);
+  Rcpp::List filtration =
+      filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(smplxTree);
+  filtration.push_back(coordinates);
+  return filtration;
 }
 
 
@@ -429,16 +434,18 @@ Rcpp::List AlphaShapeDiag(
   std::vector< std::vector< std::vector< unsigned > > > persLoc;
   std::vector< std::vector< std::vector< std::vector< unsigned > > > >
       persCycle;
+  Rcpp::NumericMatrix coordinates;
 
   alphaShapeDiag(
       X, X.nrow(), X.ncol(), maxdimension, libraryDiag, location,
-      printProgress, Rprintf, persDgm, persLoc, persCycle);
+      printProgress, Rprintf, persDgm, persLoc, persCycle, coordinates);
 
   // Output persistent diagram
   return Rcpp::List::create(
       concatStlToRcpp< Rcpp::NumericMatrix >(persDgm, true, 3),
       concatStlToRcpp< Rcpp::NumericMatrix >(persLoc, false, 2),
-      StlToRcppMatrixList< Rcpp::List, Rcpp::NumericMatrix >(persCycle));
+      StlToRcppMatrixList< Rcpp::List, Rcpp::NumericMatrix >(persCycle),
+      coordinates);
 }
 
 
@@ -461,7 +468,11 @@ Rcpp::List AlphaComplexFiltration(
   Gudhi::Simplex_tree<> smplxTree =
       AlphaComplexFiltrationGudhi< Gudhi::Simplex_tree<> >(
           X, printProgress, Rprintf);
-  return filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(smplxTree);
+  // 2018-04-24
+  // temporary fix for bug in alphaComplex
+  // return filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(smplxTree);
+  return filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(
+      smplxTree, false);
 }
 
 

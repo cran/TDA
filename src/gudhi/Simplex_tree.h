@@ -1166,8 +1166,10 @@ class Simplex_tree {
     for (auto& simplex : boost::adaptors::reverse(sib->members())) {
       // Find the maximum filtration value in the border
       Boundary_simplex_range boundary = boundary_simplex_range(&simplex);
+      // modified by Jisu KIM, 2018-04-22
+      // added this to capture clause in lambda function for compile in gcc 8
       Boundary_simplex_iterator max_border = std::max_element(std::begin(boundary), std::end(boundary),
-                                                              [](Simplex_handle sh1, Simplex_handle sh2) {
+                                                              [this](Simplex_handle sh1, Simplex_handle sh2) {
                                                                 return filtration(sh1) < filtration(sh2);
                                                               });
 
