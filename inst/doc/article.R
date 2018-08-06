@@ -1,4 +1,5 @@
 ### R code from vignette source 'article.Rnw'
+### Encoding: CP949
 
 ###################################################
 ### code chunk number 1: initial_settings

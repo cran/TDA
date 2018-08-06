@@ -283,10 +283,9 @@ inline RcppList StlToRcppMatrixList(
 template< typename SimplexHandle, typename SimplexTree, typename RealVector >
 void filtrationGudhiOne(
     const SimplexHandle & sh, SimplexTree & smplxTree, const int idxShift,
-    RealVector & cmplxVec, double & value, RealVector & boundaryVec,
-    // 2018-04-24
-    // temporary fix for bug in alphaComplex
-    bool isBdy = true) {
+    // 2018-08-04
+    // switching back to original code
+    RealVector & cmplxVec, double & value, RealVector & boundaryVec) {
 
   const unsigned nVtx = smplxTree.dimension(sh) + 1;
 
@@ -302,23 +301,21 @@ void filtrationGudhiOne(
 
   value = SimplexTree::filtration(sh);
 
-  // 2018-04-24
-  // temporary fix for bug in alphaComplex
-  if (isBdy) {
+  // 2018-08-04
+  // switching back to original code
 
-    // might need to change for cubical complex
-    if (nVtx > 1) {
-      boundaryVec = RealVector(nVtx);
-    }
-    const typename SimplexTree::Boundary_simplex_range & smplxRange =
+  // might need to change for cubical complex
+  if (nVtx > 1) {
+    boundaryVec = RealVector(nVtx);
+  }
+  const typename SimplexTree::Boundary_simplex_range & smplxRange =
       smplxTree.boundary_simplex_range(sh);
 
-    typename RealVector::iterator iBdyVec = boundaryVec.begin();
-    for (typename SimplexTree::Boundary_simplex_iterator iBdySpx =
+  typename RealVector::iterator iBdyVec = boundaryVec.begin();
+  for (typename SimplexTree::Boundary_simplex_iterator iBdySpx =
       smplxRange.begin(); iBdySpx != smplxRange.end(); ++iBdySpx, ++iBdyVec) {
-      // R is 1-base, while C++ is 0-base
-      *iBdyVec = SimplexTree::key(*iBdySpx) + idxShift;
-    }
+    // R is 1-base, while C++ is 0-base
+    *iBdyVec = SimplexTree::key(*iBdySpx) + idxShift;
   }
 }
 
@@ -329,10 +326,9 @@ template< typename IntegerVector, typename SimplexTree, typename VectorList,
           typename RealVector >
 inline void filtrationGudhiToTda(
     SimplexTree & smplxTree, VectorList & cmplx, RealVector & values,
-    VectorList & boundary,
-    // 2018-04-24
-    // temporary fix for bug in alphaComplex
-    bool isBdy = true) {
+    // 2018-08-04
+    // switching back to original code
+    VectorList & boundary) {
 
   const unsigned nFltr = smplxTree.num_simplices();
   cmplx = VectorList(nFltr);
@@ -356,10 +352,9 @@ inline void filtrationGudhiToTda(
 
     IntegerVector cmplxVec;
     IntegerVector boundaryVec;
-    // 2018-04-24
-    // temporary fix for alphaComplex
-    // filtrationGudhiOne(*iSt, smplxTree, 1, cmplxVec, *iValue, boundaryVec);
-    filtrationGudhiOne(*iSt, smplxTree, 1, cmplxVec, *iValue, boundaryVec, false);
+    // 2018-08-04
+    // switching back to original code
+    filtrationGudhiOne(*iSt, smplxTree, 1, cmplxVec, *iValue, boundaryVec);
     *iCmplx = cmplxVec;
     *iBdy = boundaryVec;
   }
@@ -369,10 +364,9 @@ inline void filtrationGudhiToTda(
 
 // TODO : see whether 'const SimplexTree &' is possible
 template< typename RcppList, typename RcppVector, typename SimplexTree >
-inline RcppList filtrationGudhiToRcpp(SimplexTree & smplxTree,
-  // 2018-04-24
-  // temporary fix for bug in alphaComplex
-  const bool isBdy = true) {
+// 2018-08-04
+// switching back to original code
+inline RcppList filtrationGudhiToRcpp(SimplexTree & smplxTree) {
 
   const unsigned nFltr = smplxTree.num_simplices();
 
@@ -397,10 +391,9 @@ inline RcppList filtrationGudhiToRcpp(SimplexTree & smplxTree,
 
     RcppVector cmplxVec;
     RcppVector boundaryVec;
-    // 2018-04-24
-    // temporary fix for alphaComplex
-    // filtrationGudhiOne(*iSt, smplxTree, 1, cmplxVec, *iValue, boundaryVec);
-    filtrationGudhiOne(*iSt, smplxTree, 1, cmplxVec, *iValue, boundaryVec, false);
+    // 2018-08-04
+    // switching back to original code
+    filtrationGudhiOne(*iSt, smplxTree, 1, cmplxVec, *iValue, boundaryVec);
     *iCmplx = cmplxVec;
     *iBdy = boundaryVec;
   }

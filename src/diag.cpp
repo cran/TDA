@@ -468,11 +468,9 @@ Rcpp::List AlphaComplexFiltration(
   Gudhi::Simplex_tree<> smplxTree =
       AlphaComplexFiltrationGudhi< Gudhi::Simplex_tree<> >(
           X, printProgress, Rprintf);
-  // 2018-04-24
-  // temporary fix for bug in alphaComplex
-  // return filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(smplxTree);
-  return filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(
-      smplxTree, false);
+  // 2018-08-04
+  // switching back to original code
+  return filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(smplxTree);
 }
 
 

@@ -237,3 +237,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+
+static const R_CallMethodDef CallEntries[] = {
+    {"TDA_GridFiltration", (DL_FUNC) &TDA_GridFiltration, 5},
+    {"TDA_GridDiag", (DL_FUNC) &TDA_GridDiag, 7},
+    {"TDA_Bottleneck", (DL_FUNC) &TDA_Bottleneck, 2},
+    {"TDA_Wasserstein", (DL_FUNC) &TDA_Wasserstein, 3},
+    {"TDA_Kde", (DL_FUNC) &TDA_Kde, 6},
+    {"TDA_KdeDist", (DL_FUNC) &TDA_KdeDist, 5},
+    {"TDA_Dtm", (DL_FUNC) &TDA_Dtm, 3},
+    {"TDA_DtmWeight", (DL_FUNC) &TDA_DtmWeight, 5},
+    {"TDA_FiltrationDiag", (DL_FUNC) &TDA_FiltrationDiag, 5},
+    {"TDA_FunFiltration", (DL_FUNC) &TDA_FunFiltration, 2},
+    {"TDA_RipsFiltration", (DL_FUNC) &TDA_RipsFiltration, 6},
+    {"TDA_RipsDiag", (DL_FUNC) &TDA_RipsDiag, 8},
+    {"TDA_AlphaShapeFiltration", (DL_FUNC) &TDA_AlphaShapeFiltration, 2},
+    {"TDA_AlphaShapeDiag", (DL_FUNC) &TDA_AlphaShapeDiag, 5},
+    {"TDA_AlphaComplexFiltration", (DL_FUNC) &TDA_AlphaComplexFiltration, 2},
+    {"TDA_AlphaComplexDiag", (DL_FUNC) &TDA_AlphaComplexDiag, 5},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_TDA(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+}

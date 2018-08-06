@@ -77,8 +77,9 @@
 \fvset{listparameters={\setlength{\topsep}{0pt}}}
 \renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
 
-\author{Brittany T. Fasy, Jisu Kim, Fabrizio Lecci, Cl\'ement Maria, \and Vincent Rouvreau \\ \small{In collaboration with the CMU TopStat Group}}
-\Plainauthor{Brittany Terese Fasy, Jisu Kim, Fabrizio Lecci, Cl\'ement Maria, Vincent Rouvreau}
+\author{\parbox{0.7\linewidth}{Brittany T. Fasy, Jisu Kim, Fabrizio Lecci, Cl\'ement Maria, David L. Millman, \and Vincent Rouvreau} \\
+  \small{In collaboration with the CMU TopStat Group}}
+\Plainauthor{Brittany Terese Fasy, Jisu Kim, Fabrizio Lecci, Cl\'ement Maria, David L. Millman, Vincent Rouvreau}
 
 \title{Introduction to the \proglang{R} package \pkg{TDA}}
 \Plaintitle{Introduction to the R package TDA}
@@ -125,6 +126,12 @@ a density function and visualize it by means of a dendrogram, the cluster tree.
   Website: \url{ http://www-sop.inria.fr/members/Clement.Maria/ } \\
   Email: \email{clement.maria@inria.fr}\\
 
+  David L. Millman\\
+  Computer Science Department\\
+  Montana State University\\
+  Website: \url{ http://millman.us } \\
+  Email: \email{david.millman@montana.edu}\\ 
+  
   Vincent Rouvreau\\
   GUDHI Group\\
   INRIA Saclay\\

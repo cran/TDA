@@ -351,17 +351,29 @@ class Simplex_tree {
     }
   }
 
-  /** \brief User-defined move constructor moves the whole tree structure. */
-  Simplex_tree(Simplex_tree && old)
-      : null_vertex_(std::move(old.null_vertex_)),
-      threshold_(std::move(old.threshold_)),
-      root_(std::move(old.root_)),
-      filtration_vect_(std::move(old.filtration_vect_)),
-      dimension_(std::move(old.dimension_)) {
-    old.dimension_ = -1;
-    old.threshold_ = 0;
-    old.root_ = Siblings(nullptr, null_vertex_);
-  }
+  // 2018-08-04
+  // The memory issue due to something like a shallow move of 'Simplex_tree' class.
+  // In 'Simplex_tree' class,
+  // 'root_' is of type 'Simplex_tree::Siblings = Simplex_tree_siblings'
+  // and 'filtration_vect_' is of type 'std::vector<Simplex_handle>'.
+  // Both type contains 'Simplex_tree_siblings *',
+  // and a 'Simplex_tree' class variable contains the pointer to its 'root_'.
+  // Hence, when the move constructor is called,
+  // then the address of 'old.root_' is still preserved in new 'Simplex_tree',
+  // although 'old' is deleted.
+  // Temporarily disable move constructor so that copy constructor is used instead.
+  //
+  ///** \brief User-defined move constructor moves the whole tree structure. */
+  //Simplex_tree(Simplex_tree && old)
+  //    : null_vertex_(std::move(old.null_vertex_)),
+  //    threshold_(std::move(old.threshold_)),
+  //    root_(std::move(old.root_)),
+  //    filtration_vect_(std::move(old.filtration_vect_)),
+  //    dimension_(std::move(old.dimension_)) {
+  //  old.dimension_ = -1;
+  //  old.threshold_ = 0;
+  //  old.root_ = Siblings(nullptr, null_vertex_);
+  //}
 
   /** \brief Destructor; deallocates the whole tree structure. */
   ~Simplex_tree() {
