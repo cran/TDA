@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -102,8 +103,6 @@ sqrt( const AS& x ) {
     typename Algebraic_structure_traits< AS >::Sqrt sqrt;
     return sqrt( x );
 }
-
-
 
 // AST-Functor adapting functions BINARY
 
@@ -311,6 +310,25 @@ to_interval( const Real_embeddable& x) {
     return to_interval( x );
 }
 
+template <typename NT>
+NT approximate_sqrt(const NT& nt, CGAL::Field_tag)
+{
+  return NT(sqrt(CGAL::to_double(nt)));
+}
+
+template <typename NT>
+NT approximate_sqrt(const NT& nt, CGAL::Field_with_sqrt_tag)
+{
+  return sqrt(nt);
+}
+
+template <typename NT>
+NT approximate_sqrt(const NT& nt)
+{
+  typedef CGAL::Algebraic_structure_traits<NT> AST;
+  typedef typename AST::Algebraic_category Algebraic_category;
+  return approximate_sqrt(nt, Algebraic_category());
+}
 
 CGAL_NTS_END_NAMESPACE
 } //namespace CGAL

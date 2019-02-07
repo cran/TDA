@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -28,11 +29,9 @@ namespace Eigen {
   struct NumTraits<CGAL::Sqrt_extension<NT, ROOT, ACDE_TAG, FP_TAG> >
   {
     typedef CGAL::Sqrt_extension<NT, ROOT, ACDE_TAG, FP_TAG> Real;
-	// Modified by Jisu KIM, 2017-04-20
-	// Literal should be defined to define a new scalar type from Eigen 3.3
-	typedef Real Literal;
     typedef Real NonInteger;
     typedef Real Nested;
+    typedef Real Literal;
 
     static inline Real epsilon() { return NumTraits<NT>::epsilon(); }
 

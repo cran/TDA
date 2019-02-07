@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
@@ -31,7 +32,7 @@ namespace CGAL {
 
 class Color {
 public:
-  Color() {}
+  Color(): _red(120), _green(120), _blue(120), _alpha(120) {}
   Color(unsigned char red,
 	unsigned char green,
 	unsigned char blue,

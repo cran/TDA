@@ -14,11 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)    : Samuel Hornus
 
 #ifndef CGAL_TDS_FULL_CELL_DEFAULT_STORAGE_POLICY_H
 #define CGAL_TDS_FULL_CELL_DEFAULT_STORAGE_POLICY_H
+
+#include <CGAL/license/Triangulation.h>
+
 
 #include <CGAL/Dimension.h>
 #include <CGAL/Compact_container.h>
@@ -61,10 +65,10 @@ struct TFC_data< Vertex_handle, Full_cell_handle, Dimen, TDS_full_cell_default_s
     {
         Xor_type result(0);
         for( int i = 0; i <= cur_dim; ++i )
-			// modified by Jisu KIM, 2017-04-24
-			// '*vertices_[i]' can fetch NULL memory if 'vertices_[i]' corresponds to NULL pointer
+            // modified by Jisu KIM, 2017-04-24
+            // '*vertices_[i]' can fetch NULL memory if 'vertices_[i]' corresponds to NULL pointer
             // result ^= reinterpret_cast<Xor_type>(&(*vertices_[i]));
-			result ^= reinterpret_cast<Xor_type>((vertices_[i]).operator->());
+            result ^= reinterpret_cast<Xor_type>((vertices_[i]).operator->());
         return result;
     }
     // ASSUMES |*this| is indeed a neighbor of neighbor(i):
@@ -82,10 +86,10 @@ struct TFC_data< Vertex_handle, Full_cell_handle, Dimen, TDS_full_cell_default_s
     {
         Xor_type opp_vertex = xor_of_vertices(cur_dim)
             ^ neighbors_[i]->xor_of_vertices(cur_dim)
-			// modified by Jisu KIM, 2017-04-24
-			// '*vertices_[i]' can fetch NULL memory if 'vertices_[i]' corresponds to NULL pointer
+            // modified by Jisu KIM, 2017-04-24
+            // '*vertices_[i]' can fetch NULL memory if 'vertices_[i]' corresponds to NULL pointer
             //^ reinterpret_cast<Xor_type>(&(*vertices_[i]));
-			^ reinterpret_cast<Xor_type>((vertices_[i]).operator->());
+            ^ reinterpret_cast<Xor_type>((vertices_[i]).operator->());
         Vertex_handle mirror;
         typedef typename Vertex_handle::pointer pointer;
         // mirror.set_pointer(reinterpret_cast<pointer>(opp_vertex));

@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -27,27 +28,85 @@
 #ifndef CGAL_ITERATOR_H
 #define CGAL_ITERATOR_H 1
 
-#include <CGAL/circulator.h>
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/assertions.h>
-#include <CGAL/use.h>
-#include <vector>
-#include <map>
+#include <CGAL/circulator.h>
+#include <CGAL/Iterator_range.h>
+#include <CGAL/result_of.h>
 #include <CGAL/tuple.h>
+#include <CGAL/use.h>
+
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
-
 #include <boost/config.hpp>
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4396)
+#include <vector>
+#include <map>
 
-#  pragma warning(disable:4522)  // multiple assignment operators specified
-// The warning, with VC12, was:
-// include\CGAL/iterator.h(1251) : warning C4522: 'CGAL::internal::Derivator<D,std::tuple<double,char>,std::tuple<std::back_insert_iterator<std::vector<double,std::allocator<_Ty>>>,std::back_insert_iterator<std::vector<char,std::allocator<char>>>>>' : multiple assignment operators specified
-
-#endif
 namespace CGAL {
+
+template<typename I>
+class Prevent_deref
+  : public boost::iterator_adaptor<
+  Prevent_deref<I>
+  , I // base
+  , I // value
+  >
+{
+public:
+  typedef boost::iterator_adaptor<
+  Prevent_deref<I>
+  , I // base
+  , I // value
+  > Base;
+  typedef typename Base::reference reference;
+  typedef typename std::pair<I, I> range;
+
+  Prevent_deref() : Base() {}
+  Prevent_deref(const I& i) : Base(i) {}
+private:
+  friend class boost::iterator_core_access;
+  reference dereference() const { return const_cast<typename boost::remove_reference<reference>::type&>(this->base_reference()); }
+};
+
+template<typename I>
+Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const Iterator_range<I>& range)
+{
+  return Iterator_range<Prevent_deref<I> >(make_prevent_deref(range.first), make_prevent_deref(range.second));
+}
+
+template<typename I>
+Prevent_deref<I> make_prevent_deref(const I& i)
+{
+  return Prevent_deref<I>(i);
+}
+
+template<typename I>
+Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const I& begin, const I& end)
+{
+  return Iterator_range<Prevent_deref<I> >(make_prevent_deref(begin), make_prevent_deref(end));
+}
+
+namespace cpp98 {
+
+template<typename Category, typename Tp, typename Distance = std::ptrdiff_t,
+         typename Pointer = Tp*, typename Reference = Tp&>
+struct iterator
+{
+  /// One of the iterator_tags tag types.
+  typedef Category  iterator_category;
+  /// The type "pointed to" by the iterator.
+  typedef Tp        value_type;
+  /// Distance between iterators is represented as this type.
+  typedef Distance  difference_type;
+  /// This type represents a pointer-to-value_type.
+  typedef Pointer   pointer;
+  /// This type represents a reference-to-value_type.
+  typedef Reference reference;
+};
+
+} // end namespace cpp98
 
 // +----------------------------------------------------------------+
 // | Emptyset_iterator
@@ -56,7 +115,7 @@ namespace CGAL {
 // +----------------------------------------------------------------+
 
 struct Emptyset_iterator
-  : public std::iterator< std::output_iterator_tag, void, void, void, void >
+  : public CGAL::cpp98::iterator< std::output_iterator_tag, void, void, void, void >
 {
   template< class T >
   Emptyset_iterator& operator=(const T&) { return *this; }
@@ -76,7 +135,7 @@ struct Emptyset_iterator
 
 template < class Container >
 class Insert_iterator
-  : public std::iterator< std::output_iterator_tag, void, void, void, void >
+  : public CGAL::cpp98::iterator< std::output_iterator_tag, void, void, void, void >
 {
 protected:
   Container *container;
@@ -117,8 +176,8 @@ inserter(Container &x)
 
 template < class T >
 class Oneset_iterator
-  : public std::iterator< std::bidirectional_iterator_tag,
-			  void, void, void, void >
+  : public CGAL::cpp98::iterator< std::bidirectional_iterator_tag,
+                                  void, void, void, void >
 {
   T* t;
   
@@ -224,7 +283,7 @@ private:
 
 // Undocumented, because there is some hope to merge it into Counting_iterator
 class Counting_output_iterator
-  : public std::iterator< std::output_iterator_tag, void, void, void, void >
+  : public CGAL::cpp98::iterator< std::output_iterator_tag, void, void, void, void >
 {
   std::size_t *c;
 public:
@@ -601,20 +660,19 @@ bool operator!=(const Filter_iterator<I,P>& it1,
 { return !(it1 == it2); }
 
 template <class I1,class Op>
-class Join_input_iterator_1 : public 
-std::iterator<typename std::iterator_traits<I1>::iterator_category, 
-	      typename Op::result_type, 
-	      typename std::iterator_traits<I1>::difference_type, 
-	      typename Op::result_type*,
-	      typename Op::result_type&>
-{ 
-public: 
-  typedef Join_input_iterator_1<I1,Op> Self;
-  typedef typename Op::result_type value_type;
-  typedef typename std::iterator_traits<I1>::difference_type difference_type; 
-  typedef value_type* pointer;
-  typedef value_type& reference; 
-  
+class Join_input_iterator_1
+{
+  typedef Join_input_iterator_1<I1,Op>                          Self;
+
+  typedef typename std::iterator_traits<I1>::value_type         arg_type;
+
+public:
+  typedef typename std::iterator_traits<I1>::iterator_category  iterator_category;
+  typedef typename cpp11::result_of<Op(arg_type)>::type         value_type;
+  typedef typename std::iterator_traits<I1>::difference_type    difference_type;
+  typedef value_type*                                           pointer;
+  typedef value_type&                                           reference;
+
 protected:
   I1 i1;
   Op op;
@@ -687,20 +745,20 @@ public:
 };
 
 template <class I1,class I2,class Op>
-class Join_input_iterator_2 : public 
-std::iterator<typename std::iterator_traits<I1>::iterator_category, 
-	      typename Op::result_type, 
-	      typename std::iterator_traits<I1>::difference_type, 
-	      typename Op::result_type*,
-	      typename Op::result_type&>
-{ 
-public: 
-  typedef Join_input_iterator_2<I1,I2,Op> Self;
-  typedef typename Op::result_type value_type;
-  typedef typename std::iterator_traits<I1>::difference_type difference_type; 
-  typedef value_type* pointer;
-  typedef value_type& reference; 
-  
+class Join_input_iterator_2
+{
+  typedef Join_input_iterator_2<I1,I2,Op>                             Self;
+
+  typedef typename std::iterator_traits<I1>::value_type               arg_type_1;
+  typedef typename std::iterator_traits<I2>::value_type               arg_type_2;
+
+public:
+  typedef typename std::iterator_traits<I1>::iterator_category        iterator_category;
+  typedef typename cpp11::result_of<Op(arg_type_1, arg_type_2)>::type value_type;
+  typedef typename std::iterator_traits<I1>::difference_type          difference_type;
+  typedef value_type*                                                 pointer;
+  typedef value_type&                                                 reference;
+
 protected:
   I1 i1;
   I2 i2;
@@ -780,19 +838,21 @@ public:
 };
 
 template <class I1,class I2,class I3,class Op>
-class Join_input_iterator_3 : public 
-std::iterator<typename std::iterator_traits<I1>::iterator_category, 
-	      typename Op::result_type, 
-	      typename std::iterator_traits<I1>::difference_type, 
-	      typename Op::result_type*,
-	      typename Op::result_type&>
-{ 
-public: 
-  typedef Join_input_iterator_3<I1,I2,I3,Op> Self;
-  typedef typename Op::result_type value_type;
-  typedef typename std::iterator_traits<I1>::difference_type difference_type; 
-  typedef value_type* pointer;
-  typedef value_type& reference; 
+class Join_input_iterator_3
+{
+  typedef Join_input_iterator_3<I1,I2,I3,Op>                    Self;
+
+  typedef typename std::iterator_traits<I1>::value_type         arg_type_1;
+  typedef typename std::iterator_traits<I2>::value_type         arg_type_2;
+  typedef typename std::iterator_traits<I3>::value_type         arg_type_3;
+
+public:
+  typedef typename std::iterator_traits<I1>::iterator_category  iterator_category;
+  typedef typename cpp11::result_of<Op(arg_type_1, arg_type_2, arg_type_3)>::type
+                                                                value_type;
+  typedef typename std::iterator_traits<I1>::difference_type    difference_type;
+  typedef value_type*                                           pointer;
+  typedef value_type&                                           reference;
   
 protected:
   I1 i1;
@@ -825,7 +885,7 @@ public:
   Join_input_iterator_3& operator=(const Join_input_iterator_3& it)
   {
     i1 = it.i1;
-    i2 = it.i1;
+    i2 = it.i2;
     i3 = it.i3;
     op = it.op;
     return *this;
@@ -1159,7 +1219,7 @@ public:
 
 template<typename _Iterator, typename Predicate>
     class Filter_output_iterator
-    : public std::iterator<std::output_iterator_tag, void, void, void, void>
+      : public CGAL::cpp98::iterator<std::output_iterator_tag, void, void, void, void>
     {
     protected:
       _Iterator iterator;
@@ -1320,14 +1380,22 @@ public:
   template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
   Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
     internal::Output_visitor<Self> visitor(this);
+    #if BOOST_VERSION==105800
+    t.apply_visitor(visitor);
+    #else
     boost::apply_visitor(visitor, t);
+    #endif
     return *this;
   }
 
   template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
   Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
     internal::Output_visitor<Self> visitor(this);
-    if(t) boost::apply_visitor(visitor, *t);
+    #if BOOST_VERSION==105800
+    if(t) t->apply_visitor(visitor);
+    #else
+    if(t)  boost::apply_visitor(visitor, *t);
+    #endif
     return *this;
   }
 
@@ -2493,8 +2561,6 @@ dispatch_or_drop_output(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6,O7 out7)
 
 } //namespace CGAL
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ITERATOR_H

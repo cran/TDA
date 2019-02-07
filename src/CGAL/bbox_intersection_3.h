@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
@@ -27,6 +28,7 @@
 #define CGAL_BBOX_INTERSECTION_3_H
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Object.h>
 
 namespace CGAL {
 

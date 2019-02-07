@@ -1,6 +1,11 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+
 #include <CGAL/Alpha_shape_3.h>
+// 2019-01-30
+// include <CGAL/Alpha_shape_vertex_base_3.h> from CGAL 4.13
+#include <CGAL/Alpha_shape_vertex_base_3.h>
+
 #include <CGAL/iterator.h>
 
 // Alpha_shape_3 templates type definitions

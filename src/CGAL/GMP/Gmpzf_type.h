@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>
@@ -23,6 +24,7 @@
 
 // includes
 #include <CGAL/basic.h>
+#include <CGAL/tss.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/gmp.h>
 #include <mpfr.h>
@@ -401,7 +403,7 @@ double Gmpzf::to_double() const
 {
   Exponent k;                                 // exponent
   double l = mpz_get_d_2exp (&k, man());      // mantissa in [0.5,1)
-  return std::ldexp(l, k+exp());
+  return std::ldexp(l, static_cast<int>(k+exp()));
 }
 
 
@@ -421,7 +423,7 @@ std::pair<std::pair<double, double>, long> Gmpzf::to_interval_exp() const
   // get surrounding interval of the form [l * 2 ^ k, u * 2^ k]
   // first get mantissa in the form l*2^k, with 0.5 <= d < 1;
   // truncation is guaranteed to go towards zero
-  long k = 0;
+  Exponent k = 0;
   double l = mpz_get_d_2exp (&k, man());
   // l = +/- 0.1*...*
   //           ------
@@ -447,7 +449,7 @@ std::pair<double, double> Gmpzf::to_interval() const
   std::pair<std::pair<double, double>, long> lue = to_interval_exp();
   double l = lue.first.first;
   double u = lue.first.second;
-  long k = lue.second;
+  int k = static_cast<int>(lue.second);
   return std::pair<double,double> (std::ldexp (l, k), std::ldexp (u, k));
 }
 
@@ -484,7 +486,8 @@ void Gmpzf::align ( const mpz_t*& a_aligned,
 			   const mpz_t*& b_aligned,
 			   Exponent& rexp,
 			   const Gmpzf& a, const Gmpzf& b) {
-  static Gmpz s;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Gmpz, s);
+
   switch (CGAL_NTS compare (b.exp(), a.exp())) {
   case SMALLER:
     {

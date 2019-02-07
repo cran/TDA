@@ -56,7 +56,10 @@ function(x, type = "lambda", color = NULL, add = FALSE, ...) {
   ## now the horizontal lines
   if (length(children) > 0) { 
     for (i in seq(along = children)) {
-      if (!is.null(children[[i]]) && length(children[[i]]>0) && !is.na(children[[i]])) {
+      # 2019-01-18
+	  # is.na() returns a vector, wrap with all() or any() if needed
+      if (!is.null(children[[i]]) && length(children[[i]]>0)
+          && all(!is.na(children[[i]]))) {
         x <- c(min(base[children[[i]]]) , max(base[children[[i]]]))
         y <- bottom[children[[i]][1]]
         graphics::segments(x[1], y, x[2], y, lwd = 3,

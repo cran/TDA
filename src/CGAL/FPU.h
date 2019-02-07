@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Sylvain Pion
@@ -26,6 +27,7 @@
 #define CGAL_FPU_H
 
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 
 #ifndef __INTEL_COMPILER
 #include <cmath> // for HUGE_VAL
@@ -66,11 +68,7 @@ extern "C" {
 #  if defined CGAL_CFG_DENORMALS_COMPILE_BUG
      // For compilers crashing when dealing with denormalized values.
      // So we have to generate it at run time instead.
-#ifdef CGAL_HEADER_ONLY
 #    define CGAL_IA_MIN_DOUBLE (CGAL::internal::get_static_minimin())
-#else
-#    define CGAL_IA_MIN_DOUBLE (CGAL::internal::minimin)
-#endif // CGAL_HEADER_ONLY
 #  else
 #    define CGAL_IA_MIN_DOUBLE (5e-324)
 #  endif
@@ -120,28 +118,17 @@ extern "C" {
 #endif
 
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
+double& get_static_minimin(); // Defined in Interval_arithmetic_impl.h
+#endif
+
+namespace  CGAL {
 
 #ifdef CGAL_HEADER_ONLY
-#include <CGAL/Interval_arithmetic_impl.h> // To define get_static_minimin();
-#else // CGAL_HEADER_ONLY
-namespace CGAL {
-namespace internal {
-CGAL_EXPORT extern double minimin;
-}
-}
-#endif // CGAL_HEADER_ONLY
-
+// Defined in test_FPU_rounding_mode_impl.h
+struct Check_FPU_rounding_mode_is_restored;
+inline const Check_FPU_rounding_mode_is_restored&
+get_static_check_fpu_rounding_mode_is_restored();
 #endif
-
-namespace CGAL {
-namespace internal {
-#ifdef __INTEL_COMPILER
-const double infinity = std::numeric_limits<double>::infinity();
-#else
-const double infinity = HUGE_VAL;
-#endif
-
-} // namespace internal
 
 // Inline function to stop compiler optimizations that shouldn't happen with
 // pragma fenv on.
@@ -422,26 +409,12 @@ FPU_get_cw (void)
     return cw;
 }
 
-} // namespace CGAL
-
-#ifdef CGAL_HEADER_ONLY
-#include <CGAL/test_FPU_rounding_mode_impl.h>
-#endif // CGAL_HEADER_ONLY
-
-namespace CGAL {
-
 // User interface (cont):
 
 inline
 void
 FPU_set_cw (FPU_CW_t cw)
 {
-#ifndef CGAL_NDEBUG
-#ifdef CGAL_HEADER_ONLY
-  const Check_FPU_rounding_mode_is_restored & tmp = get_static_check_fpu_rounding_mode_is_restored();
-#endif
-#endif
-
   CGAL_IA_SETFPCW(cw);
 }
 
@@ -535,5 +508,9 @@ inline void force_ieee_double_precision()
 }
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/test_FPU_rounding_mode_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_FPU_H

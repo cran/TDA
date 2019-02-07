@@ -13,6 +13,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
+//
 // Author(s)	:  Marc Glisse
 
 #ifndef CGAL_MPZF_H
@@ -224,7 +228,7 @@ inline int clz (boost::uint64_t x) {
 // In C++11, std::fill_n returns a pointer to the end, but in C++03,
 // it returns void.
 inline mp_limb_t* fill_n_ptr(mp_limb_t* p, int n, int c) {
-#if __cplusplus >= 201103L
+#if CGAL_CXX11
   return std::fill_n (p, n, c);
 #else
   mp_limb_t* q = p + n;
@@ -266,14 +270,16 @@ struct Mpzf {
 //#endif
 
   mp_limb_t* data_; /* data_[0] is never 0 (except possibly for 0). */
-  inline mp_limb_t*& data() { return data_; };
-  inline mp_limb_t const* data() const { return data_; };
+  inline mp_limb_t*& data() { return data_; }
+  inline mp_limb_t const* data() const { return data_; }
 
 #ifdef CGAL_MPZF_USE_CACHE
   mp_limb_t cache[cache_size + 1];
 #endif
   int size; /* Number of relevant limbs in data_. */
   int exp; /* The number is data_ (an integer) * 2 ^ (64 * exp). */
+  typedef int Exponent_type;
+  typedef int Size_type;
 
   struct allocate{};
   struct noalloc{};
@@ -471,8 +477,8 @@ struct Mpzf {
     init_from_mpz_t(z.mpz());
   }
   void init_from_mpz_t(mpz_t const z){
-    exp=mpz_scan1(z,0)/GMP_NUMB_BITS;
-    size=mpz_size(z)-exp;
+    exp=Exponent_type(mpz_scan1(z,0)/GMP_NUMB_BITS);
+    size=Size_type(mpz_size(z)-exp);
     init(size);
     mpn_copyi(data(),z->_mp_d+exp,size);
   }
@@ -800,9 +806,9 @@ struct Mpzf {
     else { mpn_copyi(res.data(), b.data(), bsize); }
     res.exp = 0; // Pick b.exp? or the average? 0 helps return 1 more often.
     if (asize < bsize)
-      res.size = mpn_gcd(res.data(), res.data(), bsize, tmp.data(), asize);
+      res.size = Size_type(mpn_gcd(res.data(), res.data(), bsize, tmp.data(), asize));
     else
-      res.size = mpn_gcd(res.data(), tmp.data(), asize, res.data(), bsize);
+      res.size = Size_type(mpn_gcd(res.data(), tmp.data(), asize, res.data(), bsize));
     if(rtz!=0) {
       mp_limb_t c = mpn_lshift(res.data(), res.data(), res.size, rtz);
       if(c) { res.data()[res.size]=c; ++res.size; }
@@ -884,7 +890,7 @@ struct Mpzf {
     if(size==0) return 0;
     int asize = std::abs(size);
     mp_limb_t top = data()[asize-1];
-    double dtop = top;
+    double dtop = (double)top;
     if(top >= (1LL<<53) || asize == 1) /* ok */ ;
     else { dtop += (double)data()[asize-2] * ldexp(1.,-GMP_NUMB_BITS); }
     return ldexp( (size<0) ? -dtop : dtop, (asize-1+exp) * GMP_NUMB_BITS);
@@ -903,13 +909,13 @@ struct Mpzf {
 	e += (11 - lz);
 	x >>= (11 - lz);
       }
-      dl = x;
-      dh = x + 1;
+      dl = double(x);
+      dh = double(x + 1);
       // Check for the few cases where dh=x works (asize==1 and the evicted
       // bits from x were 0s)
     }
     else if (asize == 1) {
-      dl = dh = x; // conversion is exact
+      dl = dh = double(x); // conversion is exact
     }
     else {
       mp_limb_t y = data()[asize-2];
@@ -917,8 +923,8 @@ struct Mpzf {
       x <<= (lz - 11);
       y >>= (75 - lz);
       x |= y;
-      dl = x;
-      dh = x + 1;
+      dl = double(x);
+      dh = double(x + 1);
       // Check for the few cases where dh=x works (asize==2 and the evicted
       // bits from y were 0s)
     }
@@ -1018,21 +1024,21 @@ std::istream& operator>> (std::istream& is, Mpzf& a)
       typedef Tag_false            Is_numerical_sensitive;
 
       struct Is_zero
-	: public std::unary_function< Type, bool > {
+	: public CGAL::cpp98::unary_function< Type, bool > {
 	  bool operator()( const Type& x ) const {
 	    return x.is_zero();
 	  }
 	};
 
       struct Is_one
-	: public std::unary_function< Type, bool > {
+	: public CGAL::cpp98::unary_function< Type, bool > {
 	  bool operator()( const Type& x ) const {
 	    return x.is_one();
 	  }
 	};
 
       struct Gcd
-	: public std::binary_function< Type, Type, Type > {
+	: public CGAL::cpp98::binary_function< Type, Type, Type > {
 	  Type operator()(
 	      const Type& x,
 	      const Type& y ) const {
@@ -1041,14 +1047,14 @@ std::istream& operator>> (std::istream& is, Mpzf& a)
 	};
 
       struct Square
-	: public std::unary_function< Type, Type > {
+	: public CGAL::cpp98::unary_function< Type, Type > {
 	  Type operator()( const Type& x ) const {
 	    return Mpzf_square(x);
 	  }
 	};
 
       struct Integral_division
-	: public std::binary_function< Type, Type, Type > {
+	: public CGAL::cpp98::binary_function< Type, Type, Type > {
 	  Type operator()(
 	      const Type& x,
 	      const Type& y ) const {
@@ -1057,14 +1063,14 @@ std::istream& operator>> (std::istream& is, Mpzf& a)
 	};
 
       struct Sqrt
-	: public std::unary_function< Type, Type > {
+	: public CGAL::cpp98::unary_function< Type, Type > {
 	  Type operator()( const Type& x) const {
 	    return Mpzf_sqrt(x);
 	  }
 	};
 
       struct Is_square
-	: public std::binary_function< Type, Type&, bool > {
+	: public CGAL::cpp98::binary_function< Type, Type&, bool > {
 	  bool operator()( const Type& x, Type& y ) const {
 	    // TODO: avoid doing 2 calls.
 	    if (!Mpzf_is_square(x)) return false;
@@ -1080,21 +1086,21 @@ std::istream& operator>> (std::istream& is, Mpzf& a)
   template <> struct Real_embeddable_traits< Mpzf >
     : public INTERN_RET::Real_embeddable_traits_base< Mpzf , CGAL::Tag_true > {
       struct Sgn
-	: public std::unary_function< Type, ::CGAL::Sign > {
+	: public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
 	  ::CGAL::Sign operator()( const Type& x ) const {
 	    return x.sign();
 	  }
 	};
 
       struct To_double
-	: public std::unary_function< Type, double > {
+	: public CGAL::cpp98::unary_function< Type, double > {
 	    double operator()( const Type& x ) const {
 	      return x.to_double();
 	    }
 	};
 
       struct Compare
-	: public std::binary_function< Type, Type, Comparison_result > {
+	: public CGAL::cpp98::binary_function< Type, Type, Comparison_result > {
 	    Comparison_result operator()(
 		const Type& x,
 		const Type& y ) const {
@@ -1103,7 +1109,7 @@ std::istream& operator>> (std::istream& is, Mpzf& a)
 	};
 
       struct To_interval
-	: public std::unary_function< Type, std::pair< double, double > > {
+	: public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
 	    std::pair<double, double> operator()( const Type& x ) const {
 	      return x.to_interval();
 	    }
@@ -1133,11 +1139,9 @@ namespace Eigen {
   {
     typedef CGAL::Mpzf Real;
     /* Should this be Quotient<Mpzf>? Gmpq?  */
-	// Modified by Jisu KIM, 2017-04-20
-	// Literal should be defined to define a new scalar type from Eigen 3.3
-	typedef CGAL::Mpzf Literal;
     typedef CGAL::Mpzf NonInteger;
     typedef CGAL::Mpzf Nested;
+    typedef CGAL::Mpzf Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }

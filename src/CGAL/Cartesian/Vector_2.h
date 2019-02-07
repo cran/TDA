@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
@@ -60,7 +61,7 @@ public:
     : base(CGAL::make_array(x, y)) {}
 
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
-    : base( hw != FT(1) ? CGAL::make_array(hx/hw, hy/hw)
+    : base( hw != FT(1) ? CGAL::make_array<FT>(hx/hw, hy/hw)
                         : CGAL::make_array(hx, hy) ) {}
 
   const FT & x() const

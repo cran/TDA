@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann, Sylvain Pion
@@ -297,9 +298,9 @@ CGAL_INLINE_FUNCTION
 Geomview_stream&
 Geomview_stream::operator<<(double d)
 {
-    float f = d;
+    float f = float(d);
     if (get_binary_mode()) {
-        float num = d;
+        float num = float(d);
         I_swap_to_big_endian(num);
         std::size_t retwrite= ::write(out, (char*)&num, sizeof(num));
         (void)retwrite;

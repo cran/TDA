@@ -1,3 +1,7 @@
+// 2019-01-17
+// For the update from R package BH 1.69
+#include <boost/next_prior.hpp>
+
 #include <topology/rips.h>
 #include <topology/filtration.h>
 #include <topology/static-persistence.h>

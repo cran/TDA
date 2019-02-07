@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -31,6 +32,7 @@
 // provided you give a NT converter from A to B.
 // There's a Homogeneous counterpart.
 
+#include <CGAL/Cartesian_converter_fwd.h>
 #include <CGAL/basic.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Enum_converter.h>
@@ -90,7 +92,7 @@ struct Converting_visitor : boost::static_visitor<> {
 
 template < class K1, class K2,
 //          class Converter = NT_converter<typename K1::FT, typename K2::FT> >
-           class Converter = typename internal::Default_converter<K1, K2>::Type >
+           class Converter>
 class Cartesian_converter : public Enum_converter
 {
     typedef Enum_converter   Base;
@@ -218,6 +220,13 @@ public:
 	return Point_2(c(a.x()), c(a.y()));
     }
 
+    typename K2::Weighted_point_2
+    operator()(const typename K1::Weighted_point_2 &a) const
+    {
+        typedef typename K2::Weighted_point_2 Weighted_point_2;
+	return Weighted_point_2(operator()(a.point()), operator()(a.weight()));
+    }
+
     typename K2::Vector_2
     operator()(const typename K1::Vector_2 &a) const
     {
@@ -284,6 +293,13 @@ public:
     {
         typedef typename K2::Point_3 Point_3;
 	return Point_3(c(a.x()), c(a.y()), c(a.z()));
+    }
+
+    typename K2::Weighted_point_3
+    operator()(const typename K1::Weighted_point_3 &a) const
+    {
+        typedef typename K2::Weighted_point_3 Weighted_point_3;
+	return Weighted_point_3((*this)(a.point()), c(a.weight()));
     }
 
     typename K2::Vector_3

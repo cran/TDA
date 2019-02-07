@@ -2,66 +2,66 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 GridFiltration <- function(FUNvalues, gridDim, maxdimension, decomposition, printProgress) {
-    .Call(TDA_GridFiltration, FUNvalues, gridDim, maxdimension, decomposition, printProgress)
+    .Call(`_TDA_GridFiltration`, FUNvalues, gridDim, maxdimension, decomposition, printProgress)
 }
 
 GridDiag <- function(FUNvalues, gridDim, maxdimension, decomposition, library, location, printProgress) {
-    .Call(TDA_GridDiag, FUNvalues, gridDim, maxdimension, decomposition, library, location, printProgress)
+    .Call(`_TDA_GridDiag`, FUNvalues, gridDim, maxdimension, decomposition, library, location, printProgress)
 }
 
 Bottleneck <- function(Diag1, Diag2) {
-    .Call(TDA_Bottleneck, Diag1, Diag2)
+    .Call(`_TDA_Bottleneck`, Diag1, Diag2)
 }
 
 Wasserstein <- function(Diag1, Diag2, p) {
-    .Call(TDA_Wasserstein, Diag1, Diag2, p)
+    .Call(`_TDA_Wasserstein`, Diag1, Diag2, p)
 }
 
 Kde <- function(X, Grid, h, kertype, weight, printProgress) {
-    .Call(TDA_Kde, X, Grid, h, kertype, weight, printProgress)
+    .Call(`_TDA_Kde`, X, Grid, h, kertype, weight, printProgress)
 }
 
 KdeDist <- function(X, Grid, h, weight, printProgress) {
-    .Call(TDA_KdeDist, X, Grid, h, weight, printProgress)
+    .Call(`_TDA_KdeDist`, X, Grid, h, weight, printProgress)
 }
 
 Dtm <- function(knnDistance, weightBound, r) {
-    .Call(TDA_Dtm, knnDistance, weightBound, r)
+    .Call(`_TDA_Dtm`, knnDistance, weightBound, r)
 }
 
 DtmWeight <- function(knnDistance, weightBound, r, knnIndex, weight) {
-    .Call(TDA_DtmWeight, knnDistance, weightBound, r, knnIndex, weight)
+    .Call(`_TDA_DtmWeight`, knnDistance, weightBound, r, knnIndex, weight)
 }
 
 FiltrationDiag <- function(filtration, maxdimension, library, location, printProgress) {
-    .Call(TDA_FiltrationDiag, filtration, maxdimension, library, location, printProgress)
+    .Call(`_TDA_FiltrationDiag`, filtration, maxdimension, library, location, printProgress)
 }
 
 FunFiltration <- function(FUNvalues, cmplx) {
-    .Call(TDA_FunFiltration, FUNvalues, cmplx)
+    .Call(`_TDA_FunFiltration`, FUNvalues, cmplx)
 }
 
 RipsFiltration <- function(X, maxdimension, maxscale, dist, library, printProgress) {
-    .Call(TDA_RipsFiltration, X, maxdimension, maxscale, dist, library, printProgress)
+    .Call(`_TDA_RipsFiltration`, X, maxdimension, maxscale, dist, library, printProgress)
 }
 
 RipsDiag <- function(X, maxdimension, maxscale, dist, libraryFiltration, libraryDiag, location, printProgress) {
-    .Call(TDA_RipsDiag, X, maxdimension, maxscale, dist, libraryFiltration, libraryDiag, location, printProgress)
+    .Call(`_TDA_RipsDiag`, X, maxdimension, maxscale, dist, libraryFiltration, libraryDiag, location, printProgress)
 }
 
 AlphaShapeFiltration <- function(X, printProgress) {
-    .Call(TDA_AlphaShapeFiltration, X, printProgress)
+    .Call(`_TDA_AlphaShapeFiltration`, X, printProgress)
 }
 
 AlphaShapeDiag <- function(X, maxdimension, libraryDiag, location, printProgress) {
-    .Call(TDA_AlphaShapeDiag, X, maxdimension, libraryDiag, location, printProgress)
+    .Call(`_TDA_AlphaShapeDiag`, X, maxdimension, libraryDiag, location, printProgress)
 }
 
 AlphaComplexFiltration <- function(X, printProgress) {
-    .Call(TDA_AlphaComplexFiltration, X, printProgress)
+    .Call(`_TDA_AlphaComplexFiltration`, X, printProgress)
 }
 
 AlphaComplexDiag <- function(X, maxdimension, libraryDiag, location, printProgress) {
-    .Call(TDA_AlphaComplexDiag, X, maxdimension, libraryDiag, location, printProgress)
+    .Call(`_TDA_AlphaComplexDiag`, X, maxdimension, libraryDiag, location, printProgress)
 }
 

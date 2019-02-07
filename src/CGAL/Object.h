@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -29,7 +30,8 @@
 #ifndef CGAL_OBJECT_H
 #define CGAL_OBJECT_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/assertions.h>
 
 #include <typeinfo>
 

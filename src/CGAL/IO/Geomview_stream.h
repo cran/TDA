@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Sylvain Pion
@@ -154,23 +155,23 @@ public:
 
     void trace(const std::string s) const
     {
-        //if (get_trace())
-        //    std::cerr << s;
+        if (get_trace())
+            std::cerr << s;
     }
     void trace(double d) const
     {
-        //if (get_trace())
-        //    std::cerr << d << ' ';
+        if (get_trace())
+            std::cerr << d << ' ';
     }
     void trace(int i) const
     {
-        //if (get_trace())
-        //    std::cerr << i << ' ';
+        if (get_trace())
+            std::cerr << i << ' ';
     }
     void trace(unsigned int i) const
     {
-        //if (get_trace())
-        //    std::cerr << i << ' ';
+        if (get_trace())
+            std::cerr << i << ' ';
     }
 
     bool set_binary_mode(bool b = true)

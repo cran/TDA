@@ -17,8 +17,8 @@
 \tabular{ll}{
 Package: \tab TDA\cr
 Type: \tab Package\cr
-Version: \tab 1.6.4\cr
-Date: \tab 2018-08-05\cr
+Version: \tab 1.6.5\cr
+Date: \tab 2019-02-07\cr
 License: \tab GPL-3 \cr
 }
 }
@@ -26,7 +26,7 @@ License: \tab GPL-3 \cr
 \author{
   Brittany Terese Fasy, Jisu Kim, Fabrizio Lecci, Clement Maria, David L. Millman, and Vincent Rouvreau
 
-  Maintainer: Jisu Kim <jisuk1@andrew.cmu.edu>
+  Maintainer: Jisu Kim <jisu.kim@inria.fr>
 }
 
 \references{

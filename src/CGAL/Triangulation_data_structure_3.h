@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -24,6 +25,10 @@
 
 #ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
+
+#include <CGAL/license/TDS_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 
@@ -36,6 +41,7 @@
 #include <boost/unordered_set.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
+#include <CGAL/internal/Has_member_visited.h>
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
@@ -334,8 +340,8 @@ public:
     }
 
   // not documented
-  void read_cells(std::istream& is, std::map< std::size_t, Vertex_handle > &V,
-                  std::size_t & m, std::map< std::size_t, Cell_handle > &C );
+  void read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
+                  std::size_t & m, std::vector< Cell_handle > &C);
   // not documented
   void print_cells(std::ostream& os,
                    const Unique_hash_map<Vertex_handle, std::size_t> &V ) const;
@@ -1069,10 +1075,27 @@ public:
   OutputIterator
   incident_facets_threadsafe(Vertex_handle v, OutputIterator facets) const
   {
-    return incident_facets<False_filter>(v, facets);
+    return incident_facets_threadsafe<False_filter>(v, facets);
   }
 
-  BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_member_visited,Has_visited_for_vertex_extractor,false)
+  template <class Filter, class OutputIterator>
+  OutputIterator
+  incident_edges_1d(Vertex_handle v, OutputIterator edges, Filter f = Filter()) const
+  {
+    CGAL_assertion (dimension() == 1);
+    CGAL_triangulation_assertion( number_of_vertices() >= 3);
+    Cell_handle n0 = v->cell();
+    const int index_v_in_n0 = n0->index(v);
+    CGAL_assume(index_v_in_n0 <= 1);
+    Cell_handle n1 = n0->neighbor(1-index_v_in_n0);
+    const int index_v_in_n1 = n1->index(v);
+    CGAL_assume(index_v_in_n1 <= 1);
+    if(!f(n0->vertex(1-index_v_in_n0)))
+      *edges++ = Edge(n0, n0->index(v), 1-index_v_in_n0);
+    if(!f(n1->vertex(1-index_v_in_n1)))
+      *edges++ = Edge(n1, n1->index(v), 1-index_v_in_n1);
+    return edges;
+  }
 
   template <class Filter, class OutputIterator>
   OutputIterator
@@ -1084,20 +1107,32 @@ public:
     CGAL_triangulation_expensive_precondition( is_valid() );
 
     if (dimension() == 1) {
-      CGAL_triangulation_assertion( number_of_vertices() >= 3);
-      Cell_handle n0 = v->cell();
-      const int index_v_in_n0 = n0->index(v);
-      CGAL_assume(index_v_in_n0 <= 1);
-      Cell_handle n1 = n0->neighbor(1-index_v_in_n0);
-      const int index_v_in_n1 = n1->index(v);
-      CGAL_assume(index_v_in_n1 <= 1);
-      if(!f(n0->vertex(1-index_v_in_n0))) *edges++ = Edge(n0, n0->index(v), 1-index_v_in_n0);
-      if(!f(n1->vertex(1-index_v_in_n1))) *edges++ = Edge(n1, n1->index(v), 1-index_v_in_n1);
-      return edges;
+      return incident_edges_1d(v, edges, f);
     }
     return visit_incident_cells<Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
-                                                 OutputIterator, Filter, Has_member_visited<Vertex>::value>,
+                                                 OutputIterator, Filter,
+                                                 internal::Has_member_visited<Vertex>::value>,
     OutputIterator>(v, edges, f);
+  }
+
+  template <class Filter, class OutputIterator>
+  OutputIterator
+  incident_edges_threadsafe(Vertex_handle v, OutputIterator edges,
+			    Filter f = Filter()) const
+  {
+    CGAL_triangulation_precondition( v != Vertex_handle() );
+    CGAL_triangulation_precondition( dimension() >= 1 );
+    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+    CGAL_triangulation_expensive_precondition( is_valid() );
+
+    if (dimension() == 1) {
+      return incident_edges_1d(v, edges, f);
+    }
+    return visit_incident_cells_threadsafe<
+      Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
+                       OutputIterator, Filter,
+                       internal::Has_member_visited<Vertex>::value>,
+      OutputIterator>(v, edges, f);
   }
 
   template <class OutputIterator>
@@ -1105,6 +1140,13 @@ public:
   incident_edges(Vertex_handle v, OutputIterator edges) const
   {
     return incident_edges<False_filter>(v, edges);
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  incident_edges_threadsafe(Vertex_handle v, OutputIterator edges) const
+  {
+    return incident_edges_threadsafe<False_filter>(v, edges);
   }
 
   template <class Filter, class OutputIterator>
@@ -1140,7 +1182,8 @@ public:
       return vertices;
     }
     return visit_incident_cells<Vertex_extractor<Vertex_feeder_treatment<OutputIterator>,
-    OutputIterator, Filter, Has_member_visited<Vertex>::value>,
+                                OutputIterator, Filter,
+                                internal::Has_member_visited<Vertex>::value>,
     OutputIterator>(v, vertices, f);
   }
 
@@ -1301,7 +1344,7 @@ public:
         Vertex_extractor<Vertex_feeder_treatment<OutputVertexIterator>,
                          OutputVertexIterator, 
                          VertexFilter, 
-                         Has_member_visited<Vertex>::value>,
+                         internal::Has_member_visited<Vertex>::value>,
         OutputVertexIterator
       >(v, vertices, cells, f);
   }
@@ -1684,7 +1727,7 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct>& tds)
   if(n == 0)
     return is;
 
-  std::map<std::size_t , Vertex_handle > V;
+  std::vector<Vertex_handle > V(n);
 
   // creation of the vertices
   for (std::size_t i=0; i < n; i++) {
@@ -1694,7 +1737,7 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct>& tds)
     V[i] = tds.create_vertex();
   }
 
-  std::map< std::size_t, Cell_handle > C;
+  std::vector< Cell_handle > C;
   std::size_t m;
 
   tds.read_cells(is, V, m, C);
@@ -2231,8 +2274,8 @@ flip_really( Cell_handle c, int i, int j,
 template <class Vb, class Cb, class Ct>
 void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
-read_cells(std::istream& is, std::map< std::size_t, Vertex_handle > &V,
-           std::size_t & m, std::map< std::size_t, Cell_handle > &C)
+read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
+           std::size_t & m, std::vector< Cell_handle > &C)
 {
   // creation of the cells and neighbors
   switch (dimension()) {
@@ -2244,6 +2287,8 @@ read_cells(std::istream& is, std::map< std::size_t, Vertex_handle > &V,
         is >> m;
       else
         read(is, m);
+
+      C.resize(m);
 
       for(std::size_t i = 0; i < m; i++) {
         Cell_handle c = create_cell();
@@ -2274,7 +2319,7 @@ read_cells(std::istream& is, std::map< std::size_t, Vertex_handle > &V,
   case 0:
     {
       m = 2;
-
+      C.resize(m);
       //      CGAL_triangulation_assertion( n == 2 );
       for (int i=0; i < 2; i++) {
         Cell_handle c = create_face(V[i], Vertex_handle(), Vertex_handle());
@@ -2290,6 +2335,7 @@ read_cells(std::istream& is, std::map< std::size_t, Vertex_handle > &V,
   case -1:
     {
       m = 1;
+      C.resize(m);
       //      CGAL_triangulation_assertion( n == 1 );
       Cell_handle c = create_face(V[0], Vertex_handle(), Vertex_handle());
       C[0] = c;
@@ -2304,7 +2350,7 @@ void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> &V ) const
 {
-  std::map<Cell_handle, std::size_t > C;
+  Unique_hash_map<Cell_handle, std::size_t > C;
   std::size_t i = 0;
 
   switch ( dimension() ) {
@@ -2324,7 +2370,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           if(is_ascii(os)) {
             os << V[it->vertex(j)];
             if ( j==3 )
-              os << std::endl;
+              os << '\n';
             else
               os << ' ';
           }
@@ -2340,7 +2386,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           if(is_ascii(os)){
             os << C[it->neighbor(j)];
             if(j==3)
-              os << std::endl;
+              os << '\n';
             else
               os <<  ' ';
           }
@@ -2354,7 +2400,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
     {
       size_type m = number_of_facets();
       if(is_ascii(os))
-        os << m << std::endl;
+        os << m << '\n';
       else
         write(os, m);
 
@@ -2366,7 +2412,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           if(is_ascii(os)) {
             os << V[(*it).first->vertex(j)];
             if ( j==2 )
-              os << std::endl;
+              os << '\n';
             else
               os <<  ' ';
           }
@@ -2383,7 +2429,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           if(is_ascii(os)){
             os << C[(*it).first->neighbor(j)];
             if(j==2)
-              os << std::endl;
+              os << '\n';
             else
               os <<  ' ';
           }
@@ -2398,7 +2444,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
     {
       size_type m = number_of_edges();
       if(is_ascii(os))
-        os << m << std::endl;
+        os << m << '\n';
       else
         write(os, m);
       // write the edges
@@ -2409,7 +2455,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           if(is_ascii(os)) {
             os << V[(*it).first->vertex(j)];
             if ( j==1 )
-              os << std::endl;
+              os << '\n';
             else
               os <<  ' ';
           }
@@ -2426,7 +2472,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           if(is_ascii(os)){
             os << C[(*it).first->neighbor(j)];
             if(j==1)
-              os << std::endl;
+              os << '\n';
             else
               os <<  ' ';
           }
@@ -3385,12 +3431,12 @@ is_valid(bool verbose, int level ) const
   case 0:
     {
       if ( number_of_vertices() < 2 ) {
-        if (verbose)
-            //std::cerr << "less than 2 vertices but dimension 0" << std::endl;
+        //if (verbose)
+        //    std::cerr << "less than 2 vertices but dimension 0" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }
-      // no break; continue
+      CGAL_FALLTHROUGH;
     }
   case -1:
     {
@@ -3648,7 +3694,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
             return false;
           }
         
-          int j1n,j2n,j3n;
+          int j1n=4,j2n=4,j3n=4;
           if ( ! n->has_vertex(c->vertex((i+1)&3),j1n) ) {
             //if (verbose) { std::cerr << "vertex " << ((i+1)&3)
             //                         << " not vertex of neighbor "
@@ -3967,5 +4013,7 @@ count_cells(size_type & i, bool verbose, int level) const
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_DATA_STRUCTURE_3_H

@@ -50,6 +50,16 @@ struct Simplex_tree_node_explicit_storage : SimplexTree::Filtration_simplex_base
     this->assign_filtration(filtration);
   }
 
+  // 2019-02-06, Jisu KIM
+  // Adding copy constructor
+  // for temporarily fixing [-Wclass-memaccess] warning in debian
+  Simplex_tree_node_explicit_storage(
+      const Simplex_tree_node_explicit_storage & stnes)
+      : children_(stnes.children()) {
+    this->assign_filtration(stnes.filtration());
+    this->assign_key(stnes.key());
+  }
+
   /*
    * Assign children to the node
    */
@@ -58,7 +68,10 @@ struct Simplex_tree_node_explicit_storage : SimplexTree::Filtration_simplex_base
   }
 
   /* Careful -> children_ can be NULL*/
-  Siblings * children() {
+  // 2019-02-06, Jisu KIM
+  // Changing to const function for adding copy constructor
+  //Siblings * children() {
+  Siblings * children() const {
     return children_;
   }
 

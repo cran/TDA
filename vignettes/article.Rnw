@@ -112,10 +112,10 @@ a density function and visualize it by means of a dendrogram, the cluster tree.
   Email: \email{brittany.fasy@alumni.duke.edu}\\
 
   Jisu Kim\\
-  Department of Statistics\\
-  Carnegie Mellon University\\
+  DataShape Group\\
+  INRIA Saclay\\
   Website: \url{ http://www.stat.cmu.edu/~jisuk/ } \\
-  Email: \email{jisuk1@andrew.cmu.edu}\\
+  Email: \email{jisu.kim@inria.fr}\\
 
   Fabrizio Lecci\\
   Email: \email{fabrizio.lecci@gmail.com}\\

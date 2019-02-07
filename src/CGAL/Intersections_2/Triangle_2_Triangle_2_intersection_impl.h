@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Geert-Jan Giezeman
@@ -245,8 +246,8 @@ Triangle_2_Triangle_2_pair<K>::intersection(
         intersection_type();
     if (_result != TRIANGLE  &&  _result != POLYGON)
         return false;
-    Pointlist_2_rec_<K> *cur;
-    int i;
+    //Pointlist_2_rec_<K> *cur;
+    //int i;
     //for (i=0, cur = _pointlist.first;
     //     i<_pointlist.size;
     //     i++, cur = cur->next) {

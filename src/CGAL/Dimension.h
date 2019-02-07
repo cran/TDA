@@ -14,13 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sylvain Pion
 
 #ifndef CGAL_DIMENSION_H
 #define CGAL_DIMENSION_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/Kernel_traits.h>
 #include <climits>
 #include <limits>

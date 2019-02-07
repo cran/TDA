@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Marc Glisse
 
@@ -425,7 +426,11 @@ template<class R_> struct Contained_in_simplex : private Store_kernel<R_> {
 		  }
 		  m(d,i)=1;
 		}
-		if (!LA::solve(a,CGAL_MOVE(m),CGAL_MOVE(b))) return false;
+		// If the simplex has full dimension, there must be a solution, only the signs need to be checked.
+		if (n == d+1)
+		  LA::solve(a,CGAL_MOVE(m),CGAL_MOVE(b));
+		else if (!LA::solve_and_check(a,CGAL_MOVE(m),CGAL_MOVE(b)))
+		  return false;
 		for(int i=0;i<n;++i){
 		  if (a[i]<0) return false;
 		}
@@ -550,6 +555,60 @@ template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
 }
 #endif
 
+namespace CartesianDKernelFunctors {
+template<class R_> struct Power_side_of_power_sphere_raw : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Power_side_of_power_sphere_raw)
+	typedef R_ R;
+	typedef typename Get_type<R, RT_tag>::type RT;
+	typedef typename Get_type<R, FT_tag>::type FT;
+	typedef typename Get_type<R, Point_tag>::type Point;
+	typedef typename Get_type<R, Oriented_side_tag>::type result_type;
+	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
+	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
+	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
+	typedef typename LA::Square_matrix Matrix;
+
+	template<class IterP, class IterW, class Pt, class Wt>
+	result_type operator()(IterP f, IterP const& e, IterW fw, Pt const& p0, Wt const& w0) const {
+	  typedef typename Get_functor<R, Squared_distance_to_origin_tag>::type Sqdo;
+	  typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+	  typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
+
+	  int d=pd(p0);
+	  Matrix m(d+1,d+1);
+	  if(CGAL::Is_stored<Sqdo>::value) {
+	    Sqdo sqdo(this->kernel());
+	    FT const& h0 = sqdo(p0) - w0;
+	    for(int i=0;f!=e;++f,++fw,++i) {
+	      Point const& p=*f;
+	      for(int j=0;j<d;++j){
+		RT const& x=c(p,j);
+		m(i,j)=x-c(p0,j);
+	      }
+	      m(i,d) = sqdo(p) - *fw - h0;
+	    }
+	  } else {
+	    for(int i=0;f!=e;++f,++fw,++i) {
+	      Point const& p=*f;
+	      m(i,d) = w0 - *fw;
+	      for(int j=0;j<d;++j){
+		RT const& x=c(p,j);
+		m(i,j)=x-c(p0,j);
+		m(i,d)+=CGAL::square(m(i,j));
+	      }
+	    }
+	  }
+	  if(d%2)
+	    return -LA::sign_of_determinant(CGAL_MOVE(m));
+	  else
+	    return LA::sign_of_determinant(CGAL_MOVE(m));
+	}
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Power_side_of_power_sphere_raw_tag,(CartesianDKernelFunctors::Power_side_of_power_sphere_raw<K>),(Point_tag),(Point_dimension_tag,Squared_distance_to_origin_tag,Compute_point_cartesian_coordinate_tag));
+
+// TODO: make Side_of_oriented_sphere call Power_side_of_power_sphere_raw
 namespace CartesianDKernelFunctors {
 template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Side_of_oriented_sphere)
@@ -683,7 +742,6 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
       typedef typename LAd::Vector Vec;
       typename Get_functor<R_, Scalar_product_tag>::type sp(this->kernel());
       int k=static_cast<int>(std::distance(f,e));
-      int d=pd(p0);
       Matrix m(k,k);
       Vec b(k);
       Vec l(k);
@@ -975,7 +1033,7 @@ template<class R_> struct Midpoint : private Store_kernel<R_> {
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
 	// There is a division, but it will be cast to RT afterwards anyway, so maybe we could use RT.
-	struct Average : std::binary_function<FT,RT,FT> {
+	struct Average : CGAL::cpp98::binary_function<FT,RT,FT> {
 		FT operator()(FT const&a, RT const&b)const{
 			return (a+b)/2;
 		}
@@ -1041,7 +1099,7 @@ template<class R_> struct Squared_distance : private Store_kernel<R_> {
 	typedef RT result_type;
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
-	struct Sq_diff : std::binary_function<RT,RT,RT> {
+	struct Sq_diff : CGAL::cpp98::binary_function<RT,RT,RT> {
 		RT operator()(RT const&a, RT const&b)const{
 			return CGAL::square(a-b);
 		}
@@ -1158,14 +1216,17 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 	template<class V,class W>
 	result_type operator()(V const&a, W const&b)const{
 		CI c(this->kernel());
+
+
 #ifdef CGAL_CXX11
-		auto
+                auto a_begin=c(a,Begin_tag());
+                auto b_begin=c(b,Begin_tag());
+                auto a_end=c(a,End_tag());
 #else
-		typename CI::result_type
+                typename CI::result_type a_begin=c(a,Begin_tag());
+                typename CI::result_type b_begin=c(b,Begin_tag());
+                typename CI::result_type a_end=c(a,End_tag());
 #endif
-		a_begin=c(a,Begin_tag()),
-		b_begin=c(b,Begin_tag()),
-		a_end=c(a,End_tag());
 		result_type res;
 		// can't we do slightly better for Uncertain<*> ?
 		// after res=...; if(is_uncertain(res))return indeterminate<result_type>();
@@ -1227,14 +1288,18 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
 	template<class V,class W>
 	result_type operator()(V const&a, W const&b)const{
 		CI c(this->kernel());
+
+
 #ifdef CGAL_CXX11
-		auto
+                auto a_begin=c(a,Begin_tag());
+                auto b_begin=c(b,Begin_tag());
+                auto a_end=c(a,End_tag());
 #else
-		typename CI::result_type
+                typename CI::result_type a_begin=c(a,Begin_tag());
+                typename CI::result_type b_begin=c(b,Begin_tag());
+                typename CI::result_type a_end=c(a,End_tag());
 #endif
-		a_begin=c(a,Begin_tag()),
-		b_begin=c(b,Begin_tag()),
-		a_end=c(a,End_tag());
+
 		result_type res = true;
 		// Is using CGAL::possibly for Uncertain really an optimization?
 		do res = res & (*a_begin++ == *b_begin++);
@@ -1260,7 +1325,7 @@ template<class R_> struct Oriented_side : private Store_kernel<R_> {
 	typedef typename Get_functor<R, Squared_radius_tag>::type SR;
   // modified by Jisu KIM, 2016-06-30
   // CS is the name of Intel CPU registers defined on Solaris
-	//typedef typename Get_functor<R, Center_of_sphere_tag>::type CS;
+  //typedef typename Get_functor<R, Center_of_sphere_tag>::type CS;
   typedef typename Get_functor<R, Center_of_sphere_tag>::type CoSt;
 
 	result_type operator()(Hyperplane const&h, Point const&p)const{

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -22,6 +23,9 @@
 
 #ifndef CGAL_TRIANGULATION_DS_CELL_BASE_3_H
 #define CGAL_TRIANGULATION_DS_CELL_BASE_3_H
+
+#include <CGAL/license/TDS_3.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
@@ -160,10 +164,10 @@ public:
   void set_neighbor(int i, Cell_handle n)
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 3);
-	// modified by Jisu KIM, 2017-04-24
-	// '*n' can fetch NULL memory if 'n' corresponds to NULL pointer
+    // modified by Jisu KIM, 2017-04-24
+    // '*n' can fetch NULL memory if 'n' corresponds to NULL pointer
     //CGAL_triangulation_precondition( this != &*n );
-	CGAL_triangulation_precondition(this != n->operator());
+    CGAL_triangulation_precondition(this != n->operator());
     N[i] = n;
   }
 
@@ -195,10 +199,10 @@ public:
     //CGAL_triangulation_precondition( this != &*n1 );
     //CGAL_triangulation_precondition( this != &*n2 );
     //CGAL_triangulation_precondition( this != &*n3 );
-	CGAL_triangulation_precondition(this != n0.operator->());
-	CGAL_triangulation_precondition(this != n1.operator->());
-	CGAL_triangulation_precondition(this != n2.operator->());
-	CGAL_triangulation_precondition(this != n3.operator->());
+    CGAL_triangulation_precondition(this != n0.operator->());
+    CGAL_triangulation_precondition(this != n1.operator->());
+    CGAL_triangulation_precondition(this != n2.operator->());
+    CGAL_triangulation_precondition(this != n3.operator->());
     N[0] = n0;
     N[1] = n1;
     N[2] = n2;
@@ -212,19 +216,6 @@ public:
   // to add their own purpose checking
   bool is_valid(bool = false, int = 0) const
   { return true; }
-
-  // This is here in the *ds*_cell_base to ease its use as default
-  // template parameter, so that the .dual() functions of Delaunay_3
-  // still work.
-  template < typename Traits >
-  typename Traits::Point_3
-  circumcenter(const Traits& gt) const
-  {
-    return gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
-                                                this->vertex(1)->point(),
-                                                this->vertex(2)->point(),
-                                                this->vertex(3)->point());
-  }
 
   // For use by Compact_container.
   void * for_compact_container() const { return N[0].for_compact_container(); }

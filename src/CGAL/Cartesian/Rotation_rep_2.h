@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
@@ -148,19 +149,19 @@ public:
             {
               case 0: return cosinus_;
               case 1: return -sinus_;
-              case 2: return FT(0);
+              default: return FT(0);
             }
     case 1: switch (j)
             {
               case 0: return sinus_;
               case 1: return cosinus_;
-              case 2: return FT(0);
+              default: return FT(0);
             }
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
-              case 2: return FT(1);
+              default: return FT(1);
             }
     }
     return FT(0);

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Marc Glisse
 
@@ -135,7 +136,12 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 
 	// m*a==b
 	template<class DV, class DM, class V>
-	static bool solve(DV&a, DM const&m, V const& b){
+	static void solve(DV&a, DM const&m, V const& b){
+		//a = m.colPivHouseholderQr().solve(b);
+		a = m.fullPivLu().solve(b);
+	}
+	template<class DV, class DM, class V>
+	static bool solve_and_check(DV&a, DM const&m, V const& b){
 		//a = m.colPivHouseholderQr().solve(b);
 		a = m.fullPivLu().solve(b);
 		return b.isApprox(m*a);

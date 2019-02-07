@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Sven Schönherr <sven@inf.ethz.ch>
@@ -29,6 +30,7 @@
 #endif
 
 #include <ctime>
+#include <iostream>
 #include <sstream>
 
 namespace CGAL {
@@ -39,14 +41,28 @@ namespace CGAL {
 // constructors
 CGAL_INLINE_FUNCTION
 Random::
-Random( )
+Random()
     :  val(0)
 {
     // get system's time
     std::time_t s;
     std::time( &s);
     seed = (unsigned int)s;
+    // initialize random numbers generator
+    rng.seed(static_cast<boost::int32_t>(seed));
+    random_value = get_int(0, 1<<15);
+}
 
+CGAL_INLINE_FUNCTION
+Random::
+Random(internal::Random_print_seed)
+    :  val(0)
+{
+    // get system's time
+    std::time_t s;
+    std::time( &s);
+    seed = (unsigned int)s;
+    //std::cerr << "CGAL::Random()::get_seed() = " << seed << std::endl;
     // initialize random numbers generator
     rng.seed(static_cast<boost::int32_t>(seed));
     random_value = get_int(0, 1<<15);
@@ -61,6 +77,7 @@ Random( unsigned int  seed)
     rng.seed(static_cast<boost::int32_t>(seed));
     random_value = get_int(0, 1<<15);
 }
+
 
 // seed
 CGAL_INLINE_FUNCTION
