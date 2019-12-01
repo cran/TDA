@@ -68,7 +68,7 @@ alphaShapeDiag(
 
   Maria C (2014). "GUDHI, Simplicial Complexes and Persistent Homology Packages." \url{ https://project.inria.fr/gudhi/software/ }
 
-  Morozov D (2008). "Homological Illusions of Persistence and Stability." \url{ http://www.mrzv.org/publications/thesis/phd/ }
+  Morozov D (2008). "Homological Illusions of Persistence and Stability."
 
   Edelsbrunner H, Harer J (2010). "Computational topology: an introduction." American Mathematical Society.
 }

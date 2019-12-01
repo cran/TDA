@@ -24,6 +24,8 @@ ripsDiag(
 
   \item{maxdimension}{
     integer: max dimension of the homological features to be computed. (e.g. 0 for connected components, 1 for connected components and loops, 2 for connected components, loops, voids, etc.)
+	Currently there is a bug for computing homological features of dimension higher than 1 when the distance is arbitrary (\code{dist = "arbitrary"}) and library 'GUDHI' is used (\code{library = "GUDHI"}).
+	
   }
 
   \item{maxscale}{
@@ -32,10 +34,12 @@ ripsDiag(
 
   \item{dist}{
     \code{"euclidean"} for Euclidean distance, \code{"arbitrary"} for an arbitrary distance given in input as a distance matrix.
+	Currently there is a bug for the arbitrary distance (\code{dist = "arbitrary"}) when computing homological features of dimension higher than 1 and library 'GUDHI' is used (\code{library = "GUDHI"}).
   }
 
   \item{library}{
     either a string or a vector of length two. When a vector is given, the first element specifies which library to compute the Rips filtration, and the second element specifies which library to compute the persistence diagram. If a string is used, then the same library is used. For computing the Rips filtration, if \code{dist = "euclidean"}, the user can use either the library \code{"GUDHI"} or \code{"Dionysus"}. If \code{dist = "arbitrary"}, the user can use either the library \code{"Dionysus"}. The default value is \code{"GUDHI"} if \code{dist = "euclidean"}, and \code{"Dionysus"} if \code{dist == "arbitrary"}. When \code{"GUDHI"} is used for \code{dist = "arbitrary"}, \code{"Dionysus"} is implicitly used. For computing the persistence diagram, the user can choose either the library \code{"GUDHI"}, \code{"Dionysus"}, or \code{"PHAT"}. The default value is \code{"GUDHI"}.
+	Currently there is a bug for 'GUDHI' (\code{library = "GUDHI"}) when computing homological features of dimension higher than 1 and the distance is arbitrary (\code{dist = "arbitrary"}).
   }
 
   \item{location}{
@@ -51,6 +55,7 @@ ripsDiag(
   For Rips filtration based on Euclidean distance of the input point cloud, the user can decide to use either the C++ library \href{ https://project.inria.fr/gudhi/software }{GUDHI} or \href{ http://www.mrzv.org/software/dionysus }{Dionysus}.
   For Rips filtration based on arbitrary distance, the user can decide to the C++ library \href{ http://www.mrzv.org/software/dionysus }{Dionysus}.
   Then for computing the persistence diagram from the Rips filtration, the user can use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI}, \href{ http://www.mrzv.org/software/dionysus/ }{Dionysus}, or \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}.
+  Currently there is a bug for computing homological features of dimension higher than 1 when the distance is arbitrary (\code{dist = "arbitrary"}) and library 'GUDHI' is used (\code{library = "GUDHI"}).
   See refereneces.
 }
 

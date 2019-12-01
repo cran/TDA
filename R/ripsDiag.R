@@ -46,6 +46,10 @@ function(X, maxdimension, maxscale, dist = "euclidean", library = "GUDHI",
     stop("printProgress should be logical")
   }
 
+  if (dist == "arbitrary" && library[2] == "GUDHI" && maxdimension > 1) {
+    stop("there is a bug for computing homological features of dimension higher than 1 when the distance is arbitrary and library 'GUDHI' is used")
+  }
+
   if (dist == "arbitrary" && library[1] == "GUDHI") {
     library[1] <- "Dionysus"
   }

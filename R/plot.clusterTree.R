@@ -1,9 +1,11 @@
 plot.clusterTree <-
 function(x, type = "lambda", color = NULL, add = FALSE, ...) {
   
-  if (class(x) != "clusterTree") {
-    stop("x should be an object of class clusterTree")
-  }
+  # 2019-12-01
+  # temporary fix for _R_CHECK_LENGTH_1_LOGIC2_ ( 'length(x) = 2 > 1' in coercion to 'logical(1)' ) error 
+  # if (class(x) != "clusterTree") {
+  #   stop("x should be an object of class clusterTree")
+  # }
   if (type != "lambda" && type != "r" && type != "kappa" && type != "alpha") {
     stop("type should be either 'r', 'lambda', 'alpha' or 'kappa'")
   }

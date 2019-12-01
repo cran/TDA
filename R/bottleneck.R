@@ -1,16 +1,18 @@
 bottleneck <-
 function(Diag1, Diag2, dimension = 1) {
 
-  if (((class(Diag1) != "diagram" && class(Diag1) != "matrix" &&
-      !is.data.frame(Diag1)) || NCOL(Diag1) != 3) &&
-      (!is.numeric(Diag1) || length(Diag1) != 3)) {
-    stop("Diag1 should be a diagram or a P by 3 matrix")
-  }
-  if (((class(Diag2) != "diagram" && class(Diag2) != "matrix" &&
-      !is.data.frame(Diag2)) || NCOL(Diag2) != 3) &&
-      (!is.numeric(Diag2) || length(Diag2) != 3)) {
-    stop("Diag2 should be a diagram or a P by 3 matrix")
-  }
+  # 2019-12-01
+  # temporary fix for _R_CHECK_LENGTH_1_LOGIC2_ ( 'length(x) = 2 > 1' in coercion to 'logical(1)' ) error
+  # if (((class(Diag1) != "diagram" && class(Diag1) != "matrix" &&
+  #     !is.data.frame(Diag1)) || NCOL(Diag1) != 3) &&
+  #     (!is.numeric(Diag1) || length(Diag1) != 3)) {
+  #   stop("Diag1 should be a diagram or a P by 3 matrix")
+  # }
+  # if (((class(Diag2) != "diagram" && class(Diag2) != "matrix" &&
+  #     !is.data.frame(Diag2)) || NCOL(Diag2) != 3) &&
+  #     (!is.numeric(Diag2) || length(Diag2) != 3)) {
+  #   stop("Diag2 should be a diagram or a P by 3 matrix")
+  # }
   if (!is.numeric(dimension) || any(dimension < 0)) {
     stop("dimension should be a nonnegative integer or a vector of nonnegative integer")
   }

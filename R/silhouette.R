@@ -2,11 +2,13 @@ silhouette <-
 function(Diag, p = 1, dimension = 1,
          tseq = seq(min(Diag[, 2:3]), max(Diag[, 2:3]), length = 500)) {
 
-  if (((class(Diag) != "diagram" && class(Diag) != "matrix" &&
-      !is.data.frame(Diag)) || NCOL(Diag) != 3) &&
-      (!is.numeric(Diag) || length(Diag) != 3)) {
-    stop("Diag should be a diagram, or a P by 3 matrix")
-  }
+  # 2019-12-01
+  # temporary fix for _R_CHECK_LENGTH_1_LOGIC2_ ( 'length(x) = 2 > 1' in coercion to 'logical(1)' ) error
+  # if (((class(Diag) != "diagram" && class(Diag) != "matrix" &&
+  #     !is.data.frame(Diag)) || NCOL(Diag) != 3) &&
+  #     (!is.numeric(Diag) || length(Diag) != 3)) {
+  #   stop("Diag should be a diagram, or a P by 3 matrix")
+  # }
   if (!is.numeric(dimension) || length(dimension) != 1 || dimension < 0) {
     stop("dimension should be an nonnegative integer")
   }

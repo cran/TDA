@@ -16,11 +16,13 @@ distFct(X, Grid)
 
 \arguments{
   \item{X}{
-    a numeric \eqn{m} by \eqn{d} matrix of coordinates in the space, where \eqn{m} is the number of points in \code{X} and \eqn{d} is the dimension of the space.
+    a numeric \eqn{m} by \eqn{d} matrix of coordinates in the space, where \eqn{m} is the number of points in \code{X} and \eqn{d} is the dimension of the space. 
+    X is the set of points whose distance is being measured from a base grid.
   }
 
   \item{Grid}{
-    a numeric \eqn{n} by \eqn{d} matrix of coordinates in the space, where \eqn{n} is the number of points in \code{Grid} and \eqn{d} is the dimension of the space.
+    a numeric \eqn{n} by \eqn{d} matrix of coordinates in the space, where \eqn{n} is the number of points in \code{Grid} and \eqn{d} is the dimension of the space. 
+    Grid is the base set from which each point is compared to the closest point in X.
   }
 }
 
@@ -34,7 +36,8 @@ distFct(X, Grid)
 }
 
 \value{
-  The function \code{distFct} returns a numeric vector of length \eqn{n}, where \eqn{n} is the number of points stored in \code{Grid}.
+  The function \code{distFct} returns a numeric vector of length \eqn{n}, where \eqn{n} is the number of points stored in \code{Grid}. 
+  Each value in V corresponds to the distance between a point in G and the nearest point in X.
 }
 
 \author{
@@ -51,9 +54,9 @@ n <- 300
 X <- circleUnif(n)
 
 ## Construct a grid of points over which we evaluate the function
-by <- 0.065
-Xseq <- seq(-1.6, 1.6, by = by)
-Yseq <- seq(-1.7, 1.7, by = by)
+interval <- 0.065
+Xseq <- seq(-1.6, 1.6, by = interval)
+Yseq <- seq(-1.7, 1.7, by = interval)
 Grid <- expand.grid(Xseq, Yseq)
 
 ## distance fct

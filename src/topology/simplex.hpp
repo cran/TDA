@@ -33,8 +33,12 @@ struct Simplex<V,T>::BoundaryIterator: public boost::iterator_adaptor<BoundaryIt
         {
             typedef     std::not_equal_to<Vertex>                           NotEqualVertex;
 
-            return      Self(boost::make_filter_iterator(std::bind2nd(NotEqualVertex(), *(this->base())), vertices_.begin(), vertices_.end()),
-                             boost::make_filter_iterator(std::bind2nd(NotEqualVertex(), *(this->base())), vertices_.end(),   vertices_.end()));
+            // 2019-11-29
+            // change std::bind2nd() to std::bind() with placeholders since std::bind2nd() is deprecated
+            // return      Self(boost::make_filter_iterator(std::bind2nd(NotEqualVertex(), *(this->base())), vertices_.begin(), vertices_.end()),
+            //                  boost::make_filter_iterator(std::bind2nd(NotEqualVertex(), *(this->base())), vertices_.end(),   vertices_.end()));			
+            return      Self(boost::make_filter_iterator(std::bind(NotEqualVertex(), std::placeholders::_1, *(this->base())), vertices_.begin(), vertices_.end()),
+                             boost::make_filter_iterator(std::bind(NotEqualVertex(), std::placeholders::_1, *(this->base())), vertices_.end(),   vertices_.end()));
         }
 
         const VertexContainer&      vertices_;

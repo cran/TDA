@@ -100,7 +100,7 @@ function(X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = NULL,
         "increasing" = sublevel, "coordinates" = Grid[["grid"]])
   } else {
     out <- list(
-        "cmplx" = gridOut[[1]], "values" = -gridOut[[2]],
+        "cmplx" = gridOut[[1]], "values" = gridOut[[2]],
         "increasing" = sublevel)
   }
 

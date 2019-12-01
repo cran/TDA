@@ -49,6 +49,9 @@ namespace CGAL {
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 #define CGAL_double(T) typename First_if_different<double, T>::Type
+// 2019-11-30
+// Temporary add for resolve ambiguity of type long int
+#define CGAL_long(T)   typename First_if_different<long,   T>::Type
 
 // Simplify the quotient numerator/denominator.
 // Currently the default template doesn't do anything.
@@ -76,6 +79,9 @@ class Quotient
   , boost::ordered_field_operators2< Quotient<NT_>, NT_
   , boost::ordered_field_operators2< Quotient<NT_>, CGAL_int(NT_)
   , boost::ordered_field_operators2< Quotient<NT_>, CGAL_double(NT_)
+  // 2019-11-30
+  // Temporary add for resolve ambiguity of type long int
+  , boost::ordered_field_operators2< Quotient<NT_>, CGAL_long(NT_) >
     > > > >
 {
  public:
@@ -91,6 +97,11 @@ class Quotient
   { Split_double<NT>()(n, num, den); }
 
   Quotient(const CGAL_int(NT) & n)
+    : num(n), den(NT(1)) {}
+
+  // 2019-11-30
+  // Temporary add for resolve ambiguity of type long int
+  Quotient(const CGAL_long(NT) & n)
     : num(n), den(NT(1)) {}
 
   template <class T>
@@ -113,6 +124,15 @@ class Quotient
   }
 
   Quotient& operator=(const CGAL_int(NT) & n)
+  {
+    num = n;
+    den = 1;
+    return *this;
+  }
+
+  // 2019-11-30
+  // Temporary add for resolve ambiguity of type long int
+  Quotient& operator=(const CGAL_long(NT) & n)
   {
     num = n;
     den = 1;
@@ -158,6 +178,12 @@ class Quotient
   Quotient<NT>& operator-= (const CGAL_double(NT)& r);
   Quotient<NT>& operator*= (const CGAL_double(NT)& r);
   Quotient<NT>& operator/= (const CGAL_double(NT)& r);
+  // 2019-11-30
+  // Temporary add for resolve ambiguity of type long int
+  Quotient<NT>& operator+= (const CGAL_long(NT)& r);
+  Quotient<NT>& operator-= (const CGAL_long(NT)& r);
+  Quotient<NT>& operator*= (const CGAL_long(NT)& r);
+  Quotient<NT>& operator/= (const CGAL_long(NT)& r);
 
   Quotient<NT>&    normalize();
 
@@ -384,6 +410,45 @@ Quotient<NT>::operator/= (const CGAL_double(NT)& r)
   return *this;
 }
 
+// 2019-11-30
+// Temporary add for resolve ambiguity of type long int
+template <class NT>
+CGAL_MEDIUM_INLINE
+Quotient<NT>&
+Quotient<NT>::operator+= (const CGAL_long(NT)& r)
+{
+    num += r * den;
+    return *this;
+}
+
+template <class NT>
+CGAL_MEDIUM_INLINE
+Quotient<NT>&
+Quotient<NT>::operator-= (const CGAL_long(NT)& r)
+{
+    num -= r * den;
+    return *this;
+}
+
+template <class NT>
+CGAL_MEDIUM_INLINE
+Quotient<NT>&
+Quotient<NT>::operator*= (const CGAL_long(NT)& r)
+{
+    num *= r;
+    return *this;
+}
+
+template <class NT>
+CGAL_MEDIUM_INLINE
+Quotient<NT>&
+Quotient<NT>::operator/= (const CGAL_long(NT)& r)
+{
+    CGAL_precondition( r != 0 );
+    den *= r;
+    return *this;
+}
+
 template <class NT>
 CGAL_MEDIUM_INLINE
 Comparison_result
@@ -492,6 +557,14 @@ bool
 operator==(const Quotient<NT>& x, const CGAL_double(NT) & y)
 { return x.den * y == x.num; }
 
+// 2019-11-30
+// Temporary add for resolve ambiguity of type long int
+template <class NT>
+inline
+bool
+operator==(const Quotient<NT>& x, const CGAL_long(NT) & y)
+{ return x.den * y == x.num; }
+
 
 
 template <class NT>
@@ -526,6 +599,16 @@ operator<(const Quotient<NT>& x, const CGAL_double(NT)& y)
   return quotient_cmp(x,Quotient<NT>(y)) == SMALLER;
 }
 
+// 2019-11-30
+// Temporary add for resolve ambiguity of type long int
+template <class NT>
+CGAL_MEDIUM_INLINE
+bool
+operator<(const Quotient<NT>& x, const CGAL_long(NT)& y)
+{
+  return quotient_cmp(x,Quotient<NT>(y)) == SMALLER;
+}
+
 
 template <class NT>
 inline
@@ -543,6 +626,14 @@ template <class NT>
 inline
 bool
 operator>(const Quotient<NT>& x, const CGAL_double(NT)& y)
+{ return quotient_cmp(x, Quotient<NT>(y)) == LARGER; }
+
+// 2019-11-30
+// Temporary add for resolve ambiguity of type long int
+template <class NT>
+inline
+bool
+operator>(const Quotient<NT>& x, const CGAL_long(NT)& y)
 { return quotient_cmp(x, Quotient<NT>(y)) == LARGER; }
 
 
@@ -598,6 +689,9 @@ gcd(const NT&, const NT&)
 
 #undef CGAL_double
 #undef CGAL_int
+// 2019-11-30
+// Temporary add for resolve ambiguity of type long int
+#undef CGAL_long
 
 //
 // Algebraic structure traits

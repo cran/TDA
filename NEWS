@@ -1,3 +1,15 @@
+### TDA: version 1.6.8
+- temporarily fixed bugs
+
+### TDA: version 1.6.7
+- temporarily fixed bug for _R_CHECK_LENGTH_1_LOGIC2_ error
+- temporarily remove testthat due to error in 32 bit windows
+
+### TDA: version 1.6.6
+- fixed bugs
+- fixed bug in gridFiltration
+- temporarily disable ripsDiag() function with dist = "arbitrary" and library = "GUDHI" when maxdimension is larger than 1
+
 ### TDA: version 1.6.5
 - fixed bugs
 - update corresponding to update from R package BH 1.69

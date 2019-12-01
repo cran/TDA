@@ -5,9 +5,11 @@ function(X, FUN, Grid, B = 30, alpha = 0.05, parallel = FALSE,
   if (!is.numeric(X) && !is.data.frame(X)) {
     stop("X should be a matrix of coordinates")
   }
-  if (class(FUN) != "function") {
-    stop("FUN should be function")
-  }
+  # 2019-12-01
+  # temporary fix for _R_CHECK_LENGTH_1_LOGIC2_ ( 'length(x) = 2 > 1' in coercion to 'logical(1)' ) error  
+  # if (class(FUN) != "function") {
+  #   stop("FUN should be function")
+  # }
   if (!is.numeric(Grid) && !is.data.frame(Grid)) {
     stop("Grid should be a matrix of coordinates")
   }
