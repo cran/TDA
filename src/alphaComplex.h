@@ -48,9 +48,14 @@ void alphaComplexDiag(
 
   float min_persistence = 0.0;
 
-  Gudhi::Simplex_tree<> alphaCmplx =
+  // 2021-02-08, Jisu KIM
+  // fixing [-Wclass-memaccess] warning
+  //Gudhi::Simplex_tree<> alphaCmplx =
+  //    AlphaComplexFiltrationGudhi< Gudhi::Simplex_tree<> >(
+  //        X, printProgress, print);
+  Gudhi::Simplex_tree<> alphaCmplx(
       AlphaComplexFiltrationGudhi< Gudhi::Simplex_tree<> >(
-          X, printProgress, print);
+          X, printProgress, print));
 
   // 2018-08-04
   // switching back to original code

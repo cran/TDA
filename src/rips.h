@@ -54,10 +54,16 @@ inline void ripsFiltration(
     VectorList        & boundary
 ) {
   if (library[0] == 'G') {
-    Gudhi::Simplex_tree<> smplxTree =
+    // 2021-02-08, Jisu KIM
+    // fixing [-Wclass-memaccess] warning
+    //Gudhi::Simplex_tree<> smplxTree =
+    //    RipsFiltrationGudhi< Gudhi::Simplex_tree<> >(X, nSample, nDim,
+    //        maxdimension, maxscale, printProgress, print);
+    //filtrationGudhiToTda< IntVector >(smplxTree, cmplx, values, boundary);
+    filtrationGudhiToTda< IntVector >(
         RipsFiltrationGudhi< Gudhi::Simplex_tree<> >(X, nSample, nDim,
-            maxdimension, maxscale, printProgress, print);
-    filtrationGudhiToTda< IntVector >(smplxTree, cmplx, values, boundary);
+            maxdimension, maxscale, printProgress, print),
+        cmplx, values, boundary);
   }
   else {
 

@@ -52,9 +52,9 @@ ripsDiag(
 }
 
 \details{
-  For Rips filtration based on Euclidean distance of the input point cloud, the user can decide to use either the C++ library \href{ https://project.inria.fr/gudhi/software }{GUDHI} or \href{ http://www.mrzv.org/software/dionysus }{Dionysus}.
-  For Rips filtration based on arbitrary distance, the user can decide to the C++ library \href{ http://www.mrzv.org/software/dionysus }{Dionysus}.
-  Then for computing the persistence diagram from the Rips filtration, the user can use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI}, \href{ http://www.mrzv.org/software/dionysus/ }{Dionysus}, or \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}.
+  For Rips filtration based on Euclidean distance of the input point cloud, the user can decide to use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI} or \href{ https://www.mrzv.org/software/dionysus/ }{Dionysus}.
+  For Rips filtration based on arbitrary distance, the user can decide to the C++ library \href{ https://www.mrzv.org/software/dionysus/ }{Dionysus}.
+  Then for computing the persistence diagram from the Rips filtration, the user can use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI}, \href{ https://www.mrzv.org/software/dionysus/ }{Dionysus}, or \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}.
   Currently there is a bug for computing homological features of dimension higher than 1 when the distance is arbitrary (\code{dist = "arbitrary"}) and library 'GUDHI' is used (\code{library = "GUDHI"}).
   See refereneces.
 }
@@ -82,7 +82,7 @@ ripsDiag(
 \references{
   Maria C (2014). "GUDHI, Simplicial Complexes and Persistent Homology Packages." \url{ https://project.inria.fr/gudhi/software/ }.
 
-  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology". \url{ http://www.mrzv.org/software/dionysus/ }
+  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology". \url{ https://www.mrzv.org/software/dionysus/ }
 
   Edelsbrunner H, Harer J (2010). "Computational topology: an introduction." American Mathematical Society.
 

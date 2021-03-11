@@ -282,7 +282,10 @@ inline RcppList StlToRcppMatrixList(
 
 template< typename SimplexHandle, typename SimplexTree, typename RealVector >
 void filtrationGudhiOne(
-    const SimplexHandle & sh, SimplexTree & smplxTree, const int idxShift,
+    // 2021-02-08, Jisu KIM
+    // fixing [-Wclass-memaccess] warning
+    //const SimplexHandle & sh, SimplexTree & smplxTree, const int idxShift,
+    const SimplexHandle & sh, const SimplexTree & smplxTree, const int idxShift,
     // 2018-08-04
     // switching back to original code
     RealVector & cmplxVec, double & value, RealVector & boundaryVec) {
@@ -325,7 +328,10 @@ void filtrationGudhiOne(
 template< typename IntegerVector, typename SimplexTree, typename VectorList,
           typename RealVector >
 inline void filtrationGudhiToTda(
-    SimplexTree & smplxTree, VectorList & cmplx, RealVector & values,
+    // 2021-02-08, Jisu KIM
+    // fixing [-Wclass-memaccess] warning
+    //SimplexTree & smplxTree, VectorList & cmplx, RealVector & values,
+    const SimplexTree & smplxTree, VectorList & cmplx, RealVector & values,
     // 2018-08-04
     // switching back to original code
     VectorList & boundary) {
@@ -347,8 +353,10 @@ inline void filtrationGudhiToTda(
     ++iSt, ++iCmplx, ++iValue, ++iBdy) {
 
     // Below two lines are only needed for computing boundary
-    smplxTree.assign_key(*iSt, iFill);
-    iFill++;
+    // 2021-02-08, Jisu KIM
+    // temporarily fixing [-Wclass-memaccess] warning
+    //smplxTree.assign_key(*iSt, iFill);
+    //iFill++;
 
     IntegerVector cmplxVec;
     IntegerVector boundaryVec;
@@ -366,7 +374,10 @@ inline void filtrationGudhiToTda(
 template< typename RcppList, typename RcppVector, typename SimplexTree >
 // 2018-08-04
 // switching back to original code
-inline RcppList filtrationGudhiToRcpp(SimplexTree & smplxTree) {
+// 2021-02-08, Jisu KIM
+// fixing [-Wclass-memaccess] warning
+//inline RcppList filtrationGudhiToRcpp(SimplexTree & smplxTree) {
+inline RcppList filtrationGudhiToRcpp(const SimplexTree & smplxTree) {
 
   const unsigned nFltr = smplxTree.num_simplices();
 
@@ -386,8 +397,10 @@ inline RcppList filtrationGudhiToRcpp(SimplexTree & smplxTree) {
        ++iSt, ++iCmplx, ++iValue, ++iBdy) {
 
     // Below two lines are only needed for computing boundary
-    smplxTree.assign_key(*iSt, iFill);
-    iFill++;
+    // 2021-02-08, Jisu KIM
+    // temporarily fixing [-Wclass-memaccess] warning
+    //smplxTree.assign_key(*iSt, iFill);
+    //iFill++;
 
     RcppVector cmplxVec;
     RcppVector boundaryVec;

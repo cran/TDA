@@ -29,7 +29,7 @@ bottleneck(Diag1, Diag2, dimension = 1)
 }
 
 \details{
-  The bottleneck distance between two diagrams is the cost of the optimal matching between points of the two diagrams. Note that all the diagonal points are included in the persistence diagrams when computing the optimal matching. When a vector is given for \code{dimension}, then maximum among bottleneck distances using each element in \code{dimension} is returned. The function \code{bottleneck} is an R wrapper of the function "bottleneck_distance" in the C++ library \href{ http://www.mrzv.org/software/dionysus }{Dionysus}. See references.
+  The bottleneck distance between two diagrams is the cost of the optimal matching between points of the two diagrams. Note that all the diagonal points are included in the persistence diagrams when computing the optimal matching. When a vector is given for \code{dimension}, then maximum among bottleneck distances using each element in \code{dimension} is returned. The function \code{bottleneck} is an R wrapper of the function "bottleneck_distance" in the C++ library \href{ https://www.mrzv.org/software/dionysus/ }{Dionysus}. See references.
 }
 
 \value{
@@ -37,7 +37,7 @@ bottleneck(Diag1, Diag2, dimension = 1)
 }
 
 \references{
-  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology." \url{ http://www.mrzv.org/software/dionysus/ }
+  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology." \url{ https://www.mrzv.org/software/dionysus/ }
 
   Edelsbrunner H, Harer J (2010). "Computational topology: an introduction." American Mathematical Society.
 }

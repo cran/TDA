@@ -281,13 +281,22 @@ class Simplex_tree {
     return filtration_vect_;
   }
 
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  Filtration_simplex_range const& filtration_simplex_range(Indexing_tag = Indexing_tag()) const {
+    return filtration_vect_;
+  }
+
   /** \brief Returns a range over the vertices of a simplex.
    *
    * The order in which the vertices are visited is the decreasing order for < on Vertex_handles,
    * which is consequenlty
    * equal to \f$(-1)^{\text{dim} \sigma}\f$ the canonical orientation on the simplex.
    */
-  Simplex_vertex_range simplex_vertex_range(Simplex_handle sh) {
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  // Simplex_vertex_range simplex_vertex_range(Simplex_handle sh) {
+  Simplex_vertex_range simplex_vertex_range(Simplex_handle sh) const {
     assert(sh != null_simplex());  // Empty simplex
     return Simplex_vertex_range(Simplex_vertex_iterator(this, sh),
                                 Simplex_vertex_iterator(this));
@@ -308,7 +317,10 @@ class Simplex_tree {
    *
    * @param[in] sh Simplex for which the boundary is computed. */
   template<class SimplexHandle>
-  Boundary_simplex_range boundary_simplex_range(SimplexHandle sh) {
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  //Boundary_simplex_range boundary_simplex_range(SimplexHandle sh) {
+  Boundary_simplex_range boundary_simplex_range(SimplexHandle sh) const {
     return Boundary_simplex_range(Boundary_simplex_iterator(this, sh),
                                   Boundary_simplex_iterator(this));
   }
@@ -337,7 +349,10 @@ class Simplex_tree {
   }
 
   /** \brief depth first search, inserts simplices when reaching a leaf. */
-  void rec_copy(Siblings *sib, Siblings *sib_source) {
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  //void rec_copy(Siblings *sib, Siblings * sib_source) {
+  void rec_copy(Siblings *sib, const Siblings * const sib_source) {
     for (auto sh = sib->members().begin(), sh_source = sib_source->members().begin();
          sh != sib->members().end(); ++sh, ++sh_source) {
       if (has_children(sh_source)) {
@@ -502,13 +517,19 @@ class Simplex_tree {
 
  public:
   /** \brief returns the number of simplices in the simplex_tree. */
-  size_t num_simplices() {
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  //size_t num_simplices() {
+  size_t num_simplices() const {
     return num_simplices(&root_);
   }
 
  private:
   /** \brief returns the number of simplices in the simplex_tree. */
-  size_t num_simplices(Siblings * sib) {
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  //size_t num_simplices(const Siblings * const sib) {
+  size_t num_simplices(const Siblings * const sib) const {
     auto sib_begin = sib->members().begin();
     auto sib_end = sib->members().end();
     size_t simplices_number = sib_end - sib_begin;
@@ -524,7 +545,10 @@ class Simplex_tree {
   /** \brief Returns the dimension of a simplex.
    *
    * Must be different from null_simplex().*/
-  int dimension(Simplex_handle sh) {
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  //int dimension(Simplex_handle sh) {
+  int dimension(Simplex_handle sh) const {
     Siblings * curr_sib = self_siblings(sh);
     int dim = 0;
     while (curr_sib != nullptr) {
@@ -791,7 +815,10 @@ class Simplex_tree {
 
   /** Returns the Siblings containing a simplex.*/
   template<class SimplexHandle>
-  Siblings* self_siblings(SimplexHandle sh) {
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  //Siblings* self_siblings(SimplexHandle sh) {
+  Siblings* self_siblings(const SimplexHandle & sh) const {
     if (sh->second.children()->parent() == sh->first)
       return sh->second.children()->oncles();
     else
@@ -1229,6 +1256,7 @@ class Simplex_tree {
     } else {
       // Keeping some elements of siblings. Remove the others, and recurse in the remaining ones.
       list.erase(last, list.end());
+
       for (auto&& simplex : list)
         if (has_children(&simplex))
           modified |= rec_prune_above_filtration(simplex.second.children(), filt);

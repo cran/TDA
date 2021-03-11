@@ -1,0 +1,7 @@
+R package TDA as a whole is distributed under GPL-3. R package TDA includes other open source libraries. The following is a list of licenses for these libraries:
+
+* GUDHI: MIT + 'The GUDHI License' <https://gudhi.inria.fr/licensing/>
+* Dionysus: GPL-3
+* PHAT: GPL-3
+* Boost/BH: 'Boost Software Licence' <https://www.boost.org/LICENSE_1_0.txt>
+* CGAL: GPL-3 | LGPL-3 + 'The CGAL Licence' <https://www.cgal.org/license.html>

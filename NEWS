@@ -1,7 +1,10 @@
-### TDA: version 1.6.8
-- temporarily fixed bugs
+### TDA: version 1.7.1, 1.7.2, 1.7.3
+- temporarily fixed [-Wclass-memaccess] warning
 
-### TDA: version 1.6.7
+### TDA: version 1.7
+- update boost library corresponding to update in R package BH
+
+### TDA: version 1.6.7, 1.6.8, 1.6.9
 - temporarily fixed bug for _R_CHECK_LENGTH_1_LOGIC2_ error
 - temporarily remove testthat due to error in 32 bit windows
 

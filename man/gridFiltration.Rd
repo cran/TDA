@@ -85,7 +85,7 @@ gridFiltration(
 \references{
   Fasy B, Lecci F, Rinaldo A, Wasserman L, Balakrishnan S, Singh A (2013). "Statistical Inference For Persistent Homology." (arXiv:1303.7117). Annals of Statistics.
 
-  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology." \url{ http://www.mrzv.org/software/dionysus/ }
+  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology." \url{ https://www.mrzv.org/software/dionysus/ }
 
   Bauer U, Kerber M, Reininghaus J (2012). "PHAT, a software library for persistent homology." \url{ https://bitbucket.org/phat-code/phat/ }
 }
@@ -95,7 +95,7 @@ gridFiltration(
 }
 
 \note{
-  The user can decide to use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI}, \href{ http://www.mrzv.org/software/dionysus/ }{Dionysus}, or \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}. See references.
+  The user can decide to use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI}, \href{ https://www.mrzv.org/software/dionysus/ }{Dionysus}, or \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}. See references.
 
   Since dimension of simplicial complex from grid points in \eqn{R^d} is up to \eqn{d}, homology of dimension \eqn{\ge d} is trivial. Hence setting \code{maxdimension} with values \eqn{\ge d} is equivalent to \code{maxdimension=d-1}.
 }

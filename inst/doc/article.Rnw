@@ -91,7 +91,7 @@ topological information about the underlying space, such as the distance functio
 the kNN density estimator, the kernel density estimator, and the kernel distance.
 The salient topological features of the sublevel sets (or superlevel sets) of these functions
 can be quantified with persistent homology. We provide an \proglang{R} interface
-for the efficient algorithms of the \proglang{C++} libraries \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}, \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}, and \href{ https://bitbucket.org/phat-code/phat }{\pkg{PHAT}}, 
+for the efficient algorithms of the \proglang{C++} libraries \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}, \href{ https://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}, and \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}, 
 including a function for the persistent homology of the Rips filtration, 
 and one for the persistent homology of sublevel
 sets (or superlevel sets) of arbitrary functions evaluated over a grid of points.
@@ -172,7 +172,7 @@ This information is encoded in the persistence diagram, a multiset of points in 
 %by Andrew Tausz;
 %\textsf{\textbf{PHAT}}\footnote{https://bitbucket.org/phat-code/phat/} is a C++
 %library developed at the Institute of Science and Technology Austria;
-%\textsf{\textbf{Dionysus}}\footnote{http://www.mrzv.org/software/dionysus/} is
+%\textsf{\textbf{Dionysus}}\footnote{https://www.mrzv.org/software/dionysus/} is
 %a
 %C++ library written and maintained by Dmitriy Morozov;
 %finally, \textsf{\textbf{GUDHI}}\footnote{https://project.inria.fr/gudhi/} is
@@ -186,7 +186,7 @@ This information is encoded in the persistence diagram, a multiset of points in 
 
 This paper is devoted to the presentation of the \proglang{R} package \pkg{TDA},
 which provides a user-friendly interface for the efficient algorithms of the 
-\proglang{C++} libraries \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}} \citep{gudhi_stpcoh}, \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}} \citep{dionysus_C}, and \href{ https://bitbucket.org/phat-code/phat }{\pkg{PHAT}} \citep{phat_C}.
+\proglang{C++} libraries \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}} \citep{gudhi_stpcoh}, \href{ https://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}} \citep{dionysus_C}, and \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}} \citep{phat_C}.
 
 In Section \ref{sec:distances}, we describe how to compute some widely studied functions that, starting from a point cloud, provide some topological information about the underlying space: the distance function (\code{distFct}), the distance to a measure function (\code{dtm}), the k Nearest Neighbor density estimator (\code{knnDE}), the kernel density estimator (\code{kde}), and the kernel distance (\code{kernelDist}).
 Section \ref{sec:persistent} is devoted to the computation of persistence diagrams: the function \code{gridDiag} can be used to compute persistent homology of sublevel sets (or superlevel sets) of functions evaluated over a grid of points; the function \code{ripsDiag} returns the persistence diagram of the Rips filtration built on top of a point cloud. 
@@ -454,7 +454,7 @@ We provide an informal description of the implemented methods of persistent homo
 %%%%%%%%%%%%%%%%%%%%%%%
 In this section, we describe how to use the \code{gridDiag} function to compute the persistent homology of sublevel (and superlevel) sets of the functions described in Section \ref{sec:distances}. 
 The function \code{gridDiag} evaluates a given real valued function over a triangulated grid, constructs a filtration of simplices using the values of the function, and computes the persistent homology of the filtration. From version 1.2, \code{gridDiag} works in arbitrary dimension.
-The core of the function is written in \proglang{C++} and the user can choose to compute persistence diagrams using either  the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}, \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat }{\pkg{PHAT}}.
+The core of the function is written in \proglang{C++} and the user can choose to compute persistence diagrams using either  the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}, \href{ https://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}.
 
 The following code computes the persistent homology of the superlevel sets \linebreak (\code{sublevel = FALSE}) of the kernel density estimator (\code{FUN = kde}, \code{h = 0.3}) using the point cloud stored in the matrix~\code{X} from the previous example.
 The same code would work for the other functions defined in Section \ref{sec:distances} (it is sufficient to replace \code{kde} and its smoothing parameter \code{h} with another function and the corresponding parameter). 
@@ -549,7 +549,7 @@ The sequence of Rips complexes obtained by gradually
 increasing the radius $\varepsilon$ creates a filtration.
 
 The \code{ripsDiag} function computes the persistence diagram of the Rips filtration built on top of a point cloud.
-The user can choose to compute the Rips filtration using either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}} or \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}. Then for computing the persistence diagram from the Rips filtration, the user can use either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}, \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}.
+The user can choose to compute the Rips filtration using either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}} or \href{ https://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}. Then for computing the persistence diagram from the Rips filtration, the user can use either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}, \href{ https://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}.
 \\The following code generates 60 points from two circles:
 
 <<eqRips1, echo=TRUE, eval=TRUE>>=
@@ -609,7 +609,7 @@ Alpha(X,r)=\left\{ \sigma\subset X:\,\underset{u\in\sigma}{\bigcap}R_{u}(\sqrt{s
 \]
 See \citep[Section 3.4]{edelsbrunner2010computational} and \citep{gudhi:AlphaComplex}. The sequence of Alpha complexes obtained by gradually increasing the parameter $s$ creates an Alpha complex filtration.
 
-The \code{alphaComplexDiag} function computes the Alpha complex filtration built on top of a point cloud, using the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}. Then for computing the persistence diagram from the Alpha complex filtration, the user can use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}, \href{ http://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}.
+The \code{alphaComplexDiag} function computes the Alpha complex filtration built on top of a point cloud, using the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}. Then for computing the persistence diagram from the Alpha complex filtration, the user can use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}, \href{ https://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}.
 
 We first generate 30 points from a circle:
 
@@ -659,7 +659,7 @@ par(mfrow = c(1, 1))
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 The {\em Alpha shape complex} $S(X,\alpha)$ is the polytope with its boundary consisting of $\alpha$-exposed simplices, where a simplex $\sigma$ is $\alpha$-exposed if there is an open ball $b$ of radius $\alpha$ such that $b \cap X = \emptyset$ and $\partial b \cap X = \sigma$. Suppose $\mathbb{R}^{d}$ is filled with ice cream, then consider scooping out the ice cream with sphere-shaped spoon of radius $\alpha$ without touching the points $X$. $S(X,\alpha)$ is the remaining polytope with straightening round surfaces. See \citep{fischer2005} and \citep{edelsbrunner1994}. The sequence of Alpha shape complexes obtained by gradually increasing the parameter $\alpha$ creates an Alpha shape complex filtration.
 
-The \code{alphaShapeDiag} function computes the persistence diagram of the Alpha shape filtration built on top of a point cloud in 3 dimension, using the C++ library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}}. Then for computing the persistence diagram from the Alpha shape filtration, the user can use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}, \href{ http://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}. Currently the point data cloud should lie in 3 dimension.
+The \code{alphaShapeDiag} function computes the persistence diagram of the Alpha shape filtration built on top of a point cloud in 3 dimension, using the C++ library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}. Then for computing the persistence diagram from the Alpha shape filtration, the user can use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}, \href{ https://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}, or \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}. Currently the point data cloud should lie in 3 dimension.
 
 We first generate 30 points from a cylinder:
 
@@ -736,7 +736,7 @@ dtmValues <- dtm(X = X, Grid = X, m0 = m0)
 FltFun <- funFiltration(FUNvalues = dtmValues, cmplx = FltRips[["cmplx"]])
 @
 
-\noindent Once the filtration is computed, the function \code{filtrationDiag} computes the persistence diagram from the filtration. The user can choose to compute the persistence diagram using either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software }{\pkg{GUDHI}} or \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}.
+\noindent Once the filtration is computed, the function \code{filtrationDiag} computes the persistence diagram from the filtration. The user can choose to compute the persistence diagram using either the \proglang{C++} library \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}} or \href{ https://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}.
 
 <<eqFiltration4, echo=TRUE, eval=TRUE>>=
 DiagFltFun <- filtrationDiag(filtration = FltFun, maxdimension = maxdimension,
@@ -767,7 +767,7 @@ plot(DiagFltFun[["diagram"]], diagLim = c(0, 1))
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Standard metrics for measuring the distance between two persistence diagrams are the bottleneck distance and the $p$th Wasserstein distance \citep{edelsbrunner2010computational}. 
-The \pkg{TDA} package includes the functions \code{bottleneck} and \code{wasserstein}, which are R wrappers of the functions ``bottleneck\_distance" and ``wasserstein\_distance" of the \proglang{C++} library \href{ http://www.mrzv.org/software/dionysus }{\pkg{Dionysus}}.
+The \pkg{TDA} package includes the functions \code{bottleneck} and \code{wasserstein}, which are R wrappers of the functions ``bottleneck\_distance" and ``wasserstein\_distance" of the \proglang{C++} library \href{ https://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}.
 
 We generate two persistence diagrams of the Rips filtrations built on top of the two (separate) circles of the previous example,
 

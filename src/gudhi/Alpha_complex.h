@@ -175,7 +175,9 @@ class Alpha_complex : public Simplex_tree<> {
 
   // Forbid copy/move constructor/assignment operator
   Alpha_complex(const Alpha_complex& other) = delete;
-  Alpha_complex& operator= (const Alpha_complex& other) = delete;
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing [-Wclass-memaccess] warning
+  // Alpha_complex& operator= (const Alpha_complex& other) = delete;
   Alpha_complex (Alpha_complex&& other) = delete;
   Alpha_complex& operator= (Alpha_complex&& other) = delete;
 

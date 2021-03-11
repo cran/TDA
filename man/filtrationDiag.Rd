@@ -43,7 +43,7 @@ filtrationDiag(
 }
 
 \details{
-  The user can decide to use either the C++ library \href{ https://project.inria.fr/gudhi/software }{GUDHI} or \href{ http://www.mrzv.org/software/dionysus }{Dionysus}.
+  The user can decide to use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI} or \href{ https://www.mrzv.org/software/dionysus/ }{Dionysus}.
   See refereneces.
 }
 
@@ -70,7 +70,7 @@ filtrationDiag(
 \references{
   Maria C (2014). "GUDHI, Simplicial Complexes and Persistent Homology Packages." \url{ https://project.inria.fr/gudhi/software/ }.
 
-  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology". \url{ http://www.mrzv.org/software/dionysus/ }
+  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology". \url{ https://www.mrzv.org/software/dionysus/ }
 
   Edelsbrunner H, Harer J (2010). "Computational topology: an introduction." American Mathematical Society.
 

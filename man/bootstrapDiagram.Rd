@@ -98,7 +98,7 @@ bootstrapDiagram(
 
   Wasserman L (2004), "All of statistics: a concise course in statistical inference." Springer.
 
-  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology." \url{ http://www.mrzv.org/software/dionysus/ }
+  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology." \url{ https://www.mrzv.org/software/dionysus/ }
 }
 
 \author{
@@ -106,7 +106,7 @@ bootstrapDiagram(
 }
 
 \note{
-  The function \code{bootstrapDiagram} uses the C++ library \href{ http://www.mrzv.org/software/dionysus }{Dionysus} for the computation of bottleneck and Wasserstein distances. See references.
+  The function \code{bootstrapDiagram} uses the C++ library \href{ https://www.mrzv.org/software/dionysus/ }{Dionysus} for the computation of bottleneck and Wasserstein distances. See references.
 }
 
 \seealso{

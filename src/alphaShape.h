@@ -45,9 +45,14 @@ void alphaShapeDiag(
 
   float min_persistence = 0.0;
 
-  Gudhi::Simplex_tree<> smplxTree =
+  // 2021-02-08, Jisu KIM
+  // fixing [-Wclass-memaccess] warning
+  //Gudhi::Simplex_tree<> smplxTree =
+  //  AlphaShapeFiltrationGudhi< Gudhi::Simplex_tree<> >(
+  //    X, printProgress, print, coordinates);
+  Gudhi::Simplex_tree<> smplxTree(
     AlphaShapeFiltrationGudhi< Gudhi::Simplex_tree<> >(
-      X, printProgress, print, coordinates);
+      X, printProgress, print, coordinates));
 
   // Compute the persistence diagram of the complex
   if (libraryDiag[0] == 'G') {

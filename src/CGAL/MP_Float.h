@@ -213,7 +213,7 @@ public:
   }
 
   // 2019-11-30
-  // Temporary add for resolve ambiguity of type long int
+  // Temporarily added to resolve type cast ambiguity of type long int
   MP_Float(long i)
     : v(2), exp(0)
   {

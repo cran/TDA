@@ -39,8 +39,8 @@ alphaComplexDiag(
 }
 
 \details{
-  The function \code{alphaComplexDiag} constructs the Alpha Complex filtration, using the C++ library \href{ https://project.inria.fr/gudhi/software }{GUDHI}.
-  Then for computing the persistence diagram from the Alpha Complex filtration, the user can use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI}, \href{ http://www.mrzv.org/software/dionysus/ }{Dionysus}, or \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}.
+  The function \code{alphaComplexDiag} constructs the Alpha Complex filtration, using the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI}.
+  Then for computing the persistence diagram from the Alpha Complex filtration, the user can use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI}, \href{ https://www.mrzv.org/software/dionysus/ }{Dionysus}, or \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}.
   See refereneces.
 }
 

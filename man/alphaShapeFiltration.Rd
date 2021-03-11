@@ -31,7 +31,7 @@ alphaShapeFiltration(
 }
 
 \details{
-  The function \code{alphaShapeFiltration} constructs the alpha shape filtration, using the C++ library \href{ https://project.inria.fr/gudhi/software }{GUDHI}.
+  The function \code{alphaShapeFiltration} constructs the alpha shape filtration, using the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI}.
   See refereneces.
 }
 

@@ -44,8 +44,8 @@ ripsFiltration(
 }
 
 \details{
-  For Rips filtration based on Euclidean distance of the input point cloud, the user can decide to use either the C++ library \href{ https://project.inria.fr/gudhi/software }{GUDHI} or \href{ http://www.mrzv.org/software/dionysus }{Dionysus}.
-  For Rips filtration based on arbitrary distance, the user can use the C++ library \href{ http://www.mrzv.org/software/dionysus }{Dionysus}.
+  For Rips filtration based on Euclidean distance of the input point cloud, the user can decide to use either the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI} or \href{ https://www.mrzv.org/software/dionysus/ }{Dionysus}.
+  For Rips filtration based on arbitrary distance, the user can use the C++ library \href{ https://www.mrzv.org/software/dionysus/ }{Dionysus}.
   See refereneces.
 }
 
@@ -72,7 +72,7 @@ ripsFiltration(
 \references{
   Maria C (2014). "GUDHI, Simplicial Complexes and Persistent Homology Packages." \url{ https://project.inria.fr/gudhi/software/ }.
 
-  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology". \url{ http://www.mrzv.org/software/dionysus/ }
+  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology". \url{ https://www.mrzv.org/software/dionysus/ }
 
   Edelsbrunner H, Harer J (2010). "Computational topology: an introduction." American Mathematical Society.
 }

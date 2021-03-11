@@ -402,11 +402,21 @@ Rcpp::List AlphaShapeFiltration(
 
   Rcpp::NumericMatrix coordinates;
 
-  Gudhi::Simplex_tree<> smplxTree =
-      AlphaShapeFiltrationGudhi< Gudhi::Simplex_tree<> >(
-          X, printProgress, Rprintf, coordinates);
+  // 2021-02-08, Jisu KIM
+  // fixing [-Wclass-memaccess] warning
+  //Gudhi::Simplex_tree<> smplxTree =
+  //    AlphaShapeFiltrationGudhi< Gudhi::Simplex_tree<> >(
+  //        X, printProgress, Rprintf, coordinates);
+  //Gudhi::Simplex_tree<> smplxTree(
+  //    AlphaShapeFiltrationGudhi< Gudhi::Simplex_tree<> >(
+  //        X, printProgress, Rprintf, coordinates));
+  //Rcpp::List filtration =
+  //    filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(smplxTree);
   Rcpp::List filtration =
-      filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(smplxTree);
+      filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(
+          AlphaShapeFiltrationGudhi< Gudhi::Simplex_tree<> >(
+              X, printProgress, Rprintf, coordinates));
+      
   filtration.push_back(coordinates);
   return filtration;
 }
@@ -465,12 +475,22 @@ Rcpp::List AlphaComplexFiltration(
   const bool                  printProgress
 ) {
 
-  Gudhi::Simplex_tree<> smplxTree =
-      AlphaComplexFiltrationGudhi< Gudhi::Simplex_tree<> >(
-          X, printProgress, Rprintf);
+  // 2021-02-08, Jisu KIM
+  // fixing [-Wclass-memaccess] warning
+  //Gudhi::Simplex_tree<> smplxTree =
+  //    AlphaComplexFiltrationGudhi< Gudhi::Simplex_tree<> >(
+  //        X, printProgress, Rprintf);
+  //Gudhi::Simplex_tree<> smplxTree(
+  //    AlphaComplexFiltrationGudhi< Gudhi::Simplex_tree<> >(
+  //        X, printProgress, Rprintf));
   // 2018-08-04
   // switching back to original code
-  return filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(smplxTree);
+  // 2021-02-08, Jisu KIM
+  // fixing [-Wclass-memaccess] warning
+  //return filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(smplxTree);
+  return filtrationGudhiToRcpp< Rcpp::List, Rcpp::NumericVector >(
+      AlphaComplexFiltrationGudhi< Gudhi::Simplex_tree<> >(
+          X, printProgress, Rprintf));
 }
 
 

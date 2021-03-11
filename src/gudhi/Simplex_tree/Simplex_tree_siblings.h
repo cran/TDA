@@ -69,6 +69,17 @@ class Simplex_tree_siblings {
         members_() {
   }
 
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing [-Wclass-memaccess] warning
+  Simplex_tree_siblings(Simplex_tree_siblings * oncles, Vertex_handle parent, const Dictionary & members)
+      : oncles_(oncles),
+        parent_(parent),
+        members_(members) {
+    for (auto& map_el : members_) {
+      map_el.second.assign_children(this);
+    }
+  }
+
   /* \brief Constructor with initialized set of members.
    *
    * 'members' must be sorted and unique.*/
@@ -76,8 +87,15 @@ class Simplex_tree_siblings {
   Simplex_tree_siblings(Simplex_tree_siblings * oncles, Vertex_handle parent, const RandomAccessVertexRange & members)
       : oncles_(oncles),
         parent_(parent),
-        members_(boost::container::ordered_unique_range, members.begin(),
-                 members.end()) {
+    // 2021-01-29, Jisu KIM
+    // temporarily fixing [-Wclass-memaccess]
+        //members_(boost::container::ordered_unique_range, members.begin(),
+        //         members.end()) {
+        members_() {
+    for (auto& map_el : members) {
+      members_.emplace(map_el.first, map_el.second);
+    }
+
     for (auto& map_el : members_) {
       map_el.second.assign_children(this);
     }
@@ -109,6 +127,12 @@ class Simplex_tree_siblings {
   }
 
   Dictionary & members() {
+    return members_;
+  }
+
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  const Dictionary & members() const {
     return members_;
   }
 

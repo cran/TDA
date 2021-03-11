@@ -10,15 +10,15 @@
 }
 
 \description{
-  Tools for Topological Data Analysis. In particular it provides functions for the statistical analysis of persistent homology and for density clustering. For that, this package provides an R interface for the efficient algorithms of the C++ libraries \href{ https://project.inria.fr/gudhi/software }{GUDHI}, \href{ http://www.mrzv.org/software/dionysus }{Dionysus} and \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}.
+  Tools for Topological Data Analysis. In particular it provides functions for the statistical analysis of persistent homology and for density clustering. For that, this package provides an R interface for the efficient algorithms of the C++ libraries \href{ https://project.inria.fr/gudhi/software/ }{GUDHI}, \href{ https://www.mrzv.org/software/dionysus/ }{Dionysus} and \href{ https://bitbucket.org/phat-code/phat/ }{PHAT}.
 }
 
 \details{
 \tabular{ll}{
 Package: \tab TDA\cr
 Type: \tab Package\cr
-Version: \tab 1.6.9\cr
-Date: \tab 2019-12-01\cr
+Version: \tab 1.7.5\cr
+Date: \tab 2021-03-10\cr
 License: \tab GPL-3 \cr
 }
 }
@@ -42,7 +42,7 @@ License: \tab GPL-3 \cr
 
   Maria C (2014). "GUDHI, Simplicial Complexes and Persistent Homology Packages." \url{ https://project.inria.fr/gudhi/software/ }.
 
-  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology." \url{ http://www.mrzv.org/software/dionysus/ }.
+  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology." \url{ https://www.mrzv.org/software/dionysus/ }.
 
   Bauer U, Kerber M, Reininghaus J (2012). "PHAT, a software library for persistent homology". \url{ https://bitbucket.org/phat-code/phat/ }.
 }

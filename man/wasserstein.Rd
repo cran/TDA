@@ -33,7 +33,7 @@
 }
 
 \details{
-  The Wasserstein distance between two diagrams is the cost of the optimal matching between points of the two diagrams. When a vector is given for \code{dimension}, then maximum among bottleneck distances using each element in \code{dimension} is returned. This function is an R wrapper of the function "wasserstein_distance" in the C++ library \href{ http://www.mrzv.org/software/dionysus }{Dionysus}. See references.
+  The Wasserstein distance between two diagrams is the cost of the optimal matching between points of the two diagrams. When a vector is given for \code{dimension}, then maximum among bottleneck distances using each element in \code{dimension} is returned. This function is an R wrapper of the function "wasserstein_distance" in the C++ library \href{ https://www.mrzv.org/software/dionysus/ }{Dionysus}. See references.
 }
 
 \value{
@@ -41,7 +41,7 @@
 }
 
 \references{
-  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology". \url{ http://www.mrzv.org/software/dionysus/ }.
+  Morozov D (2007). "Dionysus, a C++ library for computing persistent homology". \url{ https://www.mrzv.org/software/dionysus/ }.
 
   Edelsbrunner H, Harer J (2010). "Computational topology: an introduction." American Mathematical Society.
 }

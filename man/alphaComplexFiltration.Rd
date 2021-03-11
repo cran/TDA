@@ -30,7 +30,7 @@ alphaComplexFiltration(
 }
 
 \details{
-  The function \code{alphaComplexFiltration} constructs the alpha complex filtration, using the C++ library \href{ https://project.inria.fr/gudhi/software }{GUDHI}.
+  The function \code{alphaComplexFiltration} constructs the alpha complex filtration, using the C++ library \href{ https://project.inria.fr/gudhi/software/ }{GUDHI}.
   See refereneces.
 }
 

@@ -52,13 +52,17 @@ class Simplex_tree_simplex_vertex_iterator : public boost::iterator_facade<
   typedef typename SimplexTree::Siblings Siblings;
   typedef typename SimplexTree::Vertex_handle Vertex_handle;
 
-  explicit Simplex_tree_simplex_vertex_iterator(SimplexTree * st)
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  explicit Simplex_tree_simplex_vertex_iterator(const SimplexTree * const st)
       :  // any end() iterator
         sib_(nullptr),
         v_(st->null_vertex()) {
   }
 
-  Simplex_tree_simplex_vertex_iterator(SimplexTree * st, Simplex_handle sh)
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  Simplex_tree_simplex_vertex_iterator(const SimplexTree * const st, const Simplex_handle sh)
       : sib_(st->self_siblings(sh)),
         v_(sh->first) {
   }
@@ -98,14 +102,18 @@ class Simplex_tree_boundary_simplex_iterator : public boost::iterator_facade<
   typedef typename SimplexTree::Siblings Siblings;
 
 // any end() iterator
-  explicit Simplex_tree_boundary_simplex_iterator(SimplexTree * st)
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  explicit Simplex_tree_boundary_simplex_iterator(const SimplexTree * const st)
       : sib_(nullptr),
         sh_(st->null_simplex()),
         st_(st)  {
   }
 
   template<class SimplexHandle>
-  Simplex_tree_boundary_simplex_iterator(SimplexTree * st, SimplexHandle sh)
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument
+  Simplex_tree_boundary_simplex_iterator(const SimplexTree * const st, const SimplexHandle sh)
       : last_(sh->first),
         sib_(nullptr),
         st_(st) {
@@ -173,7 +181,10 @@ class Simplex_tree_boundary_simplex_iterator : public boost::iterator_facade<
 #endif
   Siblings * sib_;  // where the next search will start from
   Simplex_handle sh_;  // current Simplex_handle in the boundary
-  SimplexTree * st_;  // simplex containing the simplicial complex
+  // 2021-02-08, Jisu KIM
+  // temporarily fixing for taking const argument  
+  //SimplexTree * st_;  // simplex containing the simplicial complex
+  const SimplexTree * st_;  // simplex containing the simplicial complex
 };
 /*---------------------------------------------------------------------------*/
 /* \brief Iterator over the simplices of a simplicial complex.
