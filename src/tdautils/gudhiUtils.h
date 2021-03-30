@@ -42,7 +42,7 @@ typedef double     Filtration_value;
  */
 template< typename SimplexTree >
 inline void FiltrationDiagGudhi(
-    SimplexTree &    smplxTree,
+    SimplexTree    & smplxTree,
     const unsigned   coeffFieldCharacteristic,
     const double     minPersistence,
     const unsigned   maxdimension,

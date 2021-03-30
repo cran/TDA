@@ -1,8 +1,8 @@
-f55bfe9b1858405ead964f264e057367 *DESCRIPTION
+00fae0a7092244cc0cbe19f437a33f16 *DESCRIPTION
 4ac8c88b4533fe442c7ff4b460cfacc0 *LICENSE.note
 5a764de0fdeb7dc29b48b2f0152c3068 *NAMESPACE
-402f45d88ba9e286d13dd1bd7b7037d0 *NEWS
-869381a3f13200c2e8bf44a255c0be7f *R/RcppExports.R
+95de5c7fd7444e050d69cb590db4aca7 *NEWS
+e26eae8a1ebd7bd25206f9afea7bd934 *R/RcppExports.R
 49f89f95ebb567318700c2344f02883a *R/alphaComplexDiag.R
 d0dd9080596ed319633e79cf6a26bf8c *R/alphaComplexFiltration.R
 39c6a0712c41bf01f4ab4ea492842490 *R/alphaShapeDiag.R
@@ -47,13 +47,13 @@ d53fabd91dff54382dbccd89b1dec14a *R/siloF.R
 f85e872d3ddbd878e72c68324ca5609f *R/torusUnif.R
 c559bd1e6249ea2274ae8b68ef25d45a *R/wasserstein.R
 01c2fbdb7c17de9467534bcce23b21ef *README.md
-97d64b01b61759f59d6171ac5ac279b4 *build/vignette.rds
+05200a68a2537010e03a460caaea191f *build/vignette.rds
 931d86c8933c0b8d75e5dd7b13120e05 *inst/COPYRIGHTS
-c6c0865c02333c3bfbd60b2c6c9b6ca5 *inst/doc/article.R
+734837b1fe61f08a1e4f77d95628bd8b *inst/doc/article.R
 3150ebc31b9ebf304bdf3ea974c8eed6 *inst/doc/article.Rnw
-b8a87d3ce7f12c1e096e18472973e7d3 *inst/doc/article.pdf
+6f3333768f7165f210fbe703475473d6 *inst/doc/article.pdf
 4265f3c1d9da02a86a6e3264c3baaba7 *man/TDA-internal.Rd
-ca299b64047dd042dd08873ecb0c623e *man/TDA-package.Rd
+9ae53a7fe60dfa7f6c985475f2844330 *man/TDA-package.Rd
 c6fa6d71335308ba22684cc4d0a5bbae *man/alphaComplexDiag.Rd
 876df4cf83a25146a454a123f3230f14 *man/alphaComplexFiltration.Rd
 d0beb67e01b2a0e0a07f9f1a71722790 *man/alphaShapeDiag.Rd
@@ -630,7 +630,7 @@ ae550645de64aa63679efb0005667a46 *src/gudhi/Persistent_cohomology/Multi_field.h
 b0f4a7e76940e0ce713fd452c8aab6d2 *src/gudhi/Persistent_cohomology/Persistent_cohomology_column.h
 5e9569066bf54b8c7ae31eed88d10b2e *src/gudhi/Points_off_io.h
 d50f90f067741dd1cb451d25a8b2407c *src/gudhi/Simple_object_pool.h
-b687a90ad5249e240ec455eb89b6bec7 *src/gudhi/Simplex_tree.h
+dfd84ea0298998f74df002e0ea521c5b *src/gudhi/Simplex_tree.h
 1ec5a74261c36c5e9203ba4dfb0f9edd *src/gudhi/Simplex_tree/Simplex_tree_iterators.h
 55c227c1ebad9a418c2229d58219f776 *src/gudhi/Simplex_tree/Simplex_tree_node_explicit_storage.h
 630f2f5bc0b09eb5f7586e41bbd79bd2 *src/gudhi/Simplex_tree/Simplex_tree_siblings.h
@@ -665,7 +665,7 @@ b89ab807f78a2f64063b3e6fd1fac346 *src/tdautils/dionysusUtils.h
 dfafb56834a623e33ade9a50ef7efb7c *src/tdautils/filtrationDiag.h
 d9ad154f560f62e2102694f4a2c192ab *src/tdautils/filtrationUtils.h
 8fd5fdfc8292c826f3c11586558a9e13 *src/tdautils/gridUtils.h
-01e3f59d506b9f3bde90bb59e81c743f *src/tdautils/gudhiUtils.h
+6f17678625fd805b592013e8783ec32c *src/tdautils/gudhiUtils.h
 16d21fe2a266b416dd4118ea3423f8a0 *src/tdautils/kernelUtils.h
 f3f9c29ef3139a88290c68e07eaa412a *src/tdautils/phatUtils.h
 4259dedb6a394fe678750a2fd29d6712 *src/tdautils/ripsArbit.h

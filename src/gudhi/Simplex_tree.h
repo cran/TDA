@@ -353,8 +353,13 @@ class Simplex_tree {
   // temporarily fixing for taking const argument
   //void rec_copy(Siblings *sib, Siblings * sib_source) {
   void rec_copy(Siblings *sib, const Siblings * const sib_source) {
-    for (auto sh = sib->members().begin(), sh_source = sib_source->members().begin();
-         sh != sib->members().end(); ++sh, ++sh_source) {
+    // 2021-03-25, Jisu KIM
+    // temporarily fixing for type mismatch
+    //for (auto sh = sib->members().begin(), sh_source = sib_source->members().begin();
+    //     sh != sib->members().end(); ++sh, ++sh_source) {
+    auto sh = sib->members().begin();
+    auto sh_source = sib_source->members().begin();
+    for (; sh != sib->members().end(); ++sh, ++sh_source) {
       if (has_children(sh_source)) {
         Siblings * newsib = new Siblings(sib, sh_source->first);
         newsib->members_.reserve(sh_source->second.children()->members().size());
