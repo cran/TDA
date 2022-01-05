@@ -1,4 +1,11 @@
-### TDA: version 1.7.6
+### TDA: version 1.8.1
+- temporarily changed URLs
+
+### TDA: version 1.8
+- fixed bug in print.clusterTree
+- update boost library to 1.78.0 corresponding to R package BH being updated to 1.78.0-0
+
+### TDA: version 1.7.6, 1.7.7
 - temporarily fixed type mismatch error
 
 ### TDA: version 1.7.1, 1.7.2, 1.7.3
