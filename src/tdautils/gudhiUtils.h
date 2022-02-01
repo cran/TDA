@@ -4,13 +4,14 @@
 // #include <R.h>
 // #include <R_ext/Print.h>
 
-#include <gudhi/reader_utils.h>
+//#include <gudhi/reader_utils.h>
 #include <gudhi/graph_simplicial_complex.h>
 #include <gudhi/distance_functions.h>
 #include <gudhi/Simplex_tree.h>
 #include <gudhi/Persistent_cohomology.h>
 #include <gudhi/Persistent_cohomology/Field_Zp.h>
 #include <gudhi/Alpha_complex.h>
+#include <gudhi/Rips_complex.h>
 
 //for CGAL
 #include <tdautils/cgalUtils.h>
@@ -112,28 +113,42 @@ inline SimplexTree RipsFiltrationGudhi(
 ) {
 
   // Turn the input points into a range of points
-  typedef std::vector< double > Point_t;
-  std::vector< Point_t > point_set =
-    TdaToStl< std::vector< Point_t > >(X, nSample, nDim);
+  // 2022-01-21, Jisu KIM
+  //typedef std::vector< double > Point_t;
+  typedef std::vector< double > Point;
+  typedef Gudhi::rips_complex::Rips_complex< typename SimplexTree::Filtration_value > Rips_complex;
 
+  //std::vector< Point_t > point_set =
+  //  TdaToStl< std::vector< Point_t > >(X, nSample, nDim);
+  std::vector< Point > points =
+      TdaToStl< std::vector< Point > >(X, nSample, nDim);
 
-  // Compute the proximity graph of the points
-  Graph_t prox_graph = compute_proximity_graph(point_set, maxscale
-    , euclidean_distance<Point_t>);
+  //// Compute the proximity graph of the points
+  //Graph_t prox_graph = compute_proximity_graph(point_set, maxscale
+  //  , euclidean_distance<Point_t>);
 
   // Construct the Rips complex in a Simplex Tree
-  Gudhi::Simplex_tree<> st;
-  st.insert_graph(prox_graph); // insert the proximity graph in the simplex tree
-  st.expansion(maxdimension + 1); // expand the graph until dimension dim_max
+  //Gudhi::Simplex_tree<> st;
+  //st.insert_graph(prox_graph); // insert the proximity graph in the simplex tree
+  //st.expansion(maxdimension + 1); // expand the graph until dimension dim_max
+  Rips_complex rips_complex_from_points(
+      points, maxscale, Gudhi::Euclidean_distance());
+
+  SimplexTree stree;
+  rips_complex_from_points.create_complex(stree, maxdimension + 1);
+
 
   if (printProgress) {
-    print("# Generated complex of size: %d \n", st.num_simplices());
+    //print("# Generated complex of size: %d \n", st.num_simplices());
+    print("# Generated complex of size: %d \n", stree.num_simplices());
   }
 
   // Sort the simplices in the order of the filtration
-  st.initialize_filtration();
+  //st.initialize_filtration();
+  stree.initialize_filtration();
 
-  return st;
+  //return st;
+  return stree;
 }
 
 
@@ -234,7 +249,8 @@ inline SimplexTree AlphaShapeFiltrationGudhi(
   Alpha_shape_simplex_tree_map map_cgal_simplex_tree;
   std::vector<Alpha_value_type>::iterator the_alpha_value_iterator = the_alpha_values.begin();
   int dim_max = 0;
-  Filtration_value filtration_max = 0.0;
+  // 2022-01-21, Jisu KIM
+  //Filtration_value filtration_max = 0.0;
   for (auto object_iterator : the_objects)
   {
     // Retrieve Alpha shape vertex list from object
@@ -297,9 +313,10 @@ inline SimplexTree AlphaShapeFiltrationGudhi(
     // Construction of the simplex_tree
     Filtration_value filtr = std::sqrt(*the_alpha_value_iterator);
     //std::cout << "filtration = " << filtr << std::endl;
-    if (filtr > filtration_max) {
-      filtration_max = filtr;
-    }
+    // 2022-01-21, Jisu KIM
+    //if (filtr > filtration_max) {
+    //  filtration_max = filtr;
+    //}
     simplex_tree.insert_simplex(the_simplex_tree, filtr);
     if (the_alpha_value_iterator != the_alpha_values.end()) {
       ++the_alpha_value_iterator;
@@ -308,7 +325,8 @@ inline SimplexTree AlphaShapeFiltrationGudhi(
       //std::cout << "This shall not happen" << std::endl;
     }
   }
-  simplex_tree.set_filtration(filtration_max);
+  // 2022-01-21, Jisu KIM
+  //simplex_tree.set_filtration(filtration_max);
   simplex_tree.set_dimension(dim_max);
 
   if (printProgress) {
@@ -358,21 +376,30 @@ inline SimplexTree AlphaComplexFiltrationGudhi(
 	using Point = Kernel::Point_d;
 
 	// Turn the input points into a range of points
-	std::list<Point> lp = RcppToCGALPointD< std::list< Point > >(X);
+	//std::list<Point> lp = RcppToCGALPointD< std::list< Point > >(X);
+    std::list<Point> points = RcppToCGALPointD< std::list< Point > >(X);
 	
 
 	//Gudhi::alphacomplex::Alpha_complex<Kernel> alpha_complex_from_points(lp, maxalphasquare);
-	Gudhi::alphacomplex::Alpha_complex<Kernel>
-		alpha_complex_from_points(lp, std::numeric_limits<double>::infinity());
+	//Gudhi::alphacomplex::Alpha_complex<Kernel>
+	//	alpha_complex_from_points(lp, std::numeric_limits<double>::infinity());
+    Gudhi::alphacomplex::Alpha_complex< Kernel > alpha_complex_from_points(points);
+
+    // 2022-01-21, Jisu KIM
+    SimplexTree simplex;
+    alpha_complex_from_points.create_complex(simplex);
 
 	if (printProgress) {
-		print("# Generated complex of size: %d \n", alpha_complex_from_points.num_simplices());
+		//print("# Generated complex of size: %d \n", alpha_complex_from_points.num_simplices());
+		print("# Generated complex of size: %d \n", simplex.num_simplices());
 	}
 
 	// Sort the simplices in the order of the filtration
-	alpha_complex_from_points.initialize_filtration();
+	//alpha_complex_from_points.initialize_filtration();
+    simplex.initialize_filtration();
 
-	return alpha_complex_from_points;
+	//return alpha_complex_from_points;
+	return simplex;
 }
 
 

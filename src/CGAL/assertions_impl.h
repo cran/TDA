@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org)
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// $URL: https://github.com/CGAL/cgal/blob/v5.3.1/STL_Extension/include/CGAL/assertions_impl.h $
+// $Id: assertions_impl.h 0779373 2020-03-26T13:31:46+01:00 Sébastien Loriot
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Geert-Jan Giezeman and Sven Schönherr
@@ -37,9 +28,11 @@
 #include <cstdlib>
 #include <iostream>
 
-namespace CGAL {
+// 2022-01-23, Jisu KIM
+// for Rcpp::stop, Rcpp::Rcerr
+#include <Rcpp.h>
 
-namespace {
+namespace CGAL {
 
 #ifdef CGAL_HEADER_ONLY
 
@@ -56,6 +49,8 @@ inline Failure_behaviour& get_static_warning_behaviour()
 
 #else // CGAL_HEADER_ONLY
 
+namespace {
+
 // behaviour variables
 // -------------------
 
@@ -67,7 +62,11 @@ inline Failure_behaviour& get_static_error_behaviour()
 inline Failure_behaviour& get_static_warning_behaviour()
 { return _warning_behaviour; }
 
+} // anonymous namespace
+
 #endif // CGAL_HEADER_ONLY
+
+namespace {
 
 // standard error handlers
 // -----------------------
@@ -85,39 +84,45 @@ _standard_error_handler(
     if (get_static_error_behaviour() == THROW_EXCEPTION)
         return;
 #endif
-  //  std::cerr << "CGAL error: " << what << " violation!" << std::endl
-  //       << "Expression : " << expr << std::endl
-  //       << "File       : " << file << std::endl
-  //       << "Line       : " << line << std::endl
-  //       << "Explanation: " << msg << std::endl
-  //       << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html"
-	 //<< std::endl;
+    // 2022-01-23, Jisu KIM
+    //std::cerr << "CGAL error: " << what << " violation!" << std::endl
+    Rcpp::Rcerr << "CGAL error: " << what << " violation!" << std::endl
+         << "Expression : " << expr << std::endl
+         << "File       : " << file << std::endl
+         << "Line       : " << line << std::endl
+         << "Explanation: " << msg << std::endl
+         << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html"
+         << std::endl;
 }
 
 
 // standard warning handler
 // ------------------------
-CGAL_INLINE_FUNCTION
-void
-_standard_warning_handler( const char *,
-                          const char* expr,
-                          const char* file,
-                          int         line,
-                          const char* msg )
-{
-#if defined(__GNUG__) && !defined(__llvm__)
-    // After g++ 3.4, std::terminate defaults to printing to std::cerr itself.
-    if (get_static_warning_behaviour() == THROW_EXCEPTION)
-        return;
-#endif
-  //  std::cerr << "CGAL warning: check violation!" << std::endl
-  //       << "Expression : " << expr << std::endl
-  //       << "File       : " << file << std::endl
-  //       << "Line       : " << line << std::endl
-  //       << "Explanation: " << msg << std::endl
-  //       << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html"
-	 //<< std::endl;
-}
+// 2022-01-23, Jisu KIM
+// comment out due to std::cerr
+//CGAL_INLINE_FUNCTION
+//void
+//_standard_warning_handler( const char *,
+//                          const char* expr,
+//                          const char* file,
+//                          int         line,
+//                          const char* msg )
+//{
+//#if defined(__GNUG__) && !defined(__llvm__)
+//    // After g++ 3.4, std::terminate defaults to printing to std::cerr itself.
+//    if (get_static_warning_behaviour() == THROW_EXCEPTION)
+//        return;
+//#endif
+//    std::cerr << "CGAL warning: check violation!" << std::endl
+//         << "Expression : " << expr << std::endl
+//         << "File       : " << file << std::endl
+//         << "Line       : " << line << std::endl
+//         << "Explanation: " << msg << std::endl
+//         << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html"
+//         << std::endl;
+//}
+
+} // anonymous namespace
 
 #ifdef CGAL_HEADER_ONLY
 
@@ -126,26 +131,35 @@ inline Failure_function& get_static_error_handler()
   static Failure_function _error_handler = _standard_error_handler;
   return _error_handler;
 }
-inline Failure_function& get_static_warning_handler()
-{
-  static Failure_function _warning_handler = _standard_warning_handler;
-  return _warning_handler;
-}
+// 2022-01-23, Jisu KIM
+// comment out due to std::cerr
+//inline Failure_function& get_static_warning_handler()
+//{
+//  static Failure_function _warning_handler = _standard_warning_handler;
+//  return _warning_handler;
+//}
 
 #else // CGAL_HEADER_ONLY
+
+namespace {
+
 // default handler settings
 // ------------------------
 Failure_function _error_handler   = _standard_error_handler;
-Failure_function _warning_handler = _standard_warning_handler;
+// 2022-01-23, Jisu KIM
+// comment out due to std::cerr
+//Failure_function _warning_handler = _standard_warning_handler;
 
 inline Failure_function& get_static_error_handler()
 { return _error_handler; }
-inline Failure_function& get_static_warning_handler()
-{ return _warning_handler; }
-
-#endif // CGAL_HEADER_ONLY
+// 2022-01-23, Jisu KIM
+// comment out due to std::cerr
+//inline Failure_function& get_static_warning_handler()
+//{ return _warning_handler; }
 
 } // anonymous namespace
+
+#endif // CGAL_HEADER_ONLY
 
 // failure functions
 // -----------------
@@ -159,11 +173,14 @@ assertion_fail( const char* expr,
     get_static_error_handler()("assertion", expr, file, line, msg);
     switch (get_static_error_behaviour()) {
     case ABORT:
-        std::abort();
+        //std::abort();
+        Rcpp::stop("");
     case EXIT:
-        std::exit(1);  // EXIT_FAILURE
+        //std::exit(1);  // EXIT_FAILURE
+        Rcpp::stop("1");
     case EXIT_WITH_SUCCESS:
-        std::exit(0);  // EXIT_SUCCESS
+        //std::exit(0);  // EXIT_SUCCESS
+        Rcpp::stop("0");
     case CONTINUE: // The CONTINUE case should not be used anymore.
     case THROW_EXCEPTION:
     default:
@@ -171,112 +188,116 @@ assertion_fail( const char* expr,
     }
 }
 
-CGAL_INLINE_FUNCTION
-void
-precondition_fail( const char* expr,
-                   const char* file,
-                   int         line,
-                   const char* msg)
-{
-    get_static_error_handler()("precondition", expr, file, line, msg);
-    switch (get_static_error_behaviour()) {
-    case ABORT:
-        std::abort();
-    case EXIT:
-        std::exit(1);  // EXIT_FAILURE
-    case EXIT_WITH_SUCCESS:
-        std::exit(0);  // EXIT_SUCCESS
-    case CONTINUE:
-    case THROW_EXCEPTION:
-    default:
-        throw Precondition_exception("CGAL", expr, file, line, msg);
-    }
-}
-
-CGAL_INLINE_FUNCTION
-void
-postcondition_fail(const char* expr,
-                   const char* file,
-                   int         line,
-                   const char* msg)
-{
-    get_static_error_handler()("postcondition", expr, file, line, msg);
-    switch (get_static_error_behaviour()) {
-    case ABORT:
-        std::abort();
-    case EXIT:
-        std::exit(1);  // EXIT_FAILURE
-    case EXIT_WITH_SUCCESS:
-        std::exit(0);  // EXIT_SUCCESS
-    case CONTINUE:
-    case THROW_EXCEPTION:
-    default:
-        throw Postcondition_exception("CGAL", expr, file, line, msg);
-    }
-}
-
-
-// warning function
-// ----------------
-CGAL_INLINE_FUNCTION
-void
-warning_fail( const char* expr,
-              const char* file,
-              int         line,
-              const char* msg)
-{
-    get_static_warning_handler()("warning", expr, file, line, msg);
-    switch (get_static_warning_behaviour()) {
-    case ABORT:
-        std::abort();
-    case EXIT:
-        std::exit(1);  // EXIT_FAILURE
-    case EXIT_WITH_SUCCESS:
-        std::exit(0);  // EXIT_SUCCESS
-    case THROW_EXCEPTION:
-        throw Warning_exception("CGAL", expr, file, line, msg);
-    case CONTINUE:
-        ;
-    }
-}
+// 2022-01-23, Jisu KIM
+// comment out due to abort(), exit()
+//CGAL_INLINE_FUNCTION
+//void
+//precondition_fail( const char* expr,
+//                   const char* file,
+//                   int         line,
+//                   const char* msg)
+//{
+//    get_static_error_handler()("precondition", expr, file, line, msg);
+//    switch (get_static_error_behaviour()) {
+//    case ABORT:
+//        std::abort();
+//    case EXIT:
+//        std::exit(1);  // EXIT_FAILURE
+//    case EXIT_WITH_SUCCESS:
+//        std::exit(0);  // EXIT_SUCCESS
+//    case CONTINUE:
+//    case THROW_EXCEPTION:
+//    default:
+//        throw Precondition_exception("CGAL", expr, file, line, msg);
+//    }
+//}
+//
+//CGAL_INLINE_FUNCTION
+//void
+//postcondition_fail(const char* expr,
+//                   const char* file,
+//                   int         line,
+//                   const char* msg)
+//{
+//    get_static_error_handler()("postcondition", expr, file, line, msg);
+//    switch (get_static_error_behaviour()) {
+//    case ABORT:
+//        std::abort();
+//    case EXIT:
+//        std::exit(1);  // EXIT_FAILURE
+//    case EXIT_WITH_SUCCESS:
+//        std::exit(0);  // EXIT_SUCCESS
+//    case CONTINUE:
+//    case THROW_EXCEPTION:
+//    default:
+//        throw Postcondition_exception("CGAL", expr, file, line, msg);
+//    }
+//}
+//
+//
+//// warning function
+//// ----------------
+//CGAL_INLINE_FUNCTION
+//void
+//warning_fail( const char* expr,
+//              const char* file,
+//              int         line,
+//              const char* msg)
+//{
+//    get_static_warning_handler()("warning", expr, file, line, msg);
+//    switch (get_static_warning_behaviour()) {
+//    case ABORT:
+//        std::abort();
+//    case EXIT:
+//        std::exit(1);  // EXIT_FAILURE
+//    case EXIT_WITH_SUCCESS:
+//        std::exit(0);  // EXIT_SUCCESS
+//    case THROW_EXCEPTION:
+//        throw Warning_exception("CGAL", expr, file, line, msg);
+//    case CONTINUE:
+//        ;
+//    }
+//}
 
 
 // error handler set functions
 // ---------------------------
-CGAL_INLINE_FUNCTION
-Failure_function
-set_error_handler( Failure_function handler)
-{
-    Failure_function result = get_static_error_handler();
-    get_static_error_handler() = handler;
-    return result;
-}
-
-CGAL_INLINE_FUNCTION
-Failure_function
-set_warning_handler( Failure_function handler)
-{
-    Failure_function result = get_static_warning_handler();
-    get_static_warning_handler() = handler;
-    return result;
-}
-
-CGAL_INLINE_FUNCTION
-Failure_behaviour
-set_error_behaviour(Failure_behaviour eb)
-{
-    Failure_behaviour result = get_static_error_behaviour();
-    get_static_error_behaviour() = eb;
-    return result;
-}
-
-CGAL_INLINE_FUNCTION
-Failure_behaviour
-set_warning_behaviour(Failure_behaviour eb)
-{
-    Failure_behaviour result = get_static_warning_behaviour();
-    get_static_warning_behaviour() = eb;
-    return result;
-}
+// 2022-01-23, Jisu KIM
+// comment out due to calling get_static_warning_handler()
+//CGAL_INLINE_FUNCTION
+//Failure_function
+//set_error_handler( Failure_function handler)
+//{
+//    Failure_function result = get_static_error_handler();
+//    get_static_error_handler() = handler;
+//    return result;
+//}
+//
+//CGAL_INLINE_FUNCTION
+//Failure_function
+//set_warning_handler( Failure_function handler)
+//{
+//    Failure_function result = get_static_warning_handler();
+//    get_static_warning_handler() = handler;
+//    return result;
+//}
+//
+//CGAL_INLINE_FUNCTION
+//Failure_behaviour
+//set_error_behaviour(Failure_behaviour eb)
+//{
+//    Failure_behaviour result = get_static_error_behaviour();
+//    get_static_error_behaviour() = eb;
+//    return result;
+//}
+//
+//CGAL_INLINE_FUNCTION
+//Failure_behaviour
+//set_warning_behaviour(Failure_behaviour eb)
+//{
+//    Failure_behaviour result = get_static_warning_behaviour();
+//    get_static_warning_behaviour() = eb;
+//    return result;
+//}
 
 } //namespace CGAL

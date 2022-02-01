@@ -1,24 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org)
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// $URL: https://github.com/CGAL/cgal/blob/v5.3.1/Kernel_23/include/CGAL/Sphere_3.h $
+// $Id: Sphere_3.h 4e519a3 2021-05-05T13:15:37+02:00 Sébastien Loriot
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra
@@ -95,7 +86,7 @@ public:
 
   Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const;
 
-  typename cpp11::result_of<typename R::Construct_center_3( Sphere_3)>::type
+  decltype(auto)
   center() const
   {
     return R().construct_center_3_object()(*this);
@@ -134,14 +125,14 @@ public:
   has_on(const Point_3_ &p) const
   {
     return R().has_on_3_object()(*this, p);
-  }  
+  }
 
   typename R::Boolean
   has_on(const Circle_3 &c) const
   {
     return R().has_on_3_object()(*this, c);
   }
-  
+
   typename R::Boolean
   has_on_boundary(const Point_3_ &p) const
   {
@@ -217,7 +208,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Sphere_3<R>& c,const Cartesian_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         os << c.center() << ' ' << c.squared_radius() << ' '
            << static_cast<int>(c.orientation());
@@ -249,7 +240,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Sphere_3<R>& c, const Homogeneous_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         os << c.center() << ' ' << c.squared_radius() << ' '
            << static_cast<int>(c.orientation());
@@ -292,7 +283,7 @@ extract(std::istream& is, Sphere_3<R>& c, const Cartesian_tag&)
     typename R::Point_3 center;
     typename R::FT squared_radius(0);
     int o=0;
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
         is >> center >> squared_radius >> o;
         break;
@@ -303,8 +294,8 @@ extract(std::istream& is, Sphere_3<R>& c, const Cartesian_tag&)
         break;
     default:
         is.setstate(std::ios::failbit);
-        //std::cerr << "" << std::endl;
-        //std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
     if (is)
@@ -320,7 +311,7 @@ extract(std::istream& is, Sphere_3<R>& c, const Homogeneous_tag&)
     typename R::Point_3 center;
     typename R::FT squared_radius;
     int o=0;
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
         is >> center >> squared_radius >> o;
         break;
@@ -331,8 +322,8 @@ extract(std::istream& is, Sphere_3<R>& c, const Homogeneous_tag&)
         break;
     default:
         is.setstate(std::ios::failbit);
-        //std::cerr << "" << std::endl;
-        //std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
     if (is)

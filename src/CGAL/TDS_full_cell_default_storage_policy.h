@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// $URL: https://github.com/CGAL/cgal/blob/v5.3.1/Triangulation/include/CGAL/TDS_full_cell_default_storage_policy.h $
+// $Id: TDS_full_cell_default_storage_policy.h 378554e 2020-03-06T16:42:23+01:00 Laurent Rineau
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)    : Samuel Hornus
 
@@ -53,7 +44,7 @@ struct TFC_data< Vertex_handle, Full_cell_handle, Dimen, TDS_full_cell_default_s
     : vertices_(dmax+1), neighbors_(dmax+1)
     {}
     void*   for_compact_container() const { return vertices_.for_compact_container(); }
-    void* & for_compact_container()       { return vertices_.for_compact_container(); }
+    void    for_compact_container(void *p){ vertices_.for_compact_container(p); }
     int dimension() const { return ( vertices_.size() - 1 ); }
     void set_mirror_index(const int, const int) {}
 #ifdef BOOST_NO_INT64_T
@@ -65,7 +56,7 @@ struct TFC_data< Vertex_handle, Full_cell_handle, Dimen, TDS_full_cell_default_s
     {
         Xor_type result(0);
         for( int i = 0; i <= cur_dim; ++i )
-            // modified by Jisu KIM, 2017-04-24
+            // 2017-04-24, Jisu KIM 
             // '*vertices_[i]' can fetch NULL memory if 'vertices_[i]' corresponds to NULL pointer
             // result ^= reinterpret_cast<Xor_type>(&(*vertices_[i]));
             result ^= reinterpret_cast<Xor_type>((vertices_[i]).operator->());
@@ -86,7 +77,7 @@ struct TFC_data< Vertex_handle, Full_cell_handle, Dimen, TDS_full_cell_default_s
     {
         Xor_type opp_vertex = xor_of_vertices(cur_dim)
             ^ neighbors_[i]->xor_of_vertices(cur_dim)
-            // modified by Jisu KIM, 2017-04-24
+            // 2017-04-24, Jisu KIM
             // '*vertices_[i]' can fetch NULL memory if 'vertices_[i]' corresponds to NULL pointer
             //^ reinterpret_cast<Xor_type>(&(*vertices_[i]));
             ^ reinterpret_cast<Xor_type>((vertices_[i]).operator->());

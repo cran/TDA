@@ -1,23 +1,11 @@
-/*    This file is part of the Gudhi Library. The Gudhi library
- *    (Geometric Understanding in Higher Dimensions) is a generic C++
- *    library for computational topology.
- *
+/*    This file is part of the Gudhi Library - https://gudhi.inria.fr/ - which is released under MIT.
+ *    See file LICENSE or go to https://gudhi.inria.fr/licensing/ for full license details.
  *    Author(s):       David Salinas
  *
- *    Copyright (C) 2014  INRIA Sophia Antipolis-Mediterranee (France)
+ *    Copyright (C) 2014 Inria
  *
- *    This program is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
- *
- *    You should have received a copy of the GNU General Public License
- *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    Modification(s):
+ *      - YYYY/MM Author: Description of the modification
  */
 #ifndef DEBUG_UTILS_H_
 #define DEBUG_UTILS_H_
@@ -32,19 +20,21 @@
 // GUDHI_CHECK throw an exception if expression is false in debug mode, but does nothing in release mode
 // Could assert in release mode, but cmake sets NDEBUG (for "NO DEBUG") in this mode, means assert does nothing.
 #ifdef GUDHI_DEBUG
-  #define GUDHI_CHECK(expression, excpt) if ((expression) == 0) throw excpt
+  #define GUDHI_CHECK(expression, excpt) ((expression) ? (void) 0 : (throw excpt))
+  #define GUDHI_CHECK_code(CODE) CODE
 #else
   #define GUDHI_CHECK(expression, excpt) (void) 0
+  #define GUDHI_CHECK_code(CODE)
 #endif
 
-#define PRINT(a) std::cerr << #a << ": " << (a) << " (DISP)" << std::endl
+#define PRINT(a) std::clog << #a << ": " << (a) << " (DISP)" << std::endl
 
 // #define DBG_VERBOSE
 #ifdef DBG_VERBOSE
-  #define DBG(a) std::cout << "DBG: " << (a) << std::endl
-  #define DBGMSG(a, b) std::cout << "DBG: " << a << b << std::endl
-  #define DBGVALUE(a) std::cout << "DBG: " <<  #a << ": " << a << std::endl
-  #define DBGCONT(a) std::cout << "DBG: container " << #a << " -> "; for (auto x : a) std::cout << x << ","; std::cout << std::endl
+  #define DBG(a) std::clog << "DBG: " << (a) << std::endl
+  #define DBGMSG(a, b) std::clog << "DBG: " << a << b << std::endl
+  #define DBGVALUE(a) std::clog << "DBG: " <<  #a << ": " << a << std::endl
+  #define DBGCONT(a) std::clog << "DBG: container " << #a << " -> "; for (auto x : a) std::clog << x << ","; std::clog << std::endl
 #else
   #define DBG(a) (void) 0
   #define DBGMSG(a, b) (void) 0

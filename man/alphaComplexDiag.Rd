@@ -64,7 +64,7 @@ alphaComplexDiag(
 
   Edelsbrunner H, Harer J (2010). "Computational topology: an introduction." American Mathematical Society.
 
-  Rouvreau V (2015). "Alpha complex." In GUDHI User and Reference Manual. GUDHI Editorial Board.
+  Rouvreau V (2015). "Alpha complex." In GUDHI User and Reference Manual. GUDHI Editorial Board. \url{ https://gudhi.inria.fr/doc/latest/group__alpha__complex.html }
 
   Edelsbrunner H, Kirkpatrick G, Seidel R (1983). "On the shape of a set
 of points in the plane." IEEE Trans. Inform. Theory.

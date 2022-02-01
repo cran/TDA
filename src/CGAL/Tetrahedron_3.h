@@ -1,24 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org)
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// $URL: https://github.com/CGAL/cgal/blob/v5.3.1/Kernel_23/include/CGAL/Tetrahedron_3.h $
+// $Id: Tetrahedron_3.h 4e519a3 2021-05-05T13:15:37+02:00 Sébastien Loriot
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
@@ -79,13 +70,13 @@ public:
                          t.transform(this->vertex(3)));
   }
 
-  typename cpp11::result_of<typename R::Construct_vertex_3( Tetrahedron_3, int)>::type
+  decltype(auto)
   vertex(int i) const
   {
     return R().construct_vertex_3_object()(*this,i);
   }
 
-  typename cpp11::result_of<typename R::Construct_vertex_3( Tetrahedron_3, int)>::type
+  decltype(auto)
   operator[](int i) const
   {
     return vertex(i);
@@ -137,7 +128,7 @@ public:
     return R().has_on_unbounded_side_3_object()(*this, p);
   }
 
-  typename cpp11::result_of<typename R::Compute_volume_3( Tetrahedron_3)>::type
+  decltype(auto)
   volume() const
   {
     return R().compute_volume_3_object()(*this);
@@ -156,7 +147,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Tetrahedron_3<R> &t)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << t[0] << ' ' << t[1] << ' ' << t[2] << ' ' << t[3];
     case IO::BINARY :

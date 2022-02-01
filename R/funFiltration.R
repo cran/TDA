@@ -7,6 +7,9 @@ funFiltration <- function(FUNvalues, cmplx, sublevel = TRUE) {
   if (!is.list(cmplx)) {
     stop("cmplx should be a numeric list")
   }
+  if (any(unlist(cmplx) <= 0)) {
+    stop("each vertex of cmplx should be a positive integer")
+  }
 
   if (!is.logical(sublevel)) {
     stop("sublevel should be logical")

@@ -1,24 +1,15 @@
-// Copyright (c) 1999,2004  
+// Copyright (c) 1999,2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org)
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// $URL: https://github.com/CGAL/cgal/blob/v5.3.1/Kernel_23/include/CGAL/Bbox_3.h $
+// $Id: Bbox_3.h 4e519a3 2021-05-05T13:15:37+02:00 Sébastien Loriot
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Andreas Fabri
 
@@ -27,7 +18,6 @@
 
 #include <CGAL/config.h>
 #include <CGAL/kernel_assertions.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/array.h>
@@ -40,7 +30,7 @@ struct Simple_cartesian;
 
 class Bbox_3
 {
-  cpp11::array<double, 6>   rep;
+  std::array<double, 6>   rep;
 
 public:
 
@@ -76,6 +66,9 @@ public:
 
   inline double min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
   inline double max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
+
+  inline double min_coord(int i) const { return (min)(i); }
+  inline double max_coord(int i) const { return (max)(i); }
 
   Bbox_3  operator+(const Bbox_3& b) const;
   Bbox_3& operator+=(const Bbox_3& b);
@@ -212,11 +205,11 @@ inline
 std::ostream&
 operator<<(std::ostream &os, const Bbox_3& b)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin()
-		  << ' ' << b.xmax() << ' ' << b.ymax() << ' ' << b.zmax();
+                  << ' ' << b.xmax() << ' ' << b.ymax() << ' ' << b.zmax();
     case IO::BINARY :
         write(os, b.xmin());
         write(os, b.ymin());
@@ -248,11 +241,11 @@ operator>>(std::istream &is, Bbox_3& b)
     double ymax = 0;
     double zmax = 0;
 
-  switch(get_mode(is))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
-      is >> iformat(xmin) >> iformat(ymin) >> iformat(zmin)
-         >> iformat(xmax) >> iformat(ymax) >> iformat(zmax);
+      is >> IO::iformat(xmin) >> IO::iformat(ymin) >> IO::iformat(zmin)
+         >> IO::iformat(xmax) >> IO::iformat(ymax) >> IO::iformat(zmax);
         break;
     case IO::BINARY :
         read(is, xmin);

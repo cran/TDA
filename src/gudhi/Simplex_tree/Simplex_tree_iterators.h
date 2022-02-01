@@ -1,33 +1,21 @@
-/*    This file is part of the Gudhi Library. The Gudhi library
- *    (Geometric Understanding in Higher Dimensions) is a generic C++
- *    library for computational topology.
- *
+/*    This file is part of the Gudhi Library - https://gudhi.inria.fr/ - which is released under MIT.
+ *    See file LICENSE or go to https://gudhi.inria.fr/licensing/ for full license details.
  *    Author(s):       Clément Maria
  *
- *    Copyright (C) 2014  INRIA Sophia Antipolis-Méditerranée (France)
+ *    Copyright (C) 2014 Inria
  *
- *    This program is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
- *
- *    You should have received a copy of the GNU General Public License
- *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    Modification(s):
+ *      - YYYY/MM Author: Description of the modification
  */
 
 #ifndef SIMPLEX_TREE_SIMPLEX_TREE_ITERATORS_H_
 #define SIMPLEX_TREE_SIMPLEX_TREE_ITERATORS_H_
 
+#include <gudhi/Debug_utils.h>
+
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/version.hpp>
-#if BOOST_VERSION >= 105600
-# include <boost/container/static_vector.hpp>
-#endif
+#include <boost/container/static_vector.hpp>
 
 #include <vector>
 
@@ -52,9 +40,7 @@ class Simplex_tree_simplex_vertex_iterator : public boost::iterator_facade<
   typedef typename SimplexTree::Siblings Siblings;
   typedef typename SimplexTree::Vertex_handle Vertex_handle;
 
-  // 2021-02-08, Jisu KIM
-  // temporarily fixing for taking const argument
-  explicit Simplex_tree_simplex_vertex_iterator(const SimplexTree * const st)
+  explicit Simplex_tree_simplex_vertex_iterator(SimplexTree const* st)
       :  // any end() iterator
         sib_(nullptr),
         v_(st->null_vertex()) {
@@ -62,7 +48,8 @@ class Simplex_tree_simplex_vertex_iterator : public boost::iterator_facade<
 
   // 2021-02-08, Jisu KIM
   // temporarily fixing for taking const argument
-  Simplex_tree_simplex_vertex_iterator(const SimplexTree * const st, const Simplex_handle sh)
+  //Simplex_tree_simplex_vertex_iterator(SimplexTree const* st, Simplex_handle sh)
+  Simplex_tree_simplex_vertex_iterator(SimplexTree const* st, const Simplex_handle sh)
       : sib_(st->self_siblings(sh)),
         v_(sh->first) {
   }
@@ -101,11 +88,20 @@ class Simplex_tree_boundary_simplex_iterator : public boost::iterator_facade<
   typedef typename SimplexTree::Vertex_handle Vertex_handle;
   typedef typename SimplexTree::Siblings Siblings;
 
+  // For cython purpose only. The object it initializes should be overwritten ASAP and never used before it is overwritten.
+  Simplex_tree_boundary_simplex_iterator()
+      : sib_(nullptr),
+        st_(nullptr)  {
+  }
+
 // any end() iterator
   // 2021-02-08, Jisu KIM
   // temporarily fixing for taking const argument
+  //explicit Simplex_tree_boundary_simplex_iterator(SimplexTree * st)
   explicit Simplex_tree_boundary_simplex_iterator(const SimplexTree * const st)
-      : sib_(nullptr),
+      : last_(st->null_vertex()),
+        next_(st->null_vertex()),
+        sib_(nullptr),
         sh_(st->null_simplex()),
         st_(st)  {
   }
@@ -113,18 +109,26 @@ class Simplex_tree_boundary_simplex_iterator : public boost::iterator_facade<
   template<class SimplexHandle>
   // 2021-02-08, Jisu KIM
   // temporarily fixing for taking const argument
+  //Simplex_tree_boundary_simplex_iterator(SimplexTree * st, SimplexHandle sh)
   Simplex_tree_boundary_simplex_iterator(const SimplexTree * const st, const SimplexHandle sh)
       : last_(sh->first),
+        next_(st->null_vertex()),
         sib_(nullptr),
+        sh_(st->null_simplex()),
         st_(st) {
+    // Only check once at the beginning instead of for every increment, as this is expensive.
+    if (SimplexTree::Options::contiguous_vertices)
+      GUDHI_CHECK(st_->contiguous_vertices(), "The set of vertices is not { 0, ..., n } without holes");
     Siblings * sib = st->self_siblings(sh);
     next_ = sib->parent();
     sib_ = sib->oncles();
     if (sib_ != nullptr) {
-      sh_ = sib_->find(next_);
-    } else {
-      sh_ = st->null_simplex();
-    }  // vertex: == end()
+      if (SimplexTree::Options::contiguous_vertices && sib_->oncles() == nullptr)
+        // Only relevant for edges
+        sh_ = sib_->members_.begin()+next_;
+      else
+        sh_ = sib_->find(next_);
+    }
   }
 
  private:
@@ -148,14 +152,19 @@ class Simplex_tree_boundary_simplex_iterator : public boost::iterator_facade<
     Siblings * for_sib = sib_;
     Siblings * new_sib = sib_->oncles();
     auto rit = suffix_.rbegin();
-    if (SimplexTree::Options::contiguous_vertices && new_sib == nullptr && rit != suffix_.rend()) {
-      // We reached the root, use a short-cut to find a vertex. We could also
-      // optimize finding the second vertex of a segment, but people are
-      // expected to call endpoints().
-      assert(st_->contiguous_vertices());
-      sh_ = for_sib->members_.begin()+*rit;
-      for_sib = sh_->second.children();
-      ++rit;
+    if (SimplexTree::Options::contiguous_vertices && new_sib == nullptr) {
+      // We reached the root, use a short-cut to find a vertex.
+      if (rit == suffix_.rend()) {
+        // Segment, this vertex is the last boundary simplex
+        sh_ = for_sib->members_.begin()+last_;
+        sib_ = nullptr;
+        return;
+      } else {
+        // Dim >= 2, initial step of the descent
+        sh_ = for_sib->members_.begin()+*rit;
+        for_sib = sh_->second.children();
+        ++rit;
+      }
     }
     for (; rit != suffix_.rend(); ++rit) {
       sh_ = for_sib->find(*rit);
@@ -170,15 +179,11 @@ class Simplex_tree_boundary_simplex_iterator : public boost::iterator_facade<
   // Most of the storage should be moved to the range, iterators should be light.
   Vertex_handle last_;  // last vertex of the simplex
   Vertex_handle next_;  // next vertex to push in suffix_
-#if BOOST_VERSION >= 105600
   // 40 seems a conservative bound on the dimension of a Simplex_tree for now,
   // as it would not fit on the biggest hard-drive.
   boost::container::static_vector<Vertex_handle, 40> suffix_;
   // static_vector still has some overhead compared to a trivial hand-made
   // version using std::aligned_storage, or compared to making suffix_ static.
-#else
-  std::vector<Vertex_handle> suffix_;
-#endif
   Siblings * sib_;  // where the next search will start from
   Simplex_handle sh_;  // current Simplex_handle in the boundary
   // 2021-02-08, Jisu KIM

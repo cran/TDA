@@ -241,7 +241,12 @@ BOOST_CONTAINER_FORCEINLINE I memmove_n_source_dest(I f, std::size_t n, F &r) BO
    typedef typename boost::container::iterator_traits<F>::difference_type f_difference_type;
 
    if(BOOST_LIKELY(n != 0)){
-      std::memmove(boost::movelib::iterator_to_raw_pointer(r), boost::movelib::iterator_to_raw_pointer(f), sizeof(value_type)*n);
+      // 2022-01-21, Jisu KIM
+      // Temporarily fixing [-Wclass-memaccess] warning
+      //std::memmove(boost::movelib::iterator_to_raw_pointer(r), boost::movelib::iterator_to_raw_pointer(f), sizeof(value_type)*n);
+      std::memmove(
+          static_cast<void *>(boost::movelib::iterator_to_raw_pointer(r)),
+          boost::movelib::iterator_to_raw_pointer(f), sizeof(value_type)*n);
       f += i_difference_type(n);
       r += f_difference_type(n);
    }

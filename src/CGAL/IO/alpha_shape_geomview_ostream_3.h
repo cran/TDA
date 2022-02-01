@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// $URL: https://github.com/CGAL/cgal/blob/v5.3.1/Alpha_shapes_3/include/CGAL/IO/alpha_shape_geomview_ostream_3.h $
+// $Id: alpha_shape_geomview_ostream_3.h 254d60f 2019-10-19T15:23:19+02:00 Sébastien Loriot
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 //                 Mael Rouxel-Labbé
@@ -151,7 +142,7 @@ show_alpha_shape_faces(Geomview_stream &gv) const
      << " {appearance {}{ OFF BINARY\n"
      << number_of_points << number_of_facets << 0;
 
-  //std::cout << number_of_points << " " << number_of_facets << std::endl;
+  std::cout << number_of_points << " " << number_of_facets << std::endl;
 
   // Vertices
   typename PMapIterVector::iterator Pit, Pbegin = PIV.begin(), Pend = PIV.end();

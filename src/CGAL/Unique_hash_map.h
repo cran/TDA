@@ -1,25 +1,16 @@
-// Copyright (c) 1997-2000  
+// Copyright (c) 1997-2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org)
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// $URL: https://github.com/CGAL/cgal/blob/v5.3.1/Hash_map/include/CGAL/Unique_hash_map.h $
+// $Id: Unique_hash_map.h 590ddf8 2021-10-08T15:38:47+02:00 Mael Rouxel-Labbé
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 //                 Lutz Kettner <kettner@inf.ethz.ch>
@@ -37,7 +28,7 @@
 
 namespace CGAL {
 
-template <class Key_, class Data_, 
+template <class Key_, class Data_,
           class UniqueHashFunction = Handle_hash_function,
           class Allocator_ = CGAL_ALLOCATOR(Data_) >
 class Unique_hash_map {
@@ -68,12 +59,12 @@ public:
 
     Unique_hash_map( const Data& deflt, std::size_t table_size = 1)
         : m_map( table_size) { m_map.xdef() = deflt; }
-    
+
     Unique_hash_map( const Data& deflt,
                      std::size_t table_size,
                      const Hash_function& fct)
         : m_hash_function(fct), m_map( table_size) { m_map.xdef() = deflt; }
-    
+
     Unique_hash_map( Key first1, Key beyond1, Data first2) {
         m_map.xdef() = Data();
         insert( first1, beyond1, first2);
@@ -82,7 +73,7 @@ public:
                      const Data& deflt,
                      std::size_t table_size   = 1,
                      const Hash_function& fct = Hash_function())
-    : m_hash_function(fct), m_map( table_size) { 
+    : m_hash_function(fct), m_map( table_size) {
         m_map.xdef() = deflt;
         insert( first1, beyond1, first2);
     }
@@ -97,8 +88,8 @@ public:
         m_map.clear();
         m_map.xdef() = deflt; }
 
-    bool is_defined( const Key& key) const { 
-        return m_map.lookup( m_hash_function(key)) != 0; 
+    bool is_defined( const Key& key) const {
+        return m_map.lookup( m_hash_function(key)) != 0;
     }
 
     const Data& operator[]( const Key& key) const {
@@ -109,7 +100,7 @@ public:
     }
 
     Data& operator[]( const Key& key) {
-        return m_map.access( m_hash_function(key)); 
+        return m_map.access( m_hash_function(key));
     }
 
     Data insert( Key first1, Key beyond1, Data first2) {
@@ -142,27 +133,29 @@ namespace boost {
   public:
     typedef KeyType key_type;
     typedef ValueType value_type;
-    typedef const value_type& reference;
+    typedef value_type& reference;
     typedef lvalue_property_map_tag category;
+
     associative_property_map() : m_c(0) { }
     associative_property_map(C& c) : m_c(&c) { }
-    value_type& operator[](const key_type& k) const {
+
+    reference operator[](const key_type& k) const {
       return (*m_c)[k];
     }
 
-  friend
-  const value_type&
-  get(const associative_property_map<C>& uhm, const key_type& key)
-  {
-    return uhm[key];
-  }
+    friend
+    reference
+    get(const associative_property_map<C>& uhm, const key_type& key)
+    {
+      return uhm[key];
+    }
 
-  friend
-  void
-  put(associative_property_map<C>& uhm, const key_type& key, const value_type& val)
-  {
-    uhm[key] = val;
-  }
+    friend
+    void
+    put(associative_property_map<C>& uhm, const key_type& key, const value_type& val)
+    {
+      uhm[key] = val;
+    }
 
   private:
     C* m_c;

@@ -1,24 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org)
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// $URL: https://github.com/CGAL/cgal/blob/v5.3.1/Kernel_23/include/CGAL/Circle_2.h $
+// $Id: Circle_2.h 4e519a3 2021-05-05T13:15:37+02:00 Sébastien Loriot
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -33,7 +24,6 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/result_of.h>
 
 namespace CGAL {
 
@@ -73,7 +63,7 @@ public:
     : RCircle_2(t) {}
 
   Circle_2(const Point_2 &center, const FT &squared_radius,
-	   const Orientation &orientation)
+           const Orientation &orientation)
     : RCircle_2(typename R::Construct_circle_2()(Return_base_tag(), center, squared_radius, orientation)) {}
 
   Circle_2(const Point_2 &center, const FT &squared_radius)
@@ -83,7 +73,7 @@ public:
     : RCircle_2(typename R::Construct_circle_2()(Return_base_tag(), p, q, r)) {}
 
   Circle_2(const Point_2 & p, const Point_2 & q,
-	   const Orientation &orientation)
+           const Orientation &orientation)
     : RCircle_2(typename R::Construct_circle_2()(Return_base_tag(), p, q, orientation)) {}
 
   Circle_2(const Point_2 & p, const Point_2 & q)
@@ -98,13 +88,13 @@ public:
   Circle_2(const Point_2 & center)
     : RCircle_2(typename R::Construct_circle_2()(Return_base_tag(), center, FT(0), COUNTERCLOCKWISE)) {}
 
-  typename cpp11::result_of<typename R::Construct_center_2(Circle_2)>::type
+  decltype(auto)
   center() const
   {
     return R().construct_center_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_squared_radius_2(Circle_2)>::type
+  decltype(auto)
   squared_radius() const
   {
     return R().compute_squared_radius_2_object()(*this);
@@ -175,8 +165,8 @@ public:
   {
     //return R().construct_opposite_circle_2_object()(*this);
     return Circle_2(center(),
-		    squared_radius(),
-		    CGAL::opposite(orientation()) );
+                    squared_radius(),
+                    CGAL::opposite(orientation()) );
   }
 
   Bbox_2
@@ -231,7 +221,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Circle_2<R>& c)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         os << c.center() << ' ' << c.squared_radius() << ' '
            << static_cast<int>(c.orientation());
@@ -274,9 +264,9 @@ extract(std::istream& is, Circle_2<R>& c)
     typename R::Point_2 center;
     typename R::FT squared_radius(0);
     int o=0;
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> center >> iformat(squared_radius) >> o;
+        is >> center >> IO::iformat(squared_radius) >> o;
         break;
     case IO::BINARY :
         is >> center;
@@ -285,12 +275,12 @@ extract(std::istream& is, Circle_2<R>& c)
         break;
     default:
         is.setstate(std::ios::failbit);
-        //std::cerr << "" << std::endl;
-        //std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
     if (is)
-	c = Circle_2<R>(center, squared_radius, static_cast<Orientation>(o));
+        c = Circle_2<R>(center, squared_radius, static_cast<Orientation>(o));
     return is;
 }
 

@@ -15,27 +15,30 @@ void filtrationSort(
     std::vector< VertexVector > & cmplx, RealVector & values) {
 
   std::vector< std::pair< double, unsigned > > vipairs(cmplx.size());
-  typename std::vector< VertexVector >::iterator iCmplx;
-  typename RealVector::iterator iValue;
-  unsigned idx;
-  typename std::vector< std::pair< double, unsigned > >::iterator iPair;
-  std::vector< VertexVector > cmplxTemp(cmplx.begin(), cmplx.end());
 
-  iValue = values.begin();
-  idx = 0;
-  for (iPair = vipairs.begin(); iPair != vipairs.end();
-       ++iPair, ++iValue, ++iCmplx, ++idx) {
-    *iPair = std::make_pair(*iValue, idx);
+  {
+    typename RealVector::iterator iValue = values.begin();
+    unsigned idx = 0;
+    typename std::vector< std::pair< double, unsigned > >::iterator iPair =
+          vipairs.begin();
+    for (; iPair != vipairs.end(); ++iPair, ++iValue, ++idx) {
+      *iPair = std::make_pair(*iValue, idx);
+    }
   }
 
   std::sort(vipairs.begin(), vipairs.end());
 
-  iCmplx = cmplx.begin();
-  iValue = values.begin();
-  for (iPair = vipairs.begin(); iPair != vipairs.end();
-       ++iPair, ++iCmplx, ++iValue) {
-    *iCmplx = cmplxTemp[iPair->second];
-    *iValue = iPair->first;
+  {
+    std::vector< VertexVector > cmplxTemp(cmplx.begin(), cmplx.end());
+
+    typename std::vector< VertexVector >::iterator iCmplx = cmplx.begin();
+    typename RealVector::iterator iValue = values.begin();
+    typename std::vector< std::pair< double, unsigned > >::iterator iPair =
+        vipairs.begin();
+    for (; iPair != vipairs.end(); ++iPair, ++iCmplx, ++iValue) {
+      *iCmplx = cmplxTemp[iPair->second];
+      *iValue = iPair->first;
+    }
   }
 }
 

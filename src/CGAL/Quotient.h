@@ -1,24 +1,15 @@
-// Copyright (c) 1999-2007  
+// Copyright (c) 1999-2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org)
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// $URL: https://github.com/CGAL/cgal/blob/v5.3.1/Number_types/include/CGAL/Quotient.h $
+// $Id: Quotient.h 14c3b7e 2020-05-27T16:33:33+02:00 Laurent Rineau
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion, Michael Hemmer
@@ -31,8 +22,6 @@
 
 // The include is done before the protect macro on purpose, because
 // of a cyclic dependency.
-
-#include <CGAL/number_type_basic.h>
 
 #ifndef CGAL_QUOTIENT_H
 #define CGAL_QUOTIENT_H
@@ -49,7 +38,7 @@ namespace CGAL {
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 #define CGAL_double(T) typename First_if_different<double, T>::Type
-// 2019-11-30
+// 2019-11-30, Jisu KIM
 // Temporarily added to resolve overloading ambiguity of type long int
 #define CGAL_long(T)   typename First_if_different<long,   T>::Type
 
@@ -79,7 +68,7 @@ class Quotient
   , boost::ordered_field_operators2< Quotient<NT_>, NT_
   , boost::ordered_field_operators2< Quotient<NT_>, CGAL_int(NT_)
   , boost::ordered_field_operators2< Quotient<NT_>, CGAL_double(NT_)
-  // 2019-11-30
+  // 2019-11-30, Jisu KIM
   // Temporarily added to resolve overloading ambiguity of type long int
   , boost::ordered_field_operators2< Quotient<NT_>, CGAL_long(NT_) >
     > > > >
@@ -99,7 +88,7 @@ class Quotient
   Quotient(const CGAL_int(NT) & n)
     : num(n), den(NT(1)) {}
 
-  // 2019-11-30
+  // 2019-11-30, Jisu KIM
   // Temporarily added to resolve overloading ambiguity of type long int
   Quotient(const CGAL_long(NT) & n)
     : num(n), den(NT(1)) {}
@@ -130,7 +119,7 @@ class Quotient
     return *this;
   }
 
-  // 2019-11-30
+  // 2019-11-30, Jisu KIM
   // Temporarily added to resolve overloading ambiguity of type long int
   Quotient& operator=(const CGAL_long(NT) & n)
   {
@@ -139,28 +128,9 @@ class Quotient
     return *this;
   }
 
-#ifdef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
-
   template <class T1, class T2>
   Quotient(const T1& n, const T2& d) : num(n), den(d)
   { CGAL_precondition( d != 0 ); }
-
-#else
-  template <class T1, class T2>
-  Quotient(T1 && n, T2 && d)
-     : num(std::forward<T1>(n)), den(std::forward<T2>(d))
-  { CGAL_postcondition( den != 0 ); }
-
-  Quotient(NT && n)
-    : num(std::move(n)), den(1) {}
-
-  Quotient& operator=(NT && n)
-  {
-    num = std::move(n);
-    den = 1;
-    return *this;
-  }
-#endif
 
   Quotient<NT>& operator+= (const Quotient<NT>& r);
   Quotient<NT>& operator-= (const Quotient<NT>& r);
@@ -178,12 +148,25 @@ class Quotient
   Quotient<NT>& operator-= (const CGAL_double(NT)& r);
   Quotient<NT>& operator*= (const CGAL_double(NT)& r);
   Quotient<NT>& operator/= (const CGAL_double(NT)& r);
-  // 2019-11-30
+  // 2019-11-30, Jisu KIM
   // Temporarily added to resolve overloading ambiguity of type long int
   Quotient<NT>& operator+= (const CGAL_long(NT)& r);
   Quotient<NT>& operator-= (const CGAL_long(NT)& r);
   Quotient<NT>& operator*= (const CGAL_long(NT)& r);
   Quotient<NT>& operator/= (const CGAL_long(NT)& r);
+
+  friend bool operator==(const Quotient& x, const Quotient& y)
+  { return x.num * y.den == x.den * y.num; }
+  friend bool operator==(const Quotient& x, const NT& y)
+  { return x.den * y == x.num; }
+  friend inline bool operator==(const Quotient& x, const CGAL_int(NT) & y)
+  { return x.den * y == x.num; }
+  friend inline bool operator==(const Quotient& x, const CGAL_double(NT) & y)
+  { return x.den * y == x.num; } // Uh?
+  // 2022-01-21, Jisu KIM
+  // Temporarily added to resolve overloading ambiguity of type long int
+  friend inline bool operator==(const Quotient& x, const CGAL_long(NT) & y)
+  { return x.den * y == x.num; }
 
   Quotient<NT>&    normalize();
 
@@ -198,7 +181,7 @@ class Quotient
   }
 
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
-  int tam() const { return std::max(num.tam(), den.tam()); }
+  int tam() const { return (std::max)(num.tam(), den.tam()); }
 #endif
 
  public:
@@ -362,11 +345,11 @@ CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator+= (const CGAL_double(NT)& r)
 {
-  //num += r * den; 
-  NT r_num, r_den; 
+  //num += r * den;
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num = num*r_den + r_num*den;
-  den *=r_den; 
+  den *=r_den;
   return *this;
 }
 
@@ -376,10 +359,10 @@ Quotient<NT>&
 Quotient<NT>::operator-= (const CGAL_double(NT)& r)
 {
   //num -= r * den;
-  NT r_num, r_den; 
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num =  num*r_den - r_num*den;
-  den *= r_den; 
+  den *= r_den;
   return *this;
 }
 
@@ -389,11 +372,11 @@ Quotient<NT>&
 Quotient<NT>::operator*= (const CGAL_double(NT)& r)
 {
   // num *= r;
-  
-  NT r_num, r_den; 
+
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num *= r_num;
-  den *= r_den; 
+  den *= r_den;
   return *this;
 }
 
@@ -403,14 +386,14 @@ Quotient<NT>&
 Quotient<NT>::operator/= (const CGAL_double(NT)& r)
 {
   CGAL_precondition( r != 0 );
-  NT r_num, r_den; 
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num *= r_den;
-  den *= r_num; 
+  den *= r_num;
   return *this;
 }
 
-// 2019-11-30
+// 2019-11-30, Jisu KIM
 // Temporarily added to resolve overloading ambiguity of type long int
 template <class NT>
 CGAL_MEDIUM_INLINE
@@ -497,15 +480,15 @@ operator>>(std::istream& in, Quotient<NT>& r)
   if(!in) return in;
   std::istream::sentry s(in); // skip whitespace
   if(in.peek()!='/'){
-	  if(!in.good()){
-		  in.clear(std::ios_base::eofbit);
-		  // unlikely to be some other reason?
-	  }
+          if(!in.good()){
+                  in.clear(std::ios_base::eofbit);
+                  // unlikely to be some other reason?
+          }
   } else {
-	  char c;
-	  in.get(c); // remove the '/'
-	  in >> den;
-	  if(!in) return in;
+          char c;
+          in.get(c); // remove the '/'
+          in >> den;
+          if(!in) return in;
   }
   r=Quotient<NT>(num,den);
   return in;
@@ -531,39 +514,6 @@ NT
 quotient_truncation(const Quotient<NT>& r)
 { return (r.num / r.den); }
 
-
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-bool
-operator==(const Quotient<NT>& x, const Quotient<NT>& y)
-{ return x.num * y.den == x.den * y.num; }
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-bool
-operator==(const Quotient<NT>& x, const NT& y)
-{ return x.den * y == x.num; }
-
-template <class NT>
-inline
-bool
-operator==(const Quotient<NT>& x, const CGAL_int(NT) & y)
-{ return x.den * y == x.num; }
-
-template <class NT>
-inline
-bool
-operator==(const Quotient<NT>& x, const CGAL_double(NT) & y)
-{ return x.den * y == x.num; }
-
-// 2019-11-30
-// Temporarily added to resolve overloading ambiguity of type long int
-template <class NT>
-inline
-bool
-operator==(const Quotient<NT>& x, const CGAL_long(NT) & y)
-{ return x.den * y == x.num; }
 
 
 
@@ -599,7 +549,7 @@ operator<(const Quotient<NT>& x, const CGAL_double(NT)& y)
   return quotient_cmp(x,Quotient<NT>(y)) == SMALLER;
 }
 
-// 2019-11-30
+// 2019-11-30, Jisu KIM
 // Temporarily added to resolve overloading ambiguity of type long int
 template <class NT>
 CGAL_MEDIUM_INLINE
@@ -628,14 +578,6 @@ bool
 operator>(const Quotient<NT>& x, const CGAL_double(NT)& y)
 { return quotient_cmp(x, Quotient<NT>(y)) == LARGER; }
 
-// 2019-11-30
-// Temporarily added to resolve overloading ambiguity of type long int
-template <class NT>
-inline
-bool
-operator>(const Quotient<NT>& x, const CGAL_long(NT)& y)
-{ return quotient_cmp(x, Quotient<NT>(y)) == LARGER; }
-
 
 template< class NT >
 class Is_valid< Quotient<NT> >
@@ -645,6 +587,14 @@ class Is_valid< Quotient<NT> >
       return is_valid(x.num) && is_valid(x.den);
     }
 };
+
+// 2019-11-30, Jisu KIM
+// Temporarily added to resolve overloading ambiguity of type long int
+template <class NT>
+inline
+bool
+operator>(const Quotient<NT>& x, const CGAL_long(NT)& y)
+{ return quotient_cmp(x, Quotient<NT>(y)) == LARGER; }
 
 
 template <class NT>
@@ -689,7 +639,7 @@ gcd(const NT&, const NT&)
 
 #undef CGAL_double
 #undef CGAL_int
-// 2019-11-30
+// 2019-11-30, Jisu KIM
 // Temporarily added to resolve overloading ambiguity of type long int
 #undef CGAL_long
 
