@@ -1,7 +1,7 @@
-d1627ec5f6a694bf1056f51112c94f9c *DESCRIPTION
+ffa21d4dfa0e71bee46f5f2935597af5 *DESCRIPTION
 4ac8c88b4533fe442c7ff4b460cfacc0 *LICENSE.note
 5a764de0fdeb7dc29b48b2f0152c3068 *NAMESPACE
-14e5bbda2ac112591a7b36366aff8ae2 *NEWS
+01ead202850dc73dc0af532a93617241 *NEWS
 e26eae8a1ebd7bd25206f9afea7bd934 *R/RcppExports.R
 49f89f95ebb567318700c2344f02883a *R/alphaComplexDiag.R
 d0dd9080596ed319633e79cf6a26bf8c *R/alphaComplexFiltration.R
@@ -51,9 +51,9 @@ c559bd1e6249ea2274ae8b68ef25d45a *R/wasserstein.R
 931d86c8933c0b8d75e5dd7b13120e05 *inst/COPYRIGHTS
 c6c0865c02333c3bfbd60b2c6c9b6ca5 *inst/doc/article.R
 3150ebc31b9ebf304bdf3ea974c8eed6 *inst/doc/article.Rnw
-06ce5facc56ee79711bee66d4ae1a7b3 *inst/doc/article.pdf
+ff89ff27afbfa471545b0f1376efc099 *inst/doc/article.pdf
 4265f3c1d9da02a86a6e3264c3baaba7 *man/TDA-internal.Rd
-0957b2acc3ab62a0ac0e193c5de94b95 *man/TDA-package.Rd
+8480819fe6f4999171b1529d57f25b25 *man/TDA-package.Rd
 5c8e239f6a6607e085e8fdf0febf6af6 *man/alphaComplexDiag.Rd
 f7d3ea075aa7d753198845dfa15346da *man/alphaComplexFiltration.Rd
 d0beb67e01b2a0e0a07f9f1a71722790 *man/alphaShapeDiag.Rd
@@ -676,7 +676,7 @@ cb48c0516bca09e90d9ad51c3108f603 *src/CGAL/utils.h
 ad2a016a6e80546b59cb1de9bcf903a6 *src/CGAL/version.h
 c77270e7eeda96cb3390cfbed94d16fb *src/CGAL/version_macros.h
 bf10cc94ebb6a4a47cce6c5f79b46723 *src/CGAL/wmult.h
-a45696f01293c39d88d9be493d99848f *src/Makevars
+2eeb477fea48071494c4827e7c0026cf *src/Makevars
 5c9567765414a0352e9093eb08cb7f4b *src/RcppExports.cpp
 7cda2888c8ade22ebf4cd9bbefaadbdd *src/alphaComplex.h
 36329a62d1f1899c0ff6e7b192133422 *src/alphaShape.h

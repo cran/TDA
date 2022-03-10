@@ -1,8 +1,16 @@
 PKG_CPPFLAGS = -I.
-PKG_CXXFLAGS = -DBOOST_DISABLE_THREADS -DCGAL_EIGEN3_ENABLED -DCGAL_HEADER_ONLY
 PKG_LIBS = -lgmp
 
 ## We want C++14 due to CGAL
 CXX_STD = CXX14
+
+## clang version < 11.0.3 has a parser bug when boost and gmp are used together
+PKG_CXXFLAGS = -DBOOST_DISABLE_THREADS -DCGAL_EIGEN3_ENABLED -DCGAL_HEADER_ONLY
+ifeq ($(shell "${R_HOME}/bin/R" CMD config CXX14 | grep -c "clang"), 1)
+  PKG_CXXFLAGS = -DBOOST_DISABLE_THREADS -DCGAL_EIGEN3_ENABLED -DCGAL_HEADER_ONLY -DCGAL_DO_NOT_USE_BOOST_MP
+  ifeq ($(shell expr `clang++ --version | grep ^'Apple' | awk '{print $$4}' | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 110003), 1)
+    PKG_CXXFLAGS = -DBOOST_DISABLE_THREADS -DCGAL_EIGEN3_ENABLED -DCGAL_HEADER_ONLY
+  endif
+endif
 
 all: $(SHLIB)

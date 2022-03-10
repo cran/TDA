@@ -1,11 +1,11 @@
+### TDA: version 1.8.6
+- modified for clang parser bug
+
 ### TDA: version 1.8.5
 - fixed bugs
 
 ### TDA: version 1.8.3, 1.8.4
 - update GUDHI to 3.5.0, CGAL to 5.3.1
-
-### TDA: version 1.8.1
-- temporarily changed URLs
 
 ### TDA: version 1.8
 - fixed bug in print.clusterTree

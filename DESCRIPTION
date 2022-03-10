@@ -1,8 +1,8 @@
 Package: TDA
 Type: Package
 Title: Statistical Tools for Topological Data Analysis
-Version: 1.8.5
-Date: 2022-01-28
+Version: 1.8.6
+Date: 2022-02-28
 Author: Brittany T. Fasy, Jisu Kim, Fabrizio Lecci, Clement Maria,
     David L. Millman, Vincent Rouvreau.
 Maintainer: Jisu Kim <jisu.kim@inria.fr>
@@ -17,7 +17,7 @@ Imports: FNN, Rcpp (>= 0.11.0), igraph, parallel, scales
 Suggests: testthat, lintr
 Encoding: UTF-8
 LinkingTo: BH (>= 1.78.0-0), Rcpp, RcppEigen
-SystemRequirements: C++14, gmp
+SystemRequirements: C++14, gmp, GNU make
 NeedsCompilation: yes
-Packaged: 2022-01-28 11:54:37 UTC; jiskim
-Date/Publication: 2022-02-01 08:00:05 UTC
+Packaged: 2022-02-28 13:49:25 UTC; jiskim
+Date/Publication: 2022-03-10 14:30:02 UTC
