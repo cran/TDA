@@ -15,8 +15,11 @@
 typedef     std::vector<double>                                     Point;
 typedef     std::vector<Point>                                      PointContainer;
 
-struct WeightedL2Distance:
-    public std::binary_function<const Point&, const Point&, double>
+// 2022-03-29, Jisu KIM
+// std::binary_function is deprecated in C++11 and removed in C++17
+//struct WeightedL2Distance:
+//    public std::binary_function<const Point&, const Point&, double>
+struct WeightedL2Distance
 {
     result_type     operator()(const Point& p1, const Point& p2) const
     {

@@ -289,11 +289,13 @@ Uncertain<bool> operator!(Uncertain<bool> a)
   return Uncertain<bool>(!a.sup(), !a.inf());
 }
 
-inline
-Uncertain<bool> operator|(Uncertain<bool> a, Uncertain<bool> b)
-{
-  return Uncertain<bool>(a.inf() | b.inf(), a.sup() | b.sup());
-}
+// 2022-03-29, Jisu KIM
+// CRAN complains bitwise '|' with boolean operands 
+//inline
+//Uncertain<bool> operator|(Uncertain<bool> a, Uncertain<bool> b)
+//{
+//  return Uncertain<bool>(a.inf() | b.inf(), a.sup() | b.sup());
+//}
 
 inline
 Uncertain<bool> operator|(bool a, Uncertain<bool> b)
@@ -307,11 +309,13 @@ Uncertain<bool> operator|(Uncertain<bool> a, bool b)
   return Uncertain<bool>(a.inf() | b, a.sup() | b);
 }
 
-inline
-Uncertain<bool> operator&(Uncertain<bool> a, Uncertain<bool> b)
-{
-  return Uncertain<bool>(a.inf() & b.inf(), a.sup() & b.sup());
-}
+// 2022-03-29, Jisu KIM
+// CRAN complains bitwise '&' with boolean operands 
+//inline
+//Uncertain<bool> operator&(Uncertain<bool> a, Uncertain<bool> b)
+//{
+//  return Uncertain<bool>(a.inf() & b.inf(), a.sup() & b.sup());
+//}
 
 inline
 Uncertain<bool> operator&(bool a, Uncertain<bool> b)

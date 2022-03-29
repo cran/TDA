@@ -69,9 +69,12 @@ struct OrderContainer
 
 
 template<class Container_, class Comparison_>
-struct  ElementComparison: public std::binary_function<const typename Container_::value_type*,
-                                                       const typename Container_::value_type*,
-                                                       bool>
+// 2022-03-29, Jisu KIM
+// std::binary_function is deprecated in C++11 and removed in C++17
+//struct  ElementComparison: public std::binary_function<const typename Container_::value_type*,
+//                                                       const typename Container_::value_type*,
+//                                                       bool>
+struct  ElementComparison
 {
     typedef             Container_                                                      Container;
     typedef             Comparison_                                                     Comparison;

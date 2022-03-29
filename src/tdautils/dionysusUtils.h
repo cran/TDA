@@ -14,8 +14,11 @@ typedef std::vector< Point > PointContainer;
 
 
 template< typename Simplex >
-class ComparisonDataDimension :
-  public std::binary_function<const Simplex &, const Simplex &, bool> {
+// 2022-03-29, Jisu KIM
+// std::binary_function is deprecated in C++11 and removed in C++17
+//class ComparisonDataDimension :
+//  public std::binary_function<const Simplex &, const Simplex &, bool> {
+class ComparisonDataDimension {
 
 public:
   bool operator()(const Simplex & a, const Simplex & b) const {

@@ -331,8 +331,11 @@ class LSVineyard<V,VE,S,C>::KineticEvaluator: public Evaluator
 
 
 template<class V, class VE, class S, class C>
-class LSVineyard<V,VE,S,C>::VertexAttachmentComparison: 
-    public std::binary_function<Vertex, Vertex, bool>
+// 2022-03-29, Jisu KIM
+// std::binary_function is deprecated in C++11 and removed in C++17
+//class LSVineyard<V,VE,S,C>::VertexAttachmentComparison: 
+//    public std::binary_function<Vertex, Vertex, bool>
+class LSVineyard<V,VE,S,C>::VertexAttachmentComparison
 {
     public:
                                 VertexAttachmentComparison(const VertexLSFIndexMap& vimap, 
@@ -348,8 +351,11 @@ class LSVineyard<V,VE,S,C>::VertexAttachmentComparison:
 
 
 template<class V, class VE, class S, class C>
-struct LSVineyard<V,VE,S,C>::AttachmentCmp: 
-    public std::binary_function<const SimplexPersistenceElementTuple&, const SimplexPersistenceElementTuple&, bool>
+// 2022-03-29, Jisu KIM
+// std::binary_function is deprecated in C++11 and removed in C++17
+//struct LSVineyard<V,VE,S,C>::AttachmentCmp: 
+//    public std::binary_function<const SimplexPersistenceElementTuple&, const SimplexPersistenceElementTuple&, bool>
+struct LSVineyard<V,VE,S,C>::AttachmentCmp
 {
     bool        operator()(const SimplexPersistenceElementTuple& t1, const SimplexPersistenceElementTuple& t2) const
     {

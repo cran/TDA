@@ -177,7 +177,10 @@ class LSVineyard<V,VE,S,C>::KineticVertexType
 };
 
 template<class V, class VE, class S, class C>
-class LSVineyard<V,VE,S,C>::TrajectoryExtractor: public std::unary_function<VertexIndex, typename KineticSimulator::Function>
+// 2022-03-29, Jisu KIM
+// std::unary_function is deprecated in C++11 and removed in C++17
+//class LSVineyard<V,VE,S,C>::TrajectoryExtractor: public std::unary_function<VertexIndex, typename KineticSimulator::Function>
+class LSVineyard<V,VE,S,C>::TrajectoryExtractor
 {
     public:
         typedef                 typename KineticSimulator::Function                         Function;
@@ -194,7 +197,10 @@ class LSVineyard<V,VE,S,C>::TrajectoryExtractor: public std::unary_function<Vert
 };
 
 template<class V, class VE, class S, class C>
-class LSVineyard<V,VE,S,C>::KineticVertexComparison: public std::binary_function<const KineticVertexType&, const KineticVertexType&, bool>
+// 2022-03-29, Jisu KIM
+// std::binary_function is deprecated in C++11 and removed in C++17
+//class LSVineyard<V,VE,S,C>::KineticVertexComparison: public std::binary_function<const KineticVertexType&, const KineticVertexType&, bool>
+class LSVineyard<V,VE,S,C>::KineticVertexComparison
 {
     public:
                                 KineticVertexComparison(const VertexComparison& vcmp):
@@ -227,7 +233,10 @@ class LSVineyard<V,VE,S,C>::TranspositionVisitor: public Persistence::Transposit
 };
 
 template<class V, class VE, class S, class C>
-class LSVineyard<V,VE,S,C>::Evaluator: public std::unary_function<Index, RealType>
+// 2022-03-29, Jisu KIM
+// std::unary_function is deprecated in C++11 and removed in C++17
+//class LSVineyard<V,VE,S,C>::Evaluator: public std::unary_function<Index, RealType>
+class LSVineyard<V,VE,S,C>::Evaluator
 {
     public:
         virtual ~Evaluator() {}
@@ -239,7 +248,10 @@ class LSVineyard<V,VE,S,C>::Evaluator: public std::unary_function<Index, RealTyp
 };
 
 template<class V, class VE, class S, class C>
-class LSVineyard<V,VE,S,C>::DimensionFromIterator: std::unary_function<iterator, Dimension>
+// 2022-03-29, Jisu KIM
+// std::unary_function is deprecated in C++11 and removed in C++17
+//class LSVineyard<V,VE,S,C>::DimensionFromIterator: std::unary_function<iterator, Dimension>
+class LSVineyard<V,VE,S,C>::DimensionFromIterator
 {
     public:
                                 DimensionFromIterator(const PFMap& pfmap): pfmap_(pfmap)    {}

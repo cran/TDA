@@ -308,8 +308,11 @@ pairing_switch(iterator i, iterator j)
 
 // Helper classes
 template<class D, class CT, class OT, class E, class Cmp, class CCmp>
-struct DynamicPersistenceTrails<D,CT,OT,E,Cmp,CCmp>::TrailRemover: 
-    public std::unary_function<Element&, void>
+// 2022-03-29, Jisu KIM
+// std::unary_function is deprecated in C++11 and removed in C++17
+//struct DynamicPersistenceTrails<D,CT,OT,E,Cmp,CCmp>::TrailRemover: 
+//    public std::unary_function<Element&, void>
+struct DynamicPersistenceTrails<D,CT,OT,E,Cmp,CCmp>::TrailRemover
 {
                                 TrailRemover(OrderIndex i):
                                     i_(i)                                       {}

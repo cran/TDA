@@ -116,10 +116,13 @@ class Simulator<FuncKernel_, EventComparison_>::Event
  * (which must not take any arguments during construction).
  */
 template<class FuncKernel_, template<class Event> class EventComparison_>
-class Simulator<FuncKernel_, EventComparison_>::IndirectEventComparison:
-    public std::binary_function<const typename EventComparison::first_argument_type*,
-                                const typename EventComparison::second_argument_type*,
-                                bool>
+// 2022-03-29, Jisu KIM
+// std::binary_function is deprecated in C++11 and removed in C++17
+//class Simulator<FuncKernel_, EventComparison_>::IndirectEventComparison:
+//    public std::binary_function<const typename EventComparison::first_argument_type*,
+//                                const typename EventComparison::second_argument_type*,
+//                                bool>
+class Simulator<FuncKernel_, EventComparison_>::IndirectEventComparison
 {
     public:
         typedef                     EventComparison                                     Comparison;

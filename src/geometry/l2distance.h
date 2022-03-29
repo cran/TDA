@@ -15,9 +15,13 @@
 typedef     std::vector<double>                                     Point;
 typedef     std::vector<Point>                                      PointContainer;
 
-struct L2Distance:
-    public std::binary_function<const Point&, const Point&, double>
+// 2022-03-29, Jisu KIM
+// std::binary_function is deprecated in C++11 and removed in C++17
+//struct L2Distance:
+//    public std::binary_function<const Point&, const Point&, double>
+struct L2Distance
 {
+    typedef double result_type;
     result_type     operator()(const Point& p1, const Point& p2) const
     {
         AssertMsg(p1.size() == p2.size(), "Points must be in the same dimension (in L2Distance): dim1=%d, dim2=%d", p1.size(), p2.size());

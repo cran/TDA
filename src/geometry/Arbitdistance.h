@@ -18,9 +18,13 @@ typedef     std::vector<double>                                     Point; //Ind
 																		   // As a consequence the points indexing starts at 1.
 typedef     std::vector<Point>                                      PointContainer;
 
-struct ArbitDistance:
-    public std::binary_function<const Point&, const Point&, double>
+// 2022-03-29, Jisu KIM
+// std::binary_function is deprecated in C++11 and removed in C++17
+//struct ArbitDistance:
+//    public std::binary_function<const Point&, const Point&, double>
+struct ArbitDistance
 {
+    typedef double result_type;
     result_type     operator()(const Point& p1, const Point& p2) const
     {
         AssertMsg(p1.size() == p2.size(), "Points must be in the same dimension (in Arbitrary Distance): dim1=%d, dim2=%d", p1.size(), p2.size());

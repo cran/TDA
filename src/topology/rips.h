@@ -102,7 +102,10 @@ class Rips
         
 
 template<class Distances_, class Simplex_>
-class Rips<Distances_, Simplex_>::WithinDistance: public std::binary_function<Vertex, Vertex, bool>
+// 2022-03-29, Jisu KIM
+// std::binary_function is deprecated in C++11 and removed in C++17
+//class Rips<Distances_, Simplex_>::WithinDistance: public std::binary_function<Vertex, Vertex, bool>
+class Rips<Distances_, Simplex_>::WithinDistance
 {
     public:
                             WithinDistance(const Distances_&    distances, 
@@ -117,7 +120,10 @@ class Rips<Distances_, Simplex_>::WithinDistance: public std::binary_function<Ve
 };
 
 template<class Distances_, class Simplex_>
-class Rips<Distances_, Simplex_>::Evaluator: public std::unary_function<const Simplex&, DistanceType>
+// 2022-03-29, Jisu KIM
+// std::unary_function is deprecated in C++11 and removed in C++17
+//class Rips<Distances_, Simplex_>::Evaluator: public std::unary_function<const Simplex&, DistanceType>
+class Rips<Distances_, Simplex_>::Evaluator
 {
     public:
         typedef             Simplex_                                        Simplex;
@@ -132,7 +138,10 @@ class Rips<Distances_, Simplex_>::Evaluator: public std::unary_function<const Si
 };
 
 template<class Distances_, class Simplex_>
-class Rips<Distances_, Simplex_>::Comparison: public std::binary_function<const Simplex&, const Simplex&, bool>
+// 2022-03-29, Jisu KIM
+// std::binary_function is deprecated in C++11 and removed in C++17
+//class Rips<Distances_, Simplex_>::Comparison: public std::binary_function<const Simplex&, const Simplex&, bool>
+class Rips<Distances_, Simplex_>::Comparison
 {
     public:
         typedef             Simplex_                                        Simplex;
@@ -155,10 +164,13 @@ class Rips<Distances_, Simplex_>::Comparison: public std::binary_function<const 
 };
 
 template<class Distances_, class Simplex_>
-struct Rips<Distances_, Simplex_>::ComparePair: 
-    public std::binary_function<const std::pair<IndexType, IndexType>&,
-                                const std::pair<IndexType, IndexType>&,
-                                bool>
+// 2022-03-29, Jisu KIM
+// std::binary_function is deprecated in C++11 and removed in C++17
+//struct Rips<Distances_, Simplex_>::ComparePair: 
+//    public std::binary_function<const std::pair<IndexType, IndexType>&,
+//                                const std::pair<IndexType, IndexType>&,
+//                                bool>
+struct Rips<Distances_, Simplex_>::ComparePair
 {
                             ComparePair(const Distances& distances): 
                                 distances_(distances)                       {}
