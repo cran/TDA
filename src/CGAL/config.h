@@ -518,7 +518,10 @@ using std::max;
 
 // Macro to specify a 'unused' attribute.
 #if __has_cpp_attribute(maybe_unused)
-#  define CGAL_UNUSED [[maybe_unused]]
+// 2022-10-29, Jisu KIM
+// clang15 regards 'maybe_unused' as a C++17 extension [-Wc++17-attribute-extensions]
+//#  define CGAL_UNUSED [[maybe_unused]]
+#  define CGAL_UNUSED
 #elif defined(__GNUG__) || __has_attribute(__unused__) // [[maybe_unused]] is C++17
 #  define CGAL_UNUSED __attribute__ ((__unused__))
 #else
@@ -683,7 +686,10 @@ namespace cpp11{
 // See for gcc:
 //   https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 #if __cpp_attributes >= 200809 && __has_cpp_attribute(fallthrough)
-#  define CGAL_FALLTHROUGH [[fallthrough]]
+// 2022-10-29, Jisu KIM
+// clang15 regards 'fallthrough' as a C++17 extension [-Wc++17-attribute-extensions]
+//#  define CGAL_FALLTHROUGH [[fallthrough]]
+#  define CGAL_FALLTHROUGH while(false){}
 #elif __cpp_attributes >= 200809 && __has_cpp_attribute(gnu::fallthrough)
 #  define CGAL_FALLTHROUGH [[gnu::fallthrough]]
 #elif __cpp_attributes >= 200809 && __has_cpp_attribute(clang::fallthrough)
