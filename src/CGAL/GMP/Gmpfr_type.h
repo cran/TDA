@@ -196,7 +196,10 @@ class Gmpfr:
         Gmpfr(mpfr_srcptr f){
                 mpfr_custom_init_set(
                         fr(),
-                        mpfr_custom_get_kind(f),
+                        // 2023-01-13, Jisu KIM
+                        // to fix implicit conversion from mpfr_srcptr to mpfr_ptr, complained by [-fpermissive]
+                        // mpfr_custom_get_kind(f),
+                        mpfr_custom_get_kind(mpfr_ptr(f)),
                         mpfr_custom_get_exp(f),
                         mpfr_get_prec(f),
                         mpfr_custom_get_mantissa(f));
@@ -213,7 +216,10 @@ class Gmpfr:
                 if(p==mpfr_get_prec(f)){
                         mpfr_custom_init_set(
                                 fr(),
-                                mpfr_custom_get_kind(f),
+                                // 2023-01-13, Jisu KIM
+                                // to fix implicit conversion from mpfr_srcptr to mpfr_ptr, complained by [-fpermissive]
+                                // mpfr_custom_get_kind(f),
+                                mpfr_custom_get_kind(mpfr_ptr(f)),
                                 mpfr_custom_get_exp(f),
                                 mpfr_get_prec(f),
                                 mpfr_custom_get_mantissa(f));
@@ -234,7 +240,10 @@ class Gmpfr:
                 if(p==mpfr_get_prec(f)){
                         mpfr_custom_init_set(
                                 fr(),
-                                mpfr_custom_get_kind(f),
+                                // 2023-01-13, Jisu KIM
+                                // to fix implicit conversion from mpfr_srcptr to mpfr_ptr, complained by [-fpermissive]
+                                // mpfr_custom_get_kind(f),
+                                mpfr_custom_get_kind(mpfr_ptr(f)),
                                 mpfr_custom_get_exp(f),
                                 mpfr_get_prec(f),
                                 mpfr_custom_get_mantissa(f));

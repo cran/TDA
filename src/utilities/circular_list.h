@@ -53,7 +53,9 @@ public:
 	class const_iterator;
 	
 	class iterator
-		: public std::iterator<std::forward_iterator_tag, T>
+    // 2023-02-04, Jisu KIM
+    // std::iterator is deprecated from C++17 [-Wdeprecated-declarations]
+    //: public std::iterator<std::forward_iterator_tag, T>
 	{
 		Node* m_rep;
 	public:
@@ -94,7 +96,9 @@ public:
 	};
 
 	class const_iterator
-		: public std::iterator<std::forward_iterator_tag, const T>
+    // 2023-02-04, Jisu KIM
+    // std::iterator is deprecated from C++17 [-Wdeprecated-declarations]
+    //: public std::iterator<std::forward_iterator_tag, const T>
 	{
 		const Node* m_rep;
 	public:
