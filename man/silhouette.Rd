@@ -7,7 +7,7 @@
 }
 
 \description{
-  The function {silhouette} computes the silhouette function corresponding to a given persistence diagram.
+  The function \code{silhouette} computes the silhouette function corresponding to a given persistence diagram.
 }
 
 \usage{
@@ -35,7 +35,7 @@ silhouette(
 }
 
 \value{
-  The function {silhouette} returns a numeric matrix of with the number of row as the length of \code{tseq} and the number of column as the length of \code{p}. The value at ith row and jth column represents the value of the \code{p[j]}-th power silhouette function evaluated at \code{tseq[i]}.
+  The function \code{silhouette} returns a numeric matrix of with the number of row as the length of \code{tseq} and the number of column as the length of \code{p}. The value at ith row and jth column represents the value of the \code{p[j]}-th power silhouette function evaluated at \code{tseq[i]}.
 }
 
 \references{

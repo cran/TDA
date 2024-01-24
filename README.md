@@ -1,4 +1,4 @@
 # TDA
 
 [![Travis Build
-Status](https://travis-ci.org/compTAG/r-tda.svg?branch=master)](https://travis-ci.org/compTAG/r-tda)
+Status](https://app.travis-ci.com/compTAG/r-tda.svg?branch=master)](https://app.travis-ci.com/compTAG/r-tda)

@@ -14,7 +14,12 @@ namespace bl = boost::lambda;
 
 #include <utilities/types.h>
 
-#include <boost/progress.hpp>
+// 2024-01-23, Jisu KIM
+// progress_display in boost/progress.hpp is depricated
+// and returns error from BH 1.84;
+// use it from boost/timer/progress_display.hpp instead.
+// #include <boost/progress.hpp>
+#include <boost/timer/progress_display.hpp>
 
 
 // Element_ should derive from PairCycleData
@@ -155,7 +160,12 @@ class StaticPersistence
             // Function: finished(j)
             // Called after the processing of `j` is finished.
             void                        finished(iterator j) const                              { ++show_progress; }
-            mutable boost::progress_display     
+            // 2024-01-23, Jisu KIM
+            // progress_display in boost/progress.hpp is depricated
+            // and returns error from BH 1.84;
+			// use it from boost/timer/progress_display.hpp instead.
+            //mutable boost::progress_display     
+            mutable boost::timer::progress_display     
                                         show_progress;
         };
         
