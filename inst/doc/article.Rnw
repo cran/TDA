@@ -84,23 +84,7 @@
 \title{Introduction to the \proglang{R} package \pkg{TDA}}
 \Plaintitle{Introduction to the R package TDA}
 \Abstract{
-We present a short tutorial and introduction to using the \proglang{R} package 
-\pkg{TDA}, which provides some tools for Topological Data Analysis.
-In particular, it includes implementations of functions that, given some data, provide 
-topological information about the underlying space, such as the distance function, the distance to a measure,
-the kNN density estimator, the kernel density estimator, and the kernel distance.
-The salient topological features of the sublevel sets (or superlevel sets) of these functions
-can be quantified with persistent homology. We provide an \proglang{R} interface
-for the efficient algorithms of the \proglang{C++} libraries \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}, \href{ https://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}, and \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}, 
-including a function for the persistent homology of the Rips filtration, 
-and one for the persistent homology of sublevel
-sets (or superlevel sets) of arbitrary functions evaluated over a grid of points.
-The significance of the features in the resulting persistence diagrams can be 
-analyzed with functions that implement the methods discussed in \cite{fasy2014statistical},
-\cite{chazal2014stochastic} and \cite{chazal2014robust}.
-The \proglang{R} package \pkg{TDA} also includes the implementation of an algorithm for density 
-clustering, which allows us to identify the spatial organization of the probability mass associated to 
-a density function and visualize it by means of a dendrogram, the cluster tree. 
+We present a short tutorial and introduction to the \proglang{R} package \pkg{TDA}, which provides tools for Topological Data Analysis. The package focuses on statistical analysis of persistent homology and density clustering. The package includes implementations of functions that extract topological information about the underlying space from data, such as the distance function, the distance to a measure, the kNN density estimator, the kernel density estimator, and the kernel distance. The salient topological features of the sublevel sets (or superlevel sets) of these functions can be quantified with persistent homology. This package provides an \proglang{R} interface for the efficient algorithms of the \proglang{C++} libraries \href{ https://project.inria.fr/gudhi/software/ }{\pkg{GUDHI}}, \href{ https://www.mrzv.org/software/dionysus/ }{\pkg{Dionysus}}, and \href{ https://bitbucket.org/phat-code/phat/ }{\pkg{PHAT}}, including a function for the persistent homology of the Rips filtration, and one for the persistent homology of sublevel sets (or superlevel sets) of arbitrary functions evaluated over a grid of points. The statistical significance of persistent homology features can be analyzed with functions that implement methods from \cite{FasyLRWBS2014}, \cite{ChazalFLRW2015} and \cite{ChazalFLMRW2017}. The \proglang{R} package \pkg{TDA} also includes the implementation of an algorithm for density clustering, which allows us to identify the spatial structure of a probability density function and visualize it by means of a dendrogram, the cluster tree. 
 }
 \Keywords{Topological Data Analysis, Persistent Homology, Density Clustering}
 
@@ -112,17 +96,17 @@ a density function and visualize it by means of a dendrogram, the cluster tree.
   Email: \email{brittany.fasy@alumni.duke.edu}\\
 
   Jisu Kim\\
-  DataShape Group\\
-  INRIA Saclay\\
-  Website: \url{ http://www.stat.cmu.edu/~jisuk/ } \\
-  Email: \email{jisu.kim@inria.fr}\\
+  Department of Statistics\\
+  Seoul National University\\
+  Website: \url{ https://jkim82133.github.io/ } \\
+  Email: \email{jkim82133@snu.ac.kr}\\
 
   Fabrizio Lecci\\
   Email: \email{fabrizio.lecci@gmail.com}\\
 
   Cl\'ement Maria\\
-  School of Mathematics and Physics\\
-  The University of Queensland\\
+  DataShape Group\\
+  INRIA Sophia Antipolis\\
   Website: \url{ http://www-sop.inria.fr/members/Clement.Maria/ } \\
   Email: \email{clement.maria@inria.fr}\\
 
@@ -196,7 +180,7 @@ Statistical methods for persistent homology provide an alternative to its exact
 computation. Knowing with high confidence that an approximated persistence
 diagrams is close to the true--computationally infeasible--diagram is often
 enough for practical purposes. 
-\cite{fasy2014statistical}, \cite{chazal2014stochastic}, and \cite{chazal2014robust} propose several statistical methods to construct confidence sets for persistence diagrams and other summary functions that allow us to separate topological signal from topological noise.
+\cite{FasyLRWBS2014}, \cite{ChazalFLRW2015}, and \cite{ChazalFLMRW2017} propose several statistical methods to construct confidence sets for persistence diagrams and other summary functions that allow us to separate topological signal from topological noise.
 The methods are implemented in the \pkg{TDA} package and described in Section \ref{sec:persistent}.
 
 Finally, the \pkg{TDA} package provides the implementation of an algorithm for density clustering. 
@@ -377,7 +361,7 @@ $
 
 \vspace{0.2cm}
 
-\cite{fasy2014statistical} and \cite{chazal2014robust} prove the validity of the bootstrap algorithm for kernel density estimators, distance to measure, and kernel distance, and use it in the framework of persistent homology.
+\cite{FasyLRWBS2014} and \cite{ChazalFLMRW2017} prove the validity of the bootstrap algorithm for kernel density estimators, distance to measure, and kernel distance, and use it in the framework of persistent homology.
 The bootstrap algorithm is implemented in the function \code{bootstrapBand}, which provides the option of parallelizing the algorithm (\code{parallel = TRUE}) using the package \pkg{parallel}.
 The following code computes a 90\% confidence band for $\mathbb{E}[\hat p_h]$, showed in Figure \ref{fig:eq10}.
 
@@ -512,7 +496,7 @@ The features are born at high levels of the density and die at lower levels. The
 
 The option (\code{band = 2 * band[["width"]]}) produces a pink confidence band for the persistence diagram, using the confidence band constructed for the corresponding kernel density estimator in the previous section. 
 The features above the band can be interpreted as representing significant homological features, while points in the band are not significantly different from noise.
-The validity of the bootstrap confidence band for persistence diagrams of KDE, DTM, and Kernel Distance derive from the \textit{Stability Theorem} \citep{chazal2012structure} and is discussed in detail in \cite{fasy2014statistical} and \cite{chazal2014robust}.
+The validity of the bootstrap confidence band for persistence diagrams of KDE, DTM, and Kernel Distance derive from the \textit{Stability Theorem} \citep{chazal2012structure} and is discussed in detail in \cite{FasyLRWBS2014} and \cite{ChazalFLMRW2017}.
 
 The function \code{plot} for the class \code{"diagram"} provide the options of rotating the diagram (\code{rotated = TRUE}), drawing the barcode in place of the diagram (\code{barcode = TRUE}), as well as other standard graphical options. See Figure \ref{fig:eq11c}.
 
@@ -791,7 +775,7 @@ print(wasserstein(Diag1[["diagram"]], Diag2[["diagram"]], p = 2,
 \subsection{Landscapes and Silhouettes}
 %%%%%%%%%%%%%%%%%%%%%%
 
-Persistence landscapes and silhouettes are real-valued functions that further summarize the information contained in a persistence diagram. They have been introduced and studied in \cite{bubenik2012statistical}, \cite{chazal2014stochastic}, and \cite{chazal2014subsampling}.
+Persistence landscapes and silhouettes are real-valued functions that further summarize the information contained in a persistence diagram. They have been introduced and studied in \cite{bubenik2012statistical}, \cite{ChazalFLRW2015}, and \cite{ChazalFLMRW2015}.
 We briefly introduce the two functions.
 
 {\bf Landscape.}  The persistence landscape
@@ -965,7 +949,7 @@ plot(tseq, Sil, type = "l", lwd = 3, ylim = ylimit, ylab = "",
 \subsection{Confidence Bands for Landscapes and Silhouettes}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Recent results in \cite{chazal2014stochastic} and \cite{chazal2014subsampling} show how to construct confidence bands for landscapes 
+Recent results in \cite{ChazalFLRW2015} and \cite{ChazalFLMRW2015} show how to construct confidence bands for landscapes 
 and silhouettes, using a bootstrap algorithm (multiplier bootstrap).
 This strategy is useful in the following scenario.
 We have a very large dataset with $N$ points. There is a diagram $D$ and landscape $\lambda$ corresponding to some filtration built on the data. When $N$ is large, computing $D$ is prohibitive. Instead, we draw $n$ subsamples, each of size $m$. We compute a diagram and a landscape for each subsample yielding landscapes $\lambda_1, \dots, \lambda_n $. (Assuming $m$ is much smaller than $N$, these subsamples are essentially independent and identically distributed.) Then we compute $\frac{1}{n}\sum_i \lambda_i$, an estimate of $\mathbb{E}(\lambda_i)$, which can be regarded as an approximation of $\lambda$. The function \code{multipBootstrap} uses the landscapes $\lambda_1, \dots, \lambda_n$ to construct a confidence band for $\mathbb{E}(\lambda_i)$. The same strategy is valid for silhouette functions. We illustrate the method with a simple example.\\
@@ -1052,7 +1036,7 @@ An unsolved problem in topological inference is how to
 choose the smoothing parameters, for example \code{h} for KDE and 
 \code{m0} for DTM.
 
-\cite{chazal2014robust} suggest the following method, that we describe here for the kernel density estimator,
+\cite{ChazalFLMRW2017} suggest the following method, that we describe here for the kernel density estimator,
 but works also for the kernel distance and the distance to measure.
 
 Let $\ell_1(h),\ell_2(h),\ldots, $

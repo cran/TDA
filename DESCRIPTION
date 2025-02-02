@@ -1,23 +1,44 @@
 Package: TDA
-Type: Package
 Title: Statistical Tools for Topological Data Analysis
-Version: 1.9.1
-Date: 2024-01-23
-Author: Brittany T. Fasy, Jisu Kim, Fabrizio Lecci, Clement Maria,
-    David L. Millman, Vincent Rouvreau.
-Maintainer: Jisu Kim <jkim82133@snu.ac.kr>
-Copyright: See inst/COPYRIGHTS
-Description: Tools for the statistical analysis of persistent homology and for
-    density clustering. For that, this package provides an R interface for the
-    efficient algorithms of the C++ libraries 'GUDHI' <https://project.inria.fr/gudhi/software/>, 'Dionysus' <https://www.mrzv.org/software/dionysus/>, and 'PHAT' <https://bitbucket.org/phat-code/phat/>. This package also implements the methods in Fasy et al. (2014) <doi:10.1214/14-AOS1252> and Chazal et al. (2014) <doi:10.1145/2582112.2582128>  for analyzing the statistical significance of persistent homology features.
+Description: Tools for Topological Data Analysis. The package focuses on statistical analysis of persistent homology and density clustering. For that, this package provides an R interface for the efficient algorithms of the C++ libraries 'GUDHI' <https://project.inria.fr/gudhi/software/>, 'Dionysus' <https://www.mrzv.org/software/dionysus/>, and 'PHAT' <https://bitbucket.org/phat-code/phat/>. This package also implements methods from Fasy et al. (2014) <doi:10.1214/14-AOS1252> and Chazal et al. (2015) <doi:10.20382/jocg.v6i2a8>  for analyzing the statistical significance of persistent homology features.
+Version: 1.9.4
 Depends: R (>= 3.1.0)
-Repository: CRAN
-License: GPL-3
 Imports: FNN, Rcpp (>= 0.11.0), igraph, parallel, scales
+LinkingTo: BH (>= 1.87.0-1), Rcpp, RcppEigen
 Suggests: testthat, lintr
-Encoding: UTF-8
-LinkingTo: BH (>= 1.81.0-1), Rcpp, RcppEigen
+Date: 2025-02-01
+Authors@R: c(person(given = c("Brittany", "T."),
+                    family = "Fasy",
+                    role = "aut"),
+             person(given = "Jisu",
+                    family = "Kim",
+                    role = c("aut", "cre"),
+                    email = "jkim82133@snu.ac.kr"),
+             person(given = "Fabrizio",
+                    family = "Lecci",
+                    role = "aut"),
+             person(given = "Clement",
+                    family = "Maria",
+                    role = "aut"),
+             person(given = c("David", "L."),
+                    family = "Millman",
+                    role = "aut"),
+             person(given = "Vincent",
+                    family = "Rouvreau.",
+                    role = "aut"))
+Author: Brittany T. Fasy [aut],
+  Jisu Kim [aut, cre],
+  Fabrizio Lecci [aut],
+  Clement Maria [aut],
+  David L. Millman [aut],
+  Vincent Rouvreau. [aut]
+Maintainer: Jisu Kim <jkim82133@snu.ac.kr>
+License: GPL-3
+Copyright: See inst/COPYRIGHTS
 SystemRequirements: gmp, GNU make
+Encoding: UTF-8
+Type: Package
+Repository: CRAN
 NeedsCompilation: yes
-Packaged: 2024-01-23 19:41:21 UTC; jiskim
-Date/Publication: 2024-01-24 15:42:47 UTC
+Packaged: 2025-02-01 23:56:55 UTC; rupik
+Date/Publication: 2025-02-02 08:10:05 UTC
